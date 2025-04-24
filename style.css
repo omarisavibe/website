@@ -972,11 +972,16 @@ p {
     .product-description {
         font-size: 0.9rem;
     }
+      .tiktok-embed-wrapper {
+    padding-bottom: 120%; /* Slightly taller, but not exaggerated */
+  }
+}
+    
     @media (max-width: 400px) {
   .tiktok-embed-wrapper {
     padding-bottom: 120%; /* Slightly taller, but not exaggerated */
   }
-}
+
 
     .container {
         width: 94%; /* Slightly less padding */

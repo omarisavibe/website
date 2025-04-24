@@ -14,7 +14,7 @@
     <!-- Font Links (Keep these, they match the vibe) -->
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Link to your CSS file -->
+    <!-- Link to your CSS file (We'll create this later) -->
     <link rel="stylesheet" href="style.css">
 
     <!-- Add any SEO Meta Tags if needed -->
@@ -230,6 +230,7 @@
     </footer>
 
     <!-- ======================= CART SIDEBAR & OVERLAY ======================= -->
+    <!-- (HTML Structure is similar to previous, styling handled by CSS) -->
     <div id="cart-overlay" class="cart-overlay"></div>
     <div id="cart-sidebar" class="cart-sidebar">
         <button id="close-cart-button" class="close-modal-button" aria-label="Close Cart">×</button>
@@ -240,41 +241,45 @@
         </div>
         <div class="cart-summary-section">
             <p class="cart-total-text">Total Vibe Cost: <span id="cart-total-price">LE 0.00</span></p>
-            <button id="checkout-button" class="cta-button checkout-btn" disabled>Checkout Time!</button> <!-- Updated Text -->
+            <button id="checkout-button" class="cta-button checkout-btn" disabled>Checkout (Face the Music)</button>
         </div>
     </div>
 
     <!-- ===================== CHECKOUT MODAL & OVERLAY ===================== -->
-    <div id="checkout-overlay" class="checkout-overlay"> <!-- Flex centering happens here -->
-        <div id="checkout-modal" class="checkout-modal"> <!-- This is the item being centered -->
-            <button id="close-checkout-button" class="close-modal-button" aria-label="Close Checkout">×</button>
-            <h2 class="modal-title">Delivery Deets - Don't Mess Up</h2>
-            <form id="checkout-form" novalidate>
-                <div class="form-group">
-                    <label for="customer_name">Your Name / TikTok Handle / Alias:</label>
-                    <input type="text" id="customer_name" name="customer_name" placeholder="Who gets the goods?" required>
-                </div>
-                <!-- EMAIL FIELD COMPLETELY REMOVED -->
-                <div class="form-group">
-                    <label for="customer_address">Full Address (Crucial!):</label>
-                    <textarea id="customer_address" name="customer_address" rows="4" placeholder="Street, Building, Floor, Apartment #, Any Landmarks a confused delivery person needs!" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="customer_phone">Phone Number (MUST WORK!):</label>
-                    <input type="tel" id="customer_phone" name="customer_phone" placeholder="Egyptian Mobile # (e.g., 01xxxxxxxxx)" required pattern="^01[0-2,5]{1}[0-9]{8}$"> <!-- Basic Egyptian Mobile Pattern -->
-                    <small class="form-hint">Needed for delivery driver to find you / complain.</small>
-                </div>
+    <!-- (HTML Structure is similar to previous, styling handled by CSS) -->
+    <div id="checkout-overlay" class="checkout-overlay"></div>
+    <div id="checkout-modal" class="checkout-modal">
+        <button id="close-checkout-button" class="close-modal-button" aria-label="Close Checkout">×</button>
+        <h2 class="modal-title">Delivery Deets - Don't Mess Up</h2>
+        <form id="checkout-form" novalidate> <!-- Added novalidate to rely on JS/backend validation primarily -->
+            <div class="form-group">
+                <label for="customer_name">Your Name / TikTok Handle / Alias:</label>
+                <input type="text" id="customer_name" name="customer_name" placeholder="Who gets the goods?" required>
+            </div>
+            <!-- REMOVED EMAIL - Simplify checkout unless strictly needed for receipts/Supabase auth later -->
+            <!-- <div class="form-group">
+                <label for="customer_email">Email (Optional - For boring stuff):</label>
+                <input type="email" id="customer_email" name="customer_email" placeholder="your.vibe@email.com">
+            </div> -->
+            <div class="form-group">
+                <label for="customer_address">Full Address (Crucial!):</label>
+                <textarea id="customer_address" name="customer_address" rows="4" placeholder="Street, Building, Floor, Apartment #, Any Landmarks a confused delivery person needs!" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="customer_phone">Phone Number (MUST WORK!):</label>
+                <input type="tel" id="customer_phone" name="customer_phone" placeholder="Egyptian Mobile # (e.g., 01xxxxxxxxx)" required pattern="^01[0-2,5]{1}[0-9]{8}$"> <!-- Basic Egyptian Mobile Pattern -->
+                <small class="form-hint">Needed for delivery driver to find you / complain.</small>
+            </div>
 
-                <div class="checkout-summary-box">
-                    <h4 class="summary-title">Your Score:</h4> <!-- Changed <p> to <h4> for semantics -->
-                    <div id="checkout-summary"><!-- Populated by JS --></div>
-                    <p class="total-title">Final Damage: <span id="checkout-total-price">LE 0.00</span></p>
-                </div>
+            <div class="checkout-summary-box">
+                <p class="summary-title">Your Score:</p>
+                <div id="checkout-summary"><!-- Populated by JS --></div>
+                <p class="total-title">Final Damage: <span id="checkout-total-price">LE 0.00</span></p>
+            </div>
 
-                <button type="submit" id="submit-order-button" class="cta-button submit-btn">SEND IT! (Commit Now) 💸</button>
-                <p id="checkout-message" class="checkout-message"></p> <!-- For success/error messages -->
-            </form>
-        </div>
+            <button type="submit" id="submit-order-button" class="cta-button submit-btn">SEND IT! (Commit Now) 💸</button>
+            <p id="checkout-message" class="checkout-message"></p> <!-- For success/error messages -->
+        </form>
     </div>
 
     <!-- ============================ SCRIPTS ============================ -->

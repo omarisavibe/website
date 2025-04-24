@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe Treats - Like your posting schedule, but edible.</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Favicon Placeholder - Generate a favicon later -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <!-- Placeholder: Replace with actual logo image if you have one -->
+            <img src="logo-placeholder.png" alt="Vibe Treats Logo" id="logo-img">
+            <h1>VIBE TREATS</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#products">Treats</a></li>
+                <li><a href="#about">The Deets</a></li>
+                <li><a href="#" id="cart-button">Cart (<span id="cart-count">0</span>)</a></li>
+                 <li><a href="admin-login.html" target="_blank" class="admin-link">Admin Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero">
+            <div class="hero-content">
+                <h2>Like your posting schedule, but edible.</h2>
+                <p>Probably good? Cookies baked with questionable life choices and premium ingredients. Get 'em before I eat 'em all.</p>
+                <a href="#products" class="cta-button">Get Your Vibe On</a>
+            </div>
+            <div class="hero-image">
+                <!-- Placeholder Image -->
+                <img src="hero-image-placeholder.png" alt="Delicious looking cookies in a fun setting">
+            </div>
+        </section>
+
+        <section id="products">
+            <h2>THE LINEUP (When I Feel Like Baking)</h2>
+            <div class="product-grid" id="product-grid">
+                <!-- Products will be loaded here by JavaScript -->
+                <p class="loading-msg">Loading the good stuff...</p>
+            </div>
+        </section>
+
+        <section id="about">
+            <h2>The Deets & The Drama</h2>
+            <p>Okay, so basically I bake stuff I see online or invent in fever dreams. Sometimes it slaps, sometimes it's a certified "learning experience." If it makes the cut, it lands here. Baked in small batches (aka whenever I have executive function). Expect chaos, maybe some existential dread baked in for free.</p>
+            <p>Follow the descent into madness on TikTok: <a href="https://tiktok.com/@YOUR_TIKTOK_USERNAME" target="_blank" rel="noopener noreferrer">@YOUR_TIKTOK_USERNAME</a></p>
+            <div class="about-image">
+               <!-- Placeholder Image -->
+               <img src="about-image-placeholder.png" alt="Chaotic but fun baking scene or abstract brand pattern">
+            </div>
+        </section>
+
+        <!-- Cart Sidebar/Modal -->
+        <div id="cart-sidebar" class="cart-sidebar">
+            <button id="close-cart-button" class="close-cart-button">&times;</button>
+            <h2>Your Treat Stash</h2>
+            <div id="cart-items">
+                <!-- Cart items will be loaded here -->
+                <p>Your cart is lookin' kinda sad rn.</p>
+            </div>
+            <div class="cart-total">
+                <p>Total: $<span id="cart-total-price">0.00</span></p>
+            </div>
+            <button id="checkout-button" class="cta-button">Checkout (Commitment Issues?)</button>
+        </div>
+        <div id="cart-overlay" class="cart-overlay"></div>
+
+        <!-- Checkout Modal -->
+        <div id="checkout-modal" class="checkout-modal">
+             <button id="close-checkout-button" class="close-checkout-button">&times;</button>
+            <h2>Alright, Spill the Tea (Your Info)</h2>
+            <form id="checkout-form">
+                <label for="customer_name">Name (or alias, idc):</label>
+                <input type="text" id="customer_name" name="customer_name" required>
+
+                <label for="customer_email">Email (for receipts, not spam... prob):</label>
+                <input type="email" id="customer_email" name="customer_email" required>
+
+                <label for="customer_address">Address (where the goods go):</label>
+                <textarea id="customer_address" name="customer_address" rows="3" required></textarea>
+
+                <label for="customer_phone">Phone (Optional, for delivery drama?):</label>
+                <input type="tel" id="customer_phone" name="customer_phone">
+
+                <p>Order Summary:</p>
+                <div id="checkout-summary"></div>
+                <p>Total: $<span id="checkout-total-price">0.00</span></p>
+
+                <button type="submit" id="submit-order-button" class="cta-button">Send It (No Take-Backs!)</button>
+                 <p id="checkout-message" class="checkout-message"></p>
+            </form>
+        </div>
+         <div id="checkout-overlay" class="checkout-overlay"></div>
+
+
+    </main>
+
+    <footer>
+        <p>&copy; <span id="year"></span> Vibe Treats. Consume Responsibly (or don't, I'm not your dad).</p>
+         <p>Powered by questionable decisions & Supabase.</p>
+    </footer>
+
+    <!-- Supabase Client Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Your Custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

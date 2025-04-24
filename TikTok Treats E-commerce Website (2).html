@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Vibe Treats</title>
+    <link rel="stylesheet" href="style.css"> <!-- Reuse main styles -->
+    <style>
+        /* Specific styles for admin login */
+        body { justify-content: center; align-items: center; background-color: #f4f4f4; }
+        main { max-width: 400px; background: white; padding: 2rem; border-radius: var(--border-radius); box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h2 { font-family: var(--heading-font); color: var(--primary-color); text-align: center; margin-bottom: 1.5rem;}
+        label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
+        input { width: 100%; padding: 10px; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 4px; }
+        button { width: 100%; }
+        #error-message { color: red; text-align: center; margin-top: 1rem; font-weight: bold; }
+        footer { display: none; } /* Hide footer on login */
+    </style>
+</head>
+<body>
+    <main>
+        <h2>Admin Login - Secret Stash HQ</h2>
+        <form id="admin-login-form">
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
+            <button type="submit" class="cta-button">Enter the Void</button>
+        </form>
+        <p id="error-message"></p>
+    </main>
+
+    <!-- Supabase Client Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // IMPORTANT: Replace with your actual Supabase URL and Anon Key AGAIN
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+
+        if (!SUPABASE_URL || SUPABASE_URL === 'YOUR_SUPABASE_URL' || !SUPABASE_ANON_KEY || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY') {
+             console.error("🚨 Supabase URL or Anon Key not configured! Please update admin-login.html");
+             document.getElementById('error-message').textContent = "Admin configuration missing.";
+        } else {
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            const loginForm = document.getElementById('admin-login-form');
+            const errorMessage = document.getElementById('error-message');
+
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                errorMessage.textContent = '';
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                 const submitButton = loginForm.querySelector('button');
+                 submitButton.disabled = true;
+                 submitButton.textContent = 'Checking Vibes...';
+
+
+                try {
+                    const { data, error } = await supabase.auth.signInWithPassword({
+                        email: email,
+                        password: password,
+                    });
+
+                    if (error) {
+                        throw error;
+                    }
+
+                    if (data.session) {
+                        // Login successful! Redirect to the admin dashboard
+                         console.log("Admin login successful, redirecting...");
+                        window.location.href = 'admin.html';
+                    } else {
+                         // Should not happen if session is null without error, but good to handle
+                        errorMessage.textContent = 'Login failed. Check credentials or cry.';
+                    }
+
+                } catch (error) {
+                    console.error('Admin Login Error:', error.message);
+                    errorMessage.textContent = 'Login failed. Invalid email or password.';
+                } finally {
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Enter the Void';
+                }
+            });
+         }
+    </script>
+</body>
+</html>

@@ -304,25 +304,98 @@ p { margin-bottom: 1rem; } /* Default paragraph margin */
      margin-bottom: 1rem;
      color: var(--brand-pink);
  }
- .nutritional-facts-panel .panel-title { /* Center title */
-     text-align: center;
-     color: var(--brand-teal);
- }
+/* === In style.css === */
+
+/* 1. FIND the .nutritional-facts-panel rule */
 .nutritional-facts-panel {
-    /* --- Ensures the image is applied ONLY to this panel --- */
-    background-image: url('cookiess.webp');
+     /* Existing styles like border, padding, radius, shadow, grid-column... */
+     border: 2px solid var(--text-dark);
+     padding: 2.5rem 2rem;
+     border-radius: var(--radius-main);
+     box-shadow: var(--shadow-light);
 
-    /* --- THESE control how the image fits within the panel --- */
-    background-size: cover;      /* KEY: Scales image to cover 100% of the panel's area.
-                                     It will zoom/crop if needed to avoid empty space. */
-    background-position: center center; /* Centers the image focus */
-    background-repeat: no-repeat;    /* Prevents tiling */
+     /* --- SET EXPLICIT BACKGROUND COLOR (Keep this white or slightly off-white) --- */
+     background-color: #ffffff; /* << MAKE SURE THIS IS PRESENT & SOLID */
 
-    /* --- Other relevant styles --- */
-    position: relative;          /* Context for the overlay */
-    overflow: hidden;            /* Prevents background bleeding past rounded corners */
-    padding: 2.5rem 2rem;        /* Adds space *inside* the panel */
-    /* ... border, radius, shadow, etc. ... */
+     /* --- REMOVE THESE background image styles from the panel itself --- */
+     /* background-image: url('cookiess.webp'); */  /* << REMOVE */
+     /* background-size: cover; */              /* << REMOVE */
+     /* background-position: center center; */    /* << REMOVE */
+     /* background-repeat: no-repeat; */        /* << REMOVE */
+     /* position: relative; */ /* No longer needed for panel overlay */
+     /* overflow: hidden; */ /* Keep if needed for border-radius clipping */
+     /* z-index: 0; */
+
+     /* Ensure the panel content itself isn't trying to be relative now */
+     /* The > * rule for z-index is NO LONGER needed if the overlay is gone */
+ }
+
+/* 2. REMOVE the ::before overlay rule entirely (we don't need it on the panel anymore) */
+/* .nutritional-facts-panel::before { ... } */  /* << DELETE THIS WHOLE RULE */
+
+/* 3. Optional: Reset z-index for children if you added it */
+/* .nutritional-facts-panel > * {
+    position: relative;
+    z-index: 2;
+ } */ /* << DELETE OR COMMENT OUT THIS RULE */
+
+
+/* 4. FIND the parent section rule: .info-panel-section */
+.info-panel-section {
+     /* Keep existing padding */
+     padding: 5rem 0; /* Add padding only to top/bottom */
+     /* background: linear-gradient(...) */ /* Optional: Remove if replacing with image */
+
+     /* --- ADD BACKGROUND IMAGE TO THE SECTION --- */
+     background-image: url('cookiess.webp');   /* << YOUR IMAGE PATH */
+     background-size: cover;                /* Scale to cover section */
+     background-position: center center;      /* Center image */
+     background-repeat: no-repeat;         /* No tiling */
+     background-attachment: scroll;         /* Make it scroll with the page (or 'fixed' if desired) */
+     position: relative;                  /* Context for potential section overlay */
+     /* Add an overlay to the SECTION if needed for panel contrast */
+     /* z-index: 0; */ /* Base stacking context */
+ }
+
+ /* Optional: Add an overlay to the entire section if panel text needs more contrast */
+ /* .info-panel-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgba(255, 245, 249, 0.7); /* Example: Semi-transparent light pink */
+ /* z-index: 1; */
+ /* pointer-events: none; */
+/* } */
+
+
+/* 5. Ensure SIDE panels also have solid backgrounds */
+.info-panel.side-panel { /* Target both side panels */
+    background-color: #ffffff; /* Ensure they have a solid background */
+     /* Other existing styles for side panels... */
+     position: relative; /* Ensure they stack above section background/overlay */
+     z-index: 2;         /* Stack above section overlay if you add one */
+}
+
+/* Make sure the main container WITHIN the section doesn't have a background
+   that would hide the section's background image */
+.info-panel-container {
+     display: grid;
+     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+     gap: 2rem;
+     align-items: stretch;
+     margin-bottom: 4rem; /* Space before Deets/Drama */
+     position: relative; /* Allow panels to stack above section bg/overlay */
+     z-index: 2; /* Ensure panels are above potential section overlay */
+}
+
+/* --- MEDIA QUERY ADJUSTMENT --- */
+/* Find the media query and ensure the .nutritional-facts-panel inside still has its own solid background */
+@media (min-width: 769px) {
+    .nutritional-facts-panel {
+        grid-column: span 2; /* Still make it wider */
+        background-color: #ffffff; /* Reiterate solid background */
+        /* min-height: 400px; */ /* Optional height adjust */
+     }
 }
  .serving-info { font-size: 0.85rem; font-weight: 600; text-align: center; margin-bottom: 0.25rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 0.5rem;}
  .facts-table { margin: 1rem 0; font-size: 0.95rem; }

@@ -1,5 +1,6 @@
 /* --- ==== VIBE TREATS CSS - MOBILE OPTIMIZED EDITION ==== --- */
 /* --- CONSOLIDATED & FIXED - Latest rules take precedence --- */
+/* --- TikTok Embed Fixed - 2023-10-27 --- */
 
 /* --- CSS Variables (Brand Palette) --- */
 :root {
@@ -228,6 +229,9 @@ p {
     font-weight: 600;
     font-size: 0.9rem; /* Base font size */
     white-space: nowrap;
+    border-radius: var(--radius-small); /* Added consistency */
+    border: none; /* Ensure no border */
+    cursor: pointer; /* Ensure cursor */
 }
 .cart-toggle-button:hover:not(:disabled) {
     background-color: #17a791;
@@ -258,8 +262,7 @@ p {
     padding: 0 0.5rem; /* Consolidated mobile padding */
 }
 .hero-headline {
-    /* FIX: Increased font size for mobile */
-    font-size: clamp(2.5rem, 8vw, 3.5rem);
+    font-size: clamp(2.5rem, 8vw, 3.5rem); /* Adjusted mobile size */
     color: var(--brand-pink);
     line-height: 1;
     margin-bottom: 0.5rem; /* Consolidated mobile margin */
@@ -270,8 +273,7 @@ p {
 }
 .hero-subheadline {
     font-family: var(--body-font);
-    /* FIX: Increased font size for mobile */
-    font-size: clamp(1.1rem, 3vw, 1.5rem);
+    font-size: clamp(1.1rem, 3vw, 1.5rem); /* Adjusted mobile size */
     color: var(--brand-teal);
     margin-bottom: 1rem;
     font-weight: 700;
@@ -294,9 +296,8 @@ p {
 .hero-main-image {
     border-radius: var(--radius-main);
     box-shadow: var(--shadow-heavy);
-    /* FIX: Adjusted size for mobile */
-    width: clamp(280px, 85vw, 450px); /* Adjusted clamp */
-    max-width: 95%; /* Adjusted max-width */
+    width: clamp(280px, 85vw, 450px); /* Adjusted clamp for mobile */
+    max-width: 95%; /* Ensure it doesn't overflow */
     transform: rotate(1deg) scale(1); /* Consolidated mobile transform */
     transition: transform 0.3s ease;
     margin: 0 auto; /* Mobile: center */
@@ -314,31 +315,35 @@ p {
     z-index: 1;
 }
 
+/* --- TIKTOK EMBED FIX START --- */
+/* Adapted from Style (2).css logic - Rely on embed script for height */
 .tiktok-embed-wrapper {
-    position: relative;
-    padding-bottom: 100%; /* More standard 1:1 aspect ratio */
-    height: 0;
-    overflow: hidden;
-    max-width: 380px; /* Limit for large screens */
-    width: 100%;
-    margin: 1rem auto; /* Center and control spacing */
+    position: relative; /* Keep for potential absolute children if needed */
+    /* REMOVED padding-bottom and height: 0 to avoid forced aspect ratio */
+    overflow: hidden; /* Clip contents */
+    max-width: 450px; /* Increased max-width like older CSS */
+    width: 95%; /* Use percentage for responsiveness */
+    margin: 2rem auto; /* Center and control spacing */
     box-shadow: var(--shadow-medium);
-    border-radius: var(--radius-small);
-    background-color: #000; /* fallback */
+    border-radius: var(--radius-main); /* Use main radius */
+    background-color: #000; /* Fallback */
+    /* The height will be determined by the content (iframe/blockquote) loaded by the script */
 }
 
+/* Style the potential iframe/blockquote inside */
 .tiktok-embed-wrapper iframe,
-.tiktok-embed-wrapper blockquote,
-.tiktok-embed-wrapper embed,
-.tiktok-embed-wrapper object {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+.tiktok-embed-wrapper blockquote {
+    /* Let the script determine width/height, but ensure it fits */
+    display: block; /* Make it block level */
+    width: 100%; /* Take full width of wrapper */
+    /* Height should be set by the script or content itself */
+    /* Removed absolute positioning unless proven necessary by script */
     border: none;
-    border-radius: inherit;
+    margin: 0 auto; /* Center blockquote if script fails */
+    background: #fff; /* Background for blockquote fallback */
+    min-height: 500px; /* Add a reasonable min-height for fallback */
 }
+/* --- TIKTOK EMBED FIX END --- */
 
 .follow-link {
     margin-top: 0.5rem;
@@ -346,7 +351,15 @@ p {
     font-size: 1.1rem;
     font-weight: 600;
     text-align: center;
+    color: rgba(255, 255, 255, 0.85); /* Match dark section subtitle */
 }
+.dark-section .follow-link a { /* Ensure link color is correct */
+     color: var(--brand-yellow);
+}
+.dark-section .follow-link a:hover {
+     color: var(--text-light);
+}
+
 
 /* --- Product Section --- */
 .product-section {
@@ -354,7 +367,6 @@ p {
 }
 .product-grid {
     display: grid;
-    /* Grid columns handled in media queries */
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* Smallest mobile */
     gap: 1rem; /* Smallest mobile gap */
     margin-top: 1rem;
@@ -419,34 +431,28 @@ p {
 
 /* --- Info Panel Section --- */
 .info-panel-section {
-    padding-bottom: 1rem !important; /* Add small bottom padding */
     padding: 2rem 0 0 0; /* Consolidated mobile top padding, zero bottom */
     background-image: url('cookiess.webp');
-    /* Background properties handled in media queries for quality */
     background-size: 200% auto; /* Mobile background size */
     background-position: center top; /* Mobile background position */
     background-repeat: no-repeat;
     background-attachment: scroll;
     position: relative;
     overflow: hidden; /* Prevent potential overflow issues */
+    /* Padding bottom handled by container below or next section */
 }
-/* FIX: Removed gradient overlay, as it might contribute to spacing issues */
-/* .info-panel-section::after { ... } */
-
 .info-panel-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Base columns */
     gap: 1rem; /* Consolidated mobile gap */
     align-items: stretch;
-    /* FIX: Remove bottom margin globally to fix gap */
-    margin-bottom: 0;
+    margin-bottom: 0; /* FIX: Remove bottom margin globally to fix gap */
     position: relative;
     z-index: 2;
-    /* Added container padding for mobile */
-    padding: 0 4%;
+    padding: 0 4%; /* Added container padding for mobile */
 }
 .info-panel {
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent */
     padding: 0.75rem; /* Consolidated mobile padding */
     border-radius: var(--radius-main);
     box-shadow: var(--shadow-light);
@@ -539,7 +545,7 @@ p {
 /* --- Deets & Drama Below Panels --- */
 .deets-drama-container {
     /* FIX: Adjusted top padding to control gap */
-    padding-top: 1rem; /* Moderate default top padding */
+    padding-top: 2rem; /* Increased mobile top padding */
     padding-bottom: 3rem; /* Base bottom padding */
     background-color: var(--brand-bg-light-pink);
     padding-left: 4%; /* Consolidated mobile side padding */
@@ -555,12 +561,15 @@ p {
     gap: 1.5rem; /* Consolidated mobile gap */
     max-width: 1100px;
     margin: 0 auto;
-    padding: 0 2%; /* Consolidated mobile inner padding */
+    /* Removed inner padding from style(10) as container padding exists */
 }
 .drama-column {
     flex: 1 1 100%; /* Base flex */
     text-align: left;
     padding: 0.5rem; /* Consolidated mobile padding */
+    background-color: #fafafa; /* Add slight background like Style(2).css */
+    border-radius: var(--radius-small); /* Add radius */
+    border: 1px solid var(--border-color); /* Add border */
 }
 .drama-column h3 {
     font-size: 1.2rem; /* Consolidated mobile size */
@@ -579,7 +588,8 @@ p {
     width: 100%; /* Mobile fix */
 }
 .drama-column ul {
-    list-style: 'ðŸª ';
+    /* Using specific emojis from Style(10) */
+    list-style: '🍪 '; /* Default list style */
     padding-left: 1.2rem; /* Consolidated mobile padding */
     margin-top: 0.5rem;
 }
@@ -588,8 +598,30 @@ p {
     font-weight: 600;
 }
 .storage-column ul {
-    list-style: 'ðŸ”’ ';
+    list-style: '🔒 '; /* Specific style for storage */
 }
+.storage-column p { /* Style(2) had this p as bold */
+    font-weight: 600;
+}
+.ingredients-column .banter { /* Match selector name from Style(10) */
+    font-family: var(--body-font); /* Match Style(2) */
+    font-size: 0.8em;
+    color: var(--text-grey);
+    font-style: italic;
+    display: block; /* Ensure it takes its own line */
+    margin-top: -0.5rem; /* Adjust spacing */
+    margin-bottom: 1rem;
+}
+.ingredients-column ul { list-style: none; padding-left: 0; } /* Override default for ingredients */
+.ingredients-column li { margin-bottom: 0.5rem; font-weight: 600; }
+.ingredients-column .detail {
+    font-weight: 400;
+    font-size: 0.9em;
+    color: var(--text-grey);
+    display: block; /* Ensure detail is on new line */
+    margin-left: 0.5rem;
+}
+
 
 /* --- Footer --- */
 .site-footer {
@@ -598,30 +630,33 @@ p {
     text-align: center;
     padding: 2rem 2%;
     font-size: 0.85rem;
+    margin-top: 0; /* Removed potential margin causing gaps */
 }
 .site-footer p {
     margin-bottom: 0.5rem;
 }
-.footer-tagline {
+.footer-tagline { /* Using class from Style(10) */
     font-weight: 600;
     color: var(--brand-teal);
+    font-style: italic; /* Adding italic like Style(2) */
+    opacity: 0.8; /* Adding opacity like Style(2) */
 }
-.footer-smallprint {
+.footer-smallprint { /* Class from Style(10) */
     font-style: italic;
     opacity: 0.8;
     font-size: 0.75rem;
 }
-.admin-secret-link {
-    display: inline-block;
+.admin-secret-link { /* Using class from Style(10) */
+    display: inline-block; /* Changed to inline-block */
     margin-top: 1rem;
     color: rgba(255, 255, 255, 0.4);
-    font-size: 1.5rem;
+    font-size: 0.8rem; /* Matched Style(2) size */
     opacity: 0.6;
-    text-decoration: none;
+    text-decoration: none; /* Ensure no underline */
 }
 .admin-secret-link:hover {
     opacity: 1;
-    color: var(--brand-yellow);
+    color: var(--brand-yellow); /* Matched Style(10) hover */
 }
 
 /* --- Cart Sidebar & Overlay --- */
@@ -640,7 +675,7 @@ p {
     visibility: visible;
     transition: opacity 0.4s ease, visibility 0s;
 }
-.checkout-overlay {
+.checkout-overlay { /* Used for checkout modal */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -649,8 +684,9 @@ p {
 .cart-sidebar {
     position: fixed;
     top: 0;
-    right: -100%;
+    right: -100%; /* Use percentage for smoother transition */
     width: 85%; /* Consolidated mobile width */
+    max-width: 400px; /* Add max-width like Style(2) */
     height: 100%;
     background-color: white;
     box-shadow: -6px 0 20px rgba(0,0,0,0.15);
@@ -664,7 +700,7 @@ p {
 .cart-sidebar.active {
     right: 0;
 }
-.sidebar-title {
+.sidebar-title { /* Used in Style(10) */
     font-family: var(--heading-font);
     color: var(--brand-pink);
     margin-bottom: 1rem;
@@ -673,13 +709,30 @@ p {
     border-bottom: 3px solid var(--brand-yellow);
     padding-bottom: 0.5rem;
 }
-.cart-items-container {
+.close-cart-button { /* Adding close button like Style(2) */
+    position: absolute;
+    top: 10px; /* Adjust position */
+    right: 15px; /* Adjust position */
+    background: none;
+    border: none;
+    font-size: 2rem; /* Adjust size */
+    cursor: pointer;
+    color: #bbb;
+    line-height: 1;
+    transition: color 0.2s ease, transform 0.2s ease;
+    z-index: 1000; /* Ensure it's above title */
+}
+.close-cart-button:hover {
+    color: var(--brand-pink);
+    transform: rotate(90deg); /* Rotate effect from Style(10) */
+}
+
+.cart-items-container { /* Used in Style(10) */
     flex-grow: 1;
     margin-bottom: 1rem;
 }
 .cart-item {
-    display: grid;
-    /* Grid layout handled in media query */
+    display: grid; /* Keep grid layout */
     grid-template-columns: auto 1fr; /* Mobile */
     align-items: center;
     gap: 0.8rem;
@@ -691,7 +744,6 @@ p {
     border-bottom: none;
 }
 .cart-item-img {
-    /* Grid layout handled in media query */
     grid-row: 1 / 2; /* Mobile */
     width: 60px; /* Mobile */
     height: 60px; /* Mobile */
@@ -699,7 +751,6 @@ p {
     border-radius: var(--radius-small);
 }
 .cart-item-info {
-    /* Grid layout handled in media query */
     grid-column: 2 / 3; /* Mobile */
     grid-row: 1 / 2; /* Mobile */
 }
@@ -708,26 +759,28 @@ p {
     margin-bottom: 0.25rem;
     font-weight: 700;
 }
-.cart-item-info p {
+.cart-item-info p { /* Price/details */
     font-size: 0.9rem;
     color: var(--text-grey);
     margin: 0;
 }
 .cart-item-actions {
-    /* Grid layout handled in media query */
     grid-column: 1 / 3; /* Mobile */
     grid-row: 2 / 3; /* Mobile */
     display: flex;
-    flex-direction: row; /* Mobile */
-    justify-content: center;
-    gap: 1rem; /* Mobile */
+    flex-direction: row; /* Mobile: Keep horizontal */
+    justify-content: flex-start; /* Align left */
+    align-items: center; /* Center vertically */
+    gap: 0.6rem; /* Adjusted gap */
     margin-top: 0.5rem; /* Mobile */
 }
 .cart-item-actions .item-quantity {
     font-weight: 700;
     font-size: 1rem;
+    min-width: 20px; /* Ensure space for quantity */
+    text-align: center;
 }
-.action-button {
+.action-button { /* +/- buttons */
     background: var(--brand-teal);
     color: white;
     border: none;
@@ -744,6 +797,7 @@ p {
     box-shadow: var(--shadow-light);
     position: relative;
     overflow: hidden;
+    line-height: 1; /* Ensure vertical center */
 }
 .action-button:hover {
     background: #17a791;
@@ -752,46 +806,56 @@ p {
 .action-button:active {
     transform: scale(0.95);
 }
-.action-button.danger {
-    background: #f0f0f0;
-    color: var(--brand-pink);
-    font-size: 1.3rem; /* Base size */
-    width: 24px; /* Base size */
-    height: 24px; /* Base size */
-    margin-left: 1rem; /* Base margin */
+.action-button.danger { /* Remove/Trash button */
+    background: #f0f0f0; /* Light grey like Style(2) */
+    color: var(--brand-pink); /* Pink icon */
+    font-size: 1.1rem; /* Adjusted size */
+    width: 28px; /* Match +/- */
+    height: 28px; /* Match +/- */
+    margin-left: auto; /* Push to the right */
 }
 .action-button.danger:hover {
     background: var(--brand-pink);
     color: white;
 }
-.cart-summary-section {
+.cart-summary-section { /* Used in Style(10) */
     margin-top: auto;
     padding-top: 1rem;
     border-top: 1px solid var(--border-color);
 }
-.cart-total-text {
+.cart-total-text { /* Used in Style(10) */
     font-weight: 800;
     font-size: 1.3rem;
     color: var(--brand-teal);
     text-align: right;
     margin-bottom: 1rem;
 }
-.checkout-btn {
+.checkout-btn { /* Used in Style(10) */
     width: 100%;
     padding: 12px;
     font-size: 1rem;
+    /* Use main CTA style */
+    background-color: var(--brand-yellow);
+    color: var(--text-dark);
+    box-shadow: 0 4px 10px rgba(255, 240, 0, 0.4);
 }
+.checkout-btn:hover:not(:disabled) {
+     background-color: #e6d300; /* Darker yellow */
+     transform: translateY(-3px) scale(1.02);
+     box-shadow: 0 6px 15px rgba(255, 240, 0, 0.5);
+}
+
 
 /* --- Checkout Modal --- */
 .checkout-modal {
     background: white;
     padding: 1.25rem 0.75rem; /* Consolidated mobile padding */
     border-radius: var(--radius-main);
-    max-width: 90vw;
-    width: 100%;
+    max-width: 90vw; /* Use vw for mobile */
+    width: 550px; /* Max width like Style(2) */
     z-index: 1001;
     position: relative;
-    max-height: 80vh; /* Consolidated mobile height */
+    max-height: 85vh; /* Adjusted height */
     overflow-y: auto;
     box-shadow: var(--shadow-medium);
     opacity: 0;
@@ -805,14 +869,14 @@ p {
     transform: scale(1) translateY(0);
     transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0s;
 }
-.modal-title {
+.modal-title { /* Used in Style(10) */
     font-family: var(--heading-font);
     color: var(--brand-teal);
     margin-bottom: 1rem; /* Consolidated mobile margin */
     text-align: center;
     font-size: 1.5rem; /* Consolidated mobile size */
 }
-.close-modal-button {
+.close-modal-button { /* Used in Style(10) */
     position: absolute;
     top: 10px;
     right: 10px;
@@ -822,6 +886,7 @@ p {
     cursor: pointer;
     color: #bbb;
     transition: color 0.2s ease, transform 0.2s ease;
+    line-height: 1; /* Ensure centered */
 }
 .close-modal-button:hover {
     color: var(--brand-pink);
@@ -840,7 +905,7 @@ p {
 #checkout-form textarea {
     width: 100%;
     padding: 10px; /* Consolidated mobile padding */
-    border: 2px solid #ddd;
+    border: 1px solid #ccc; /* Match Style(2) border */
     border-radius: var(--radius-small);
     font-family: var(--body-font);
     font-size: 0.95rem; /* Consolidated mobile size */
@@ -855,7 +920,7 @@ p {
 #checkout-form textarea:focus {
     border-color: var(--brand-teal);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(29, 185, 163, 0.2);
+    box-shadow: 0 0 0 3px rgba(29, 185, 163, 0.2); /* Match Style(2) focus */
 }
 .form-hint {
     font-size: 0.8rem;
@@ -863,12 +928,12 @@ p {
     display: block;
     margin-top: 0.3rem;
 }
-.checkout-summary-box {
-    background: #f8f9fa;
+.checkout-summary-box { /* Used in Style(10) */
+    background: #f8f9fa; /* Match Style(10) */
     padding: 1rem;
     border-radius: var(--radius-small);
     margin-bottom: 1.2rem;
-    border: 1px solid #eee;
+    border: 1px solid #eee; /* Match Style(10) */
 }
 .checkout-summary-box .summary-title {
     font-family: var(--heading-font);
@@ -877,10 +942,15 @@ p {
     margin-bottom: 0.75rem;
     text-align: center;
 }
-#checkout-summary {
+#checkout-summary { /* Used in Style(10) */
     margin-bottom: 0.5rem;
     max-height: 120px;
     overflow-y: auto;
+    /* Styling like Style(2) */
+    border: 1px dashed var(--border-color);
+    padding: 0.8rem;
+    background: #fafafa;
+    border-radius: var(--radius-small);
 }
 #checkout-summary ul {
     list-style: none;
@@ -891,26 +961,36 @@ p {
     font-weight: 600;
     font-size: 0.9rem;
     line-height: 1.4;
-    border-bottom: 1px dotted #ccc;
+    border-bottom: 1px dotted #ccc; /* Use dotted from Style(10) */
     padding-bottom: 0.5rem;
 }
 #checkout-summary .item:last-child {
     border-bottom: none;
 }
-.total-title {
+.total-title { /* Combined styles */
     text-align: right;
-    font-size: 1.3rem;
+    font-size: 1.3rem; /* Size from Style(10) */
     font-weight: bold;
-    color: var(--brand-teal);
+    color: var(--brand-pink); /* Color from Style(2) */
     margin-top: 0.75rem;
     margin-bottom: 0;
 }
-.submit-btn {
+.submit-btn { /* Used in Style(10) */
     width: 100%;
     margin-top: 1.2rem;
-    padding: 12px;
+    padding: 12px; /* Adjusted padding */
     font-size: 1rem;
+    /* Use main CTA style */
+    background-color: var(--brand-yellow);
+    color: var(--text-dark);
+    box-shadow: 0 4px 10px rgba(255, 240, 0, 0.4);
 }
+.submit-btn:hover:not(:disabled) {
+     background-color: #e6d300; /* Darker yellow */
+     transform: translateY(-3px) scale(1.02);
+     box-shadow: 0 6px 15px rgba(255, 240, 0, 0.5);
+}
+
 .checkout-message {
     margin-top: 1.2rem;
     text-align: center;
@@ -935,7 +1015,7 @@ p {
 .empty-message,
 .error-message,
 .cart-empty-message {
-    font-style: normal;
+    font-style: normal; /* Remove italic */
     color: var(--text-grey);
     font-weight: 600;
     text-align: center;
@@ -950,6 +1030,7 @@ p {
 .cart-empty-message {
     font-size: 1rem;
     padding: 1.5rem 1rem;
+    text-align: center;
 }
 
 /* --- Responsiveness --- */
@@ -960,7 +1041,7 @@ p {
 /* Tablet & Smaller Desktop (min-width: 481px) */
 @media (min-width: 481px) {
     .product-grid {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Slightly larger cards */
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Slightly larger cards */
         gap: 1.25rem;
     }
     .product-image-container {
@@ -972,19 +1053,102 @@ p {
     .product-description {
         font-size: 0.9rem;
     }
-      .tiktok-embed-wrapper {
-    padding-bottom: 120%; /* Slightly taller, but not exaggerated */
-  }
+    /* Removed TikTok media query styling from style(10) as it's handled differently now */
 }
-    
-    @media (max-width: 400px) {
-  .tiktok-embed-wrapper {
-    padding-bottom: 120%; /* Slightly taller, but not exaggerated */
-  }
 
+/* Smaller Mobile Styles (max-width: 480px) */
+/* Added earlier breakpoint from style(10) for very small devices */
+@media (max-width: 480px) {
+    h2 {
+        font-size: 1.8rem; /* Smaller H2 */
+    }
+    .section-subtitle {
+        font-size: 0.9rem; /* Smaller subtitle */
+        max-width: 95%;
+    }
+    .hero-headline {
+        font-size: clamp(2.2rem, 7vw, 3rem); /* Adjust hero headline */
+    }
+     .hero-subheadline {
+        font-size: clamp(1rem, 2.8vw, 1.3rem); /* Adjust hero subheadline */
+    }
+    .hero-main-image {
+       width: clamp(250px, 80vw, 350px); /* Further adjust hero image */
+    }
+    .product-grid {
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); /* Smaller cards for small mobile */
+        gap: 0.75rem;
+    }
+     .product-image-container {
+        height: 140px;
+    }
+    .product-details {
+        padding: 0.75rem;
+    }
+    .product-name {
+        font-size: 1rem;
+    }
+     .product-price {
+        font-size: 1.1rem;
+     }
+     .add-to-cart-btn {
+        font-size: 0.85rem;
+        padding: 8px;
+     }
+    .cta-button, .button-style-primary {
+        padding: 8px 18px;
+        font-size: 0.9rem;
+    }
+    .info-panel-container {
+        padding: 0 2%; /* Less padding on smallest screens */
+    }
+    .deets-drama-container {
+        padding-left: 2%;
+        padding-right: 2%;
+    }
+    .drama-columns {
+        gap: 1rem;
+    }
+    .cart-sidebar {
+        width: 90%; /* Slightly wider on very small screens */
+    }
+    .checkout-modal {
+        max-width: 95vw; /* Allow more width */
+        padding: 1rem 0.5rem; /* Less padding */
+    }
+    .modal-title {
+        font-size: 1.3rem;
+    }
+    #checkout-form label {
+        font-size: 0.85rem;
+    }
+    #checkout-form input, #checkout-form textarea {
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+    .site-footer {
+        font-size: 0.8rem;
+    }
+    /* Ensure TikTok wrapper doesn't exceed screen width */
+     .tiktok-embed-wrapper {
+         width: 95%;
+     }
+}
 
+/* Ensure container has slightly less padding on small screens */
+@media (max-width: 400px) {
     .container {
-        width: 94%; /* Slightly less padding */
+        width: 96%;
+    }
+    .header-container {
+       padding: 0.1rem 0;
+    }
+    .logo-main {
+       height: 35px;
+    }
+    .cart-toggle-button {
+        padding: 6px 12px;
+        font-size: 0.8rem;
     }
 }
 
@@ -1016,12 +1180,13 @@ p {
         display: none; /* Hide mobile toggle */
     }
     .main-nav {
-        display: block; /* Show desktop nav */
+        display: flex; /* Show desktop nav */
         position: static;
         width: auto;
         background: none;
         box-shadow: none;
         flex-direction: row;
+        align-items: center; /* Align items vertically */
         padding: 0;
         z-index: auto;
     }
@@ -1035,49 +1200,65 @@ p {
     .cart-toggle-button {
         padding: 10px 20px;
         font-size: 1rem;
+        margin-left: 1rem; /* Add space between nav and cart */
     }
     .hero-container {
         flex-direction: row; /* Side-by-side layout */
         text-align: left;
-        gap: 2rem;
+        gap: 3rem; /* Increased gap for desktop */
+        padding: 4rem 0 5rem 0; /* Desktop padding */
     }
     .hero-text {
-        flex: 1 1 500px;
+        flex: 1 1 50%; /* Adjust flex basis */
         padding: 0; /* Remove mobile padding */
+        text-align: left; /* Ensure left align */
     }
     .hero-visual {
-        flex: 1 1 400px;
+        flex: 1 1 50%; /* Adjust flex basis */
         display: block; /* Override mobile flex centering */
+        text-align: center; /* Center image within its flex container */
     }
     .hero-headline {
-        font-size: clamp(3.5rem, 8vw, 5.5rem); /* Larger headline */
+        font-size: clamp(3.5rem, 6vw, 5rem); /* Larger headline for desktop */
         margin-bottom: 1rem;
+        text-align: left;
     }
     .hero-subheadline {
-        font-size: clamp(1.3rem, 3vw, 1.6rem); /* Larger subheadline */
+        font-size: clamp(1.3rem, 2.5vw, 1.6rem); /* Larger subheadline */
+        text-align: left;
     }
     .hero-description {
         font-size: 1.1rem;
         max-width: 550px;
         margin-left: 0; /* Align left */
         margin-right: 0;
+        text-align: left;
     }
     .hero-main-image {
-        width: 550px; /* Fixed width for desktop */
-        max-width: none; /* Override mobile max-width */
-        margin: 0; /* Remove mobile auto margin */
+        width: 100%; /* Allow image to scale within its container */
+        max-width: 550px; /* Max width like Style(2) */
         transform: rotate(2deg) scale(1.02); /* Original transform */
+        margin: 0 auto; /* Center within its container */
     }
-  
+    .tiktok-feature-section {
+        padding: 4rem 0; /* Desktop padding */
+    }
+    /* TikTok wrapper max-width already set */
+    .product-section {
+        padding: 4rem 0; /* Desktop padding */
+    }
     .product-grid {
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Larger cards */
-        gap: 1.5rem;
+        gap: 2rem; /* Desktop gap */
     }
     .product-image-container {
         height: 280px;
     }
     .product-name {
-        font-size: clamp(1.4rem, 4vw, 1.7rem);
+        font-size: clamp(1.4rem, 2vw, 1.7rem); /* Use clamp for responsiveness */
+    }
+    .product-description {
+         font-size: 0.95rem; /* Slightly larger description */
     }
     .product-price {
         font-size: 1.5rem;
@@ -1087,33 +1268,35 @@ p {
         font-size: 1rem;
     }
     .info-panel-section {
-        padding: 3rem 0 3rem 0; /* Restore desktop padding */
+        padding: 3rem 0 0 0; /* Restore desktop padding, zero bottom */
         background-size: cover; /* Restore desktop background */
         background-position: center center;
     }
     .info-panel-container {
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Desktop grid */
         gap: 1.5rem;
-        /* FIX: Restore bottom margin for desktop */
+        /* FIX: Restore bottom margin for desktop below panels */
         margin-bottom: 3rem;
         padding: 0; /* Remove mobile padding */
     }
-    .nutritional-facts-panel {
-        grid-column: span 2; /* Span columns */
-        overflow-x: visible; /* Restore overflow */
-        font-size: 0.9rem; /* Restore base size */
-        margin-bottom: 0; /* Remove potential mobile margin */
-    }
     .info-panel {
-        padding: 1rem; /* Restore base padding */
+        padding: 1.5rem; /* Restore base padding */
     }
     .panel-title {
         font-size: 1.2rem; /* Restore base size */
         margin-bottom: 0.75rem; /* Restore base margin */
     }
+    .nutritional-facts-panel {
+        grid-column: span 2; /* Span columns if needed */
+        max-width: none; /* Remove mobile max-width */
+        overflow-x: visible; /* Restore overflow */
+        font-size: 0.9rem; /* Restore base size */
+        margin-bottom: 0; /* Ensure no bottom margin */
+    }
     .serving-info {
         font-size: 0.8rem; /* Restore base size */
     }
+
     .deets-drama-container {
         /* FIX: Restore top padding for desktop */
         padding-top: 3rem;
@@ -1123,10 +1306,11 @@ p {
     .drama-columns {
         gap: 2rem; /* Desktop gap */
         padding: 0; /* Remove mobile padding */
+        flex-wrap: nowrap; /* Prevent wrapping on desktop */
     }
     .drama-column {
-        flex: 1 1 400px; /* Desktop flex basis */
-        padding: 0; /* Remove mobile padding */
+        flex: 1 1 50%; /* Equal columns on desktop */
+        padding: 1.5rem; /* Add padding for desktop */
     }
     .drama-column h3 {
         font-size: 1.4rem; /* Restore desktop size */
@@ -1140,40 +1324,47 @@ p {
     .drama-column ul {
         padding-left: 1.5rem; /* Restore desktop padding */
     }
+    .ingredients-column ul {
+        padding-left: 0; /* Keep no padding for ingredients */
+    }
     .cart-sidebar {
-        width: clamp(300px, 50vw, 420px); /* Desktop width */
-        padding: 1rem; /* Desktop padding */
+        width: 420px; /* Desktop width */
+        padding: 1.5rem; /* Desktop padding */
+        right: -450px; /* Ensure off-screen value matches */
     }
     .cart-item {
-        grid-template-columns: auto 1fr auto; /* Desktop layout */
+        grid-template-columns: auto 1fr auto; /* Desktop layout: img | info | actions */
+        grid-template-rows: auto auto; /* Allow rows for info/actions */
+        gap: 1rem; /* Desktop gap */
+        align-items: center; /* Align items center */
     }
     .cart-item-img {
-        grid-row: 1 / 3;
+        grid-row: 1 / 3; /* Span both rows */
+        grid-column: 1 / 2;
         width: 75px;
         height: 75px;
     }
     .cart-item-info {
         grid-column: 2 / 3;
-        grid-row: 1 / 2;
+        grid-row: 1 / 2; /* Info on top row */
+        align-self: center; /* Center info vertically */
     }
     .cart-item-actions {
-        grid-column: 3 / 4;
-        grid-row: 1 / 3;
-        flex-direction: column;
-        align-items: center;
+        grid-column: 2 / 3; /* Actions below info */
+        grid-row: 2 / 3;
+        flex-direction: row; /* Horizontal actions on desktop */
+        justify-content: flex-start; /* Align left */
         gap: 0.6rem;
-        margin-top: 0;
+        margin-top: 0.25rem; /* Small top margin */
+        padding-left: 0; /* Remove mobile padding */
+    }
+     .action-button.danger { /* Push remove button to the right */
+        margin-left: auto;
     }
     .action-button {
         width: 30px;
         height: 30px;
         font-size: 1.2rem;
-    }
-    .action-button.danger {
-        width: 26px;
-        height: 26px;
-        margin-left: 0;
-        margin-top: 0.5rem;
     }
     .checkout-modal {
         padding: 2.5rem;
@@ -1197,11 +1388,12 @@ p {
         font-size: 1rem; /* Restore desktop size */
     }
     .section-subtitle {
-        font-size: 1rem; /* Restore base size */
+        font-size: 1.1rem; /* Restore base size */
         margin-bottom: 2rem; /* Restore base margin */
+        max-width: 700px; /* Wider subtitle on desktop */
     }
     h2 {
-       font-size: clamp(2rem, 5vw, 2.8rem); /* Restore base size */
+       font-size: clamp(2.5rem, 5vw, 3rem); /* Restore base size */
     }
     .follow-link {
         margin-top: 1.5rem; /* Restore base margin */
@@ -1209,25 +1401,25 @@ p {
     }
 }
 
-/* Smaller Mobile Styles (max-width: 480px) */
-@media (max-width: 480px) {
-    h2 {
-        font-size: 1.8rem; /* Smaller H2 */
+/* Further refinement for large desktops */
+@media (min-width: 1200px) {
+    .product-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Slightly larger basis */
+        gap: 2.5rem;
     }
-    .section-subtitle {
-        font-size: 0.9rem; /* Smaller subtitle */
+     .hero-headline {
+        font-size: clamp(4rem, 6vw, 5.5rem);
     }
-    /* Hero sizes adjusted in base mobile styles */
-    .hero-main-image {
-       /* Max width already adjusted */
+     .hero-subheadline {
+        font-size: clamp(1.4rem, 2.5vw, 1.8rem);
     }
-    /* Product grid/image sizes already set for smallest mobile */
-    /* Button sizes already set for smallest mobile */
+     .info-panel-container {
+        gap: 2rem;
+     }
 }
 
 
-/* --- Animation & Feedback Styles --- */
-/* ... (Keep all existing animation/feedback styles) ... */
+/* --- Animation & Feedback Styles (Keep all existing from Style(10)) --- */
 .fade-in {
     opacity: 0;
     animation: fadeInAnimation 0.6s ease-out forwards;
@@ -1422,36 +1614,30 @@ textarea:focus.input-error {
     background-color: #546E7A;
 }
 
-/* --- Specific Mobile Fixes (Keep last) --- */
-@media (max-width: 768px) {
-  .tiktok-video { /* Keep specific class if used elsewhere */
-    width: 100%;
-    height: 100%;
-  }
-  .hero-image { /* Keep specific class if used elsewhere */
-    display: block;
-    margin: 0 auto;
-  }
-  .additional-facts-bg { /* Keep specific class if used elsewhere */
-    background-size: contain;
-  }
-  .detail-drama { /* Keep specific class if used elsewhere */
-    max-width: 100%;
-    padding: 0 10px;
-  }
-  .tiktok-embed-wrapper {
-      padding-bottom: 120%; /* or experiment with 75% */
-      max-width: 100%;
-  }
-}
-  .detail-drama p { /* Keep specific class if used elsewhere */
-    font-size: 14px;
-    line-height: 1.5;
-  }
-.deets-drama-container {
-        padding-top: 2rem; /* Keep larger padding for desktop */
-    }
-.info-panel-section {
-        padding-bottom: 3rem !important; /* Restore desktop padding */
-    }
-}
+
+/* --- Specific Mobile Fixes (Keep last, remove redundant ones) --- */
+/* Removing redundant/conflicting rules from the end of style(10) */
+/* @media (max-width: 768px) { */
+  /* .tiktok-video { /* Keep specific class if used elsewhere */
+    /* width: 100%; */
+    /* height: 100%; */
+  /* } */
+  /* .hero-image { /* Keep specific class if used elsewhere */
+    /* display: block; */
+    /* margin: 0 auto; */
+  /* } */
+  /* .additional-facts-bg { /* Keep specific class if used elsewhere */
+    /* background-size: contain; */
+  /* } */
+  /* .detail-drama { /* Keep specific class if used elsewhere */
+    /* max-width: 100%; */
+    /* padding: 0 10px; */
+  /* } */
+   /* Tiktok wrapper handled above */
+/* } */
+  /* .detail-drama p { /* Keep specific class if used elsewhere */
+    /* font-size: 14px; */
+    /* line-height: 1.5; */
+  /* } */
+
+/* Removed duplicated rules for deets-drama/info-panel padding from end of style(10) */

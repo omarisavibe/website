@@ -4,84 +4,189 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - Vibe Treats</title>
-    <link rel="stylesheet" href="style.css"> <!-- Reuse main styles -->
+    <!-- Link to your MAIN style.css to reuse some variables/fonts if needed -->
+    <link rel="stylesheet" href="style.css">
     <style>
-        /* Specific styles for admin login */
-        body { justify-content: center; align-items: center; background-color: #f4f4f4; }
-        main { max-width: 400px; background: white; padding: 2rem; border-radius: var(--border-radius); box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h2 { font-family: var(--heading-font); color: var(--primary-color); text-align: center; margin-bottom: 1.5rem;}
-        label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
-        input { width: 100%; padding: 10px; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 4px; }
-        button { width: 100%; }
-        #error-message { color: red; text-align: center; margin-top: 1rem; font-weight: bold; }
-        footer { display: none; } /* Hide footer on login */
+        /* Specific styles for a clean admin login */
+        :root { /* Make sure these variables are defined in style.css or redefine them here */
+            --brand-teal: #1DB9A3;
+            --brand-pink: #FF3399;
+            --brand-yellow: #FFF000;
+            --text-dark: #222222;
+            --text-light: #ffffff;
+            --radius-main: 12px;
+            --heading-font: 'Luckiest Guy', cursive;
+             --body-font: 'Poppins', sans-serif; /* Add body font */
+        }
+        html, body { height: 100%; margin: 0; font-family: var(--body-font); }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, var(--brand-teal), var(--brand-pink)); /* Fun gradient */
+            padding: 1rem;
+        }
+        .login-container {
+            background: var(--text-light);
+            padding: 2.5rem 3rem;
+            border-radius: var(--radius-main);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        .login-container img.logo { /* Style for a logo */
+             max-width: 100px; /* Adjust size */
+             margin-bottom: 1rem;
+         }
+
+        .login-container h2 {
+            font-family: var(--heading-font);
+            color: var(--brand-teal);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+        .login-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            text-align: left;
+            font-size: 0.9rem;
+        }
+        .login-form input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 1.2rem;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+             box-sizing: border-box; /* Include padding in width */
+        }
+        .login-form input:focus {
+             border-color: var(--brand-teal);
+             outline: none;
+         }
+
+        /* Reusing cta-button style from main style.css */
+        .login-form .cta-button {
+             width: 100%;
+             background-color: var(--brand-pink); /* Pink login button */
+             padding: 14px;
+             font-size: 1.1rem;
+        }
+        .login-form .cta-button:hover {
+             background-color: #e60073;
+         }
+        .login-form .cta-button:disabled {
+             background-color: #ccc;
+             cursor: not-allowed;
+         }
+
+
+        #error-message {
+            color: #c62828; /* Red error message */
+            margin-top: 1.5rem;
+            font-weight: 600;
+            min-height: 1.2em; /* Prevent layout shift */
+            font-size: 0.9rem;
+        }
+
+         /* Make sure you have a logo file named vibe-treats-logo-actual.png */
+         img.logo-img {
+            display: block;
+            margin: 0 auto 1rem auto; /* Center logo */
+             max-height: 80px; /* Control logo size */
+             width: auto;
+         }
+
     </style>
 </head>
 <body>
-    <main>
-        <h2>Admin Login - Secret Stash HQ</h2>
-        <form id="admin-login-form">
-            <label for="email">Email:</label>
-            <input type="email" id="email" required>
-            <label for="password">Password:</label>
-            <input type="password" id="password" required>
-            <button type="submit" class="cta-button">Enter the Void</button>
+    <div class="login-container">
+        <!-- Optional: Add your logo here -->
+        <img src="vibe-treats-logo-actual.png" alt="Vibe Treats Logo" class="logo-img">
+        <h2>Admin Realm - Enter If You Dare</h2>
+        <form id="admin-login-form" class="login-form">
+            <label for="email">Your Admin Email:</label>
+            <input type="email" id="email" name="email" placeholder="you@youradminemail.com" required>
+
+            <label for="password">Secret Handshake (Password):</label>
+            <input type="password" id="password" name="password" placeholder="••••••••" required>
+
+            <button type="submit" id="login-submit-button" class="cta-button">Unlock The Vibes</button>
         </form>
-        <p id="error-message"></p>
-    </main>
+        <p id="error-message"></p> <!-- To display login errors -->
+    </div>
 
     <!-- Supabase Client Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // IMPORTANT: Replace with your actual Supabase URL and Anon Key AGAIN
-        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        // IMPORTANT: Use the SAME Supabase URL and Anon Key as in script.js
+        const SUPABASE_URL = 'https://oljmjsegopkyqnujrzyi.supabase.co'; // ✅ Your URL
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9sam1qc2Vnb3BreXFudWpyenlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NjY3MjIsImV4cCI6MjA2MTA0MjcyMn0.hLOLhq6UOYsLsPpM-nQf4VM1p7uXKv2SaQ8_ffVl8Y4'; // ✅ Your Key
 
-        if (!SUPABASE_URL || SUPABASE_URL === 'YOUR_SUPABASE_URL' || !SUPABASE_ANON_KEY || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY') {
-             console.error("🚨 Supabase URL or Anon Key not configured! Please update admin-login.html");
-             document.getElementById('error-message').textContent = "Admin configuration missing.";
-        } else {
-            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            const loginForm = document.getElementById('admin-login-form');
+        // --- Check if keys are set ---
+         if (!SUPABASE_URL || !SUPABASE_ANON_KEY || SUPABASE_URL.includes("YOUR_SUPABASE_URL")) {
+             console.error("🛑 LOGIN PAGE: Supabase keys missing!");
+            document.getElementById('error-message').textContent = "Admin Config Error!";
+         } else {
+             // --- Initialize Supabase ---
+             const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+             const loginForm = document.getElementById('admin-login-form');
             const errorMessage = document.getElementById('error-message');
+             const submitButton = document.getElementById('login-submit-button'); // Get button
 
-            loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                errorMessage.textContent = '';
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-                 const submitButton = loginForm.querySelector('button');
-                 submitButton.disabled = true;
-                 submitButton.textContent = 'Checking Vibes...';
+             console.log("Admin login page script loaded.");
 
+             // --- Login Handler ---
+             loginForm.addEventListener('submit', async (e) => {
+                 e.preventDefault(); // Prevent default HTML form submission
+                 errorMessage.textContent = ''; // Clear previous errors
+                 submitButton.disabled = true; // Disable button during login
+                 submitButton.textContent = 'Checking Vibes...'; // Feedback
+                 console.log("Login attempt started...");
 
-                try {
-                    const { data, error } = await supabase.auth.signInWithPassword({
-                        email: email,
-                        password: password,
-                    });
+                 const email = document.getElementById('email').value;
+                 const password = document.getElementById('password').value;
 
-                    if (error) {
-                        throw error;
-                    }
+                 try {
+                     const { data, error } = await supabase.auth.signInWithPassword({
+                         email: email,
+                         password: password,
+                     });
 
-                    if (data.session) {
-                        // Login successful! Redirect to the admin dashboard
-                         console.log("Admin login successful, redirecting...");
-                        window.location.href = 'admin.html';
+                     if (error) {
+                         // Throw the error to be caught by the catch block
+                         throw error;
+                     }
+
+                     // Check if session data exists (successful login)
+                     if (data.session) {
+                         console.log("✅ Admin Login SUCCESS! Redirecting to dashboard...");
+                         // Redirect to the main admin dashboard page
+                         window.location.href = 'admin.html';
+                         // Don't need to re-enable button on success as we're navigating away
+                     } else {
+                         // This case should technically not happen if session is null without error, but handle defensively
+                         console.warn("Login succeeded technically, but no session data? Weird.");
+                         errorMessage.textContent = 'Login weirdness. Try again?';
+                         submitButton.disabled = false;
+                         submitButton.textContent = 'Unlock The Vibes';
+                     }
+
+                 } catch (error) {
+                     console.error('🔥 Admin Login FAILED:', error.message);
+                    // Provide user-friendly error based on Supabase message
+                    if (error.message.includes("Invalid login credentials")) {
+                         errorMessage.textContent = 'Hmm, wrong email or password. Try again!';
                     } else {
-                         // Should not happen if session is null without error, but good to handle
-                        errorMessage.textContent = 'Login failed. Check credentials or cry.';
+                         errorMessage.textContent = `Login failed: ${error.message}`; // Show other Supabase errors
                     }
-
-                } catch (error) {
-                    console.error('Admin Login Error:', error.message);
-                    errorMessage.textContent = 'Login failed. Invalid email or password.';
-                } finally {
-                    submitButton.disabled = false;
-                    submitButton.textContent = 'Enter the Void';
-                }
-            });
+                    submitButton.disabled = false; // Re-enable button on failure
+                     submitButton.textContent = 'Unlock The Vibes';
+                 }
+             });
          }
     </script>
 </body>

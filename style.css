@@ -1,4 +1,5 @@
 /* --- ==== VIBE TREATS CSS - MOBILE OPTIMIZED EDITION ==== --- */
+/* --- CONSOLIDATED - Latest rules take precedence --- */
 
 /* --- CSS Variables (Brand Palette) --- */
 :root {
@@ -27,7 +28,7 @@
 }
 html {
     scroll-behavior: smooth;
-    font-size: 16px;
+    font-size: 16px; /* Note: Original had 15px in a max-width: 768px query, but 16px in a later one. Keeping 16px as latest. */
 }
 body {
     font-family: var(--body-font);
@@ -76,7 +77,7 @@ p {
 
 /* --- Utility Classes --- */
 .container {
-    width: 95%;
+    width: 95%; /* Note: Original had 90% then 92% in max-width: 768px queries. Keeping the global 95% as base. */
     max-width: 1300px;
     margin: 0 auto;
 }
@@ -94,14 +95,14 @@ p {
     color: var(--text-light);
 }
 .section-title {
-    margin-bottom: 1rem;
+    margin-bottom: 1rem; /* Note: Original had 1rem, then 1rem in max-width: 768px. Keeping 1rem. */
 }
 .section-subtitle {
     font-size: 1rem;
     color: var(--text-grey);
     text-align: center;
     margin-top: -1.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem; /* Note: Original had 2rem, then 1rem in max-width: 768px. Keeping 1rem as latest mobile rule override. */
     max-width: 90%;
     margin-left: auto;
     margin-right: auto;
@@ -167,7 +168,7 @@ p {
 /* --- Header --- */
 .site-header {
     background-color: var(--text-light);
-    padding: 0.5rem 2%;
+    padding: 0.5rem 2%; /* Base padding */
     box-shadow: var(--shadow-light);
     position: sticky;
     top: 0;
@@ -179,6 +180,8 @@ p {
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
+    position: relative; /* Added in mobile fix */
+    padding: 0.25rem 0; /* Added in mobile fix */
 }
 .logo-area {
     display: flex;
@@ -190,13 +193,30 @@ p {
     width: auto;
 }
 .main-nav {
-    display: none;
+    display: none; /* Base: hidden for mobile-first */
+    /* Active state styles are handled in media queries */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: white;
+    box-shadow: var(--shadow-medium);
+    flex-direction: column;
+    padding: 1rem 0;
+    z-index: 899;
+}
+.main-nav.active {
+    display: flex; /* Display when active on mobile */
 }
 .nav-link {
     font-weight: 600;
     color: var(--text-dark);
-    margin: 0.5rem 0;
+    margin: 0.5rem 0; /* Base margin for mobile stacked nav */
     transition: color 0.2s ease;
+    display: block; /* For mobile nav */
+    padding: 0.75rem 5%; /* Latest mobile nav padding */
+    text-align: center; /* For mobile nav */
+    font-size: 1.1rem; /* Latest mobile nav font size */
 }
 .nav-link:hover, .nav-link.active {
     color: var(--brand-pink);
@@ -213,7 +233,7 @@ p {
     background-color: #17a791;
 }
 .mobile-menu-toggle {
-    display: block;
+    display: block; /* Base: shown for mobile-first */
     background: none;
     border: none;
     font-size: 1.6rem;
@@ -223,24 +243,25 @@ p {
 /* --- Hero Section --- */
 .hero-section {
     background: linear-gradient(135deg, var(--brand-bg-light-pink) 60%, #ffddee 100%);
-    padding: 2rem 0 3rem 0;
+    padding: 1.5rem 0; /* Latest mobile padding */
     overflow: hidden;
 }
 .hero-container {
     display: flex;
     align-items: center;
-    gap: 2rem;
-    flex-wrap: wrap;
+    gap: 1rem; /* Latest mobile gap */
+    flex-direction: column; /* Latest mobile direction */
 }
 .hero-text {
     flex: 1 1 100%;
     text-align: center;
+    padding: 0 0.5rem; /* Latest mobile padding */
 }
 .hero-headline {
-    font-size: clamp(2.5rem, 8vw, 4rem);
+    font-size: clamp(2.2rem, 7vw, 3rem); /* Latest mobile clamp */
     color: var(--brand-pink);
     line-height: 1;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem; /* Latest mobile margin */
     transform: rotate(-2deg);
 }
 .hero-headline span {
@@ -248,14 +269,14 @@ p {
 }
 .hero-subheadline {
     font-family: var(--body-font);
-    font-size: clamp(1.1rem, 3vw, 1.4rem);
+    font-size: clamp(1rem, 2.5vw, 1.3rem); /* Latest mobile clamp */
     color: var(--brand-teal);
     margin-bottom: 1rem;
     font-weight: 700;
 }
 .hero-description {
     color: var(--text-grey);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem; /* Latest mobile margin */
     font-size: 1rem;
     max-width: 90%;
     margin-left: auto;
@@ -264,14 +285,18 @@ p {
 .hero-visual {
     flex: 1 1 100%;
     text-align: center;
+    display: flex; /* Added in mobile fix */
+    justify-content: center; /* Added in mobile fix */
+    align-items: center; /* Added in mobile fix */
 }
 .hero-main-image {
     border-radius: var(--radius-main);
     box-shadow: var(--shadow-heavy);
-    max-width: 100%;
+    max-width: 90%; /* Latest mobile max-width */
     width: clamp(250px, 80vw, 400px);
-    transform: rotate(2deg) scale(1.02);
+    transform: rotate(1deg) scale(1); /* Latest mobile transform */
     transition: transform 0.3s ease;
+    margin: 0 auto; /* Added in mobile fix */
 }
 .hero-main-image:hover {
     transform: rotate(0deg) scale(1.05);
@@ -279,17 +304,18 @@ p {
 
 /* --- TikTok Feature Section --- */
 .tiktok-feature-section {
-    padding: 3rem 0;
+    padding: 2rem 0; /* Latest mobile padding */
     position: relative;
     background-color: var(--brand-teal);
     color: var(--text-light);
+    z-index: 1; /* Added fix */
 }
 .tiktok-embed-wrapper {
     position: relative;
-    padding-bottom: 56.25%;
+    padding-bottom: 110%; /* Latest base padding-bottom */
     height: 0;
     overflow: hidden;
-    max-width: 100%;
+    max-width: 500px; /* Latest base max-width */
     margin: 1.5rem auto;
 }
 .tiktok-embed-wrapper iframe,
@@ -302,9 +328,11 @@ p {
     height: 100%;
     border-radius: var(--radius-small);
     box-shadow: var(--shadow-medium);
+    z-index: 2; /* Added fix */
 }
 .follow-link {
-    margin-top: 1.5rem;
+    margin-top: 1rem; /* Latest mobile margin */
+    margin-bottom: 0.5rem; /* Latest mobile margin */
     font-size: 1.1rem;
     font-weight: 600;
     text-align: center;
@@ -312,12 +340,12 @@ p {
 
 /* --- Product Section --- */
 .product-section {
-    padding: 3rem 0;
+    padding: 2rem 0; /* Latest mobile padding */
 }
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); /* Base */
+    gap: 1.5rem; /* Base */
     margin-top: 1rem;
 }
 .product-card {
@@ -336,7 +364,7 @@ p {
 .product-image-container {
     background-color: #f0f0f0;
     position: relative;
-    height: 200px;
+    height: 200px; /* Base */
     overflow: hidden;
 }
 .product-main-image {
@@ -355,51 +383,62 @@ p {
     flex-direction: column;
 }
 .product-name {
-    font-size: clamp(1.2rem, 4vw, 1.5rem);
+    font-size: clamp(1.2rem, 4vw, 1.5rem); /* Base */
     color: var(--brand-pink);
     margin-bottom: 0.5rem;
 }
 .product-description {
     color: var(--text-grey);
-    font-size: 0.9rem;
+    font-size: 0.9rem; /* Base */
     margin-bottom: 1rem;
     flex-grow: 1;
     line-height: 1.6;
 }
 .product-price {
     font-weight: 800;
-    font-size: 1.3rem;
+    font-size: 1.3rem; /* Base */
     color: var(--brand-teal);
     margin-bottom: 1rem;
 }
 .add-to-cart-btn {
     width: 100%;
-    padding: 10px;
-    font-size: 0.9rem;
+    padding: 10px; /* Base */
+    font-size: 0.9rem; /* Base */
 }
 
 /* --- Info Panel Section --- */
 .info-panel-section {
-    padding: 3rem 0;
+    padding: 2rem 0 0 0; /* Latest mobile padding (top) and zero bottom padding */
     background-image: url('cookiess.webp');
-    background-size: cover;
-    background-position: center center;
+    background-size: cover; /* Base */
+    background-position: center center; /* Base */
     background-repeat: no-repeat;
     background-attachment: scroll;
     position: relative;
+    overflow: hidden; /* Added fix */
+}
+.info-panel-section::after { /* Added fix */
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background: linear-gradient(to bottom, transparent, var(--brand-bg-light-pink));
+  z-index: 1;
 }
 .info-panel-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Base */
+    gap: 1rem; /* Latest mobile gap */
     align-items: stretch;
-    margin-bottom: 3rem;
+    margin-bottom: 1rem; /* Latest mobile margin */
     position: relative;
-    z-index: 2;
+    z-index: 2; /* Ensure panels are above gradient */
 }
 .info-panel {
     background-color: #ffffff;
-    padding: 1rem;
+    padding: 0.75rem; /* Latest mobile padding */
     border-radius: var(--radius-main);
     box-shadow: var(--shadow-light);
     border: 1px solid var(--border-color);
@@ -412,16 +451,20 @@ p {
 }
 .panel-title {
     font-family: var(--heading-font);
-    font-size: 1.2rem;
-    margin-bottom: 0.75rem;
+    font-size: 1.1rem; /* Latest mobile size */
+    margin-bottom: 0.5rem; /* Latest mobile margin */
     color: var(--brand-pink);
 }
 .nutritional-facts-panel {
     border: 2px solid var(--text-dark);
-    padding: 1.5rem 1rem;
+    padding: 1.5rem 1rem; /* Base */
+    max-width: 100%; /* Added mobile fix */
+    overflow-x: hidden; /* Added mobile fix */
+    font-size: 0.9rem; /* Added mobile fix */
+    margin-bottom: 1rem; /* Added mobile fix */
 }
 .serving-info {
-    font-size: 0.8rem;
+    font-size: 0.75rem; /* Latest mobile size */
     font-weight: 600;
     text-align: center;
     margin-bottom: 0.25rem;
@@ -485,9 +528,11 @@ p {
 
 /* --- Deets & Drama Below Panels --- */
 .deets-drama-container {
-    padding-top: 2rem;
-    padding-bottom: 3rem;
+    padding-top: 0.5rem; /* Latest mobile padding */
+    padding-bottom: 3rem; /* Base */
     background-color: var(--brand-bg-light-pink);
+    padding-left: 4%; /* Added mobile fix */
+    padding-right: 4%; /* Added mobile fix */
 }
 .deets-drama-container h2 {
     color: var(--brand-pink);
@@ -496,18 +541,20 @@ p {
 .drama-columns {
     display: flex;
     flex-wrap: wrap;
-    gap: 2rem;
+    gap: 1.5rem; /* Latest mobile gap */
     max-width: 1100px;
     margin: 0 auto;
+    padding: 0 2%; /* Added mobile fix */
 }
 .drama-column {
-    flex: 1 1 100%;
+    flex: 1 1 100%; /* Base */
     text-align: left;
+    padding: 0.5rem; /* Added mobile fix */
 }
 .drama-column h3 {
-    font-size: 1.4rem;
+    font-size: 1.2rem; /* Latest mobile size */
     color: var(--brand-teal);
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem; /* Latest mobile margin */
     border-bottom: 2px solid var(--brand-yellow);
     padding-bottom: 0.3rem;
     display: inline-block;
@@ -515,11 +562,14 @@ p {
 .drama-column p {
     color: var(--text-grey);
     margin-bottom: 0.75rem;
-    line-height: 1.8;
+    line-height: 1.6; /* Latest mobile line-height */
+    font-size: 0.9rem; /* Latest mobile font-size */
+    word-wrap: break-word; /* Added mobile fix */
+    width: 100%; /* Added mobile fix */
 }
 .drama-column ul {
     list-style: '🍪 ';
-    padding-left: 1.5rem;
+    padding-left: 1.2rem; /* Latest mobile padding */
     margin-top: 0.5rem;
 }
 .drama-column li {
@@ -589,12 +639,12 @@ p {
     position: fixed;
     top: 0;
     right: -100%;
-    width: 90vw;
+    width: 85%; /* Latest mobile width */
     height: 100%;
     background-color: white;
     box-shadow: -6px 0 20px rgba(0,0,0,0.15);
     z-index: 999;
-    padding: 1rem;
+    padding: 1rem 0.75rem; /* Latest mobile padding */
     transition: right 0.5s cubic-bezier(0.23, 1, 0.32, 1);
     overflow-y: auto;
     display: flex;
@@ -618,7 +668,7 @@ p {
 }
 .cart-item {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto 1fr; /* Base */
     align-items: center;
     gap: 0.8rem;
     margin-bottom: 1rem;
@@ -629,15 +679,15 @@ p {
     border-bottom: none;
 }
 .cart-item-img {
-    grid-row: 1 / 2;
-    width: 60px;
-    height: 60px;
+    grid-row: 1 / 2; /* Base */
+    width: 60px; /* Base */
+    height: 60px; /* Base */
     object-fit: cover;
     border-radius: var(--radius-small);
 }
 .cart-item-info {
-    grid-column: 2 / 3;
-    grid-row: 1 / 2;
+    grid-column: 2 / 3; /* Base */
+    grid-row: 1 / 2; /* Base */
 }
 .cart-item-info h4 {
     font-size: 1rem;
@@ -650,13 +700,13 @@ p {
     margin: 0;
 }
 .cart-item-actions {
-    grid-column: 1 / 3;
-    grid-row: 2 / 3;
+    grid-column: 1 / 3; /* Base */
+    grid-row: 2 / 3; /* Base */
     display: flex;
-    flex-direction: row;
+    flex-direction: row; /* Base */
     justify-content: center;
-    gap: 1rem;
-    margin-top: 0.5rem;
+    gap: 1rem; /* Base */
+    margin-top: 0.5rem; /* Base */
 }
 .cart-item-actions .item-quantity {
     font-weight: 700;
@@ -667,10 +717,10 @@ p {
     color: white;
     border: none;
     border-radius: 50%;
-    width: 28px;
-    height: 28px;
+    width: 28px; /* Base */
+    height: 28px; /* Base */
     cursor: pointer;
-    font-size: 1.1rem;
+    font-size: 1.1rem; /* Base */
     font-weight: bold;
     display: flex;
     justify-content: center;
@@ -690,10 +740,10 @@ p {
 .action-button.danger {
     background: #f0f0f0;
     color: var(--brand-pink);
-    font-size: 1.3rem;
-    width: 24px;
-    height: 24px;
-    margin-left: 1rem;
+    font-size: 1.3rem; /* Base */
+    width: 24px; /* Base */
+    height: 24px; /* Base */
+    margin-left: 1rem; /* Base */
 }
 .action-button.danger:hover {
     background: var(--brand-pink);
@@ -720,13 +770,13 @@ p {
 /* --- Checkout Modal --- */
 .checkout-modal {
     background: white;
-    padding: 1.5rem 1rem;
+    padding: 1.25rem 0.75rem; /* Latest mobile padding */
     border-radius: var(--radius-main);
     max-width: 90vw;
     width: 100%;
     z-index: 1001;
     position: relative;
-    max-height: 85vh;
+    max-height: 80vh; /* Latest mobile height */
     overflow-y: auto;
     box-shadow: var(--shadow-medium);
     opacity: 0;
@@ -743,9 +793,9 @@ p {
 .modal-title {
     font-family: var(--heading-font);
     color: var(--brand-teal);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem; /* Latest mobile margin */
     text-align: center;
-    font-size: 1.8rem;
+    font-size: 1.5rem; /* Latest mobile size */
 }
 .close-modal-button {
     position: absolute;
@@ -763,22 +813,22 @@ p {
     transform: rotate(90deg);
 }
 #checkout-form .form-group {
-    margin-bottom: 1.2rem;
+    margin-bottom: 0.8rem; /* Latest mobile margin */
 }
 #checkout-form label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem; /* Latest mobile margin */
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 0.9rem; /* Latest mobile size */
 }
 #checkout-form input,
 #checkout-form textarea {
     width: 100%;
-    padding: 12px;
+    padding: 10px; /* Latest mobile padding */
     border: 2px solid #ddd;
     border-radius: var(--radius-small);
     font-family: var(--body-font);
-    font-size: 1rem;
+    font-size: 0.95rem; /* Latest mobile size */
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     background-color: #fff;
 }
@@ -888,15 +938,28 @@ p {
 }
 
 /* --- Responsiveness --- */
+
+/* Desktop Styles (min-width: 769px) */
 @media (min-width: 769px) {
     .main-nav {
         display: block;
+        position: static; /* Override absolute positioning */
+        width: auto;
+        background: none;
+        box-shadow: none;
+        flex-direction: row; /* Horizontal nav */
+        padding: 0;
+        z-index: auto;
     }
     .mobile-menu-toggle {
         display: none;
     }
     .nav-link {
-        margin: 0 0.8rem;
+        margin: 0 0.8rem; /* Horizontal spacing */
+        display: inline-block; /* Override block */
+        padding: 0; /* Override mobile padding */
+        text-align: left; /* Override center */
+        font-size: 1rem; /* Override mobile size */
     }
     .logo-main {
         height: 60px;
@@ -906,126 +969,247 @@ p {
         font-size: 1rem;
     }
     .hero-container {
-        flex-direction: row;
+        flex-direction: row; /* Override mobile column */
         text-align: left;
+        gap: 2rem; /* Restore desktop gap */
     }
     .hero-text {
         flex: 1 1 500px;
+        padding: 0; /* Override mobile padding */
     }
     .hero-visual {
         flex: 1 1 400px;
+        display: block; /* Override flex */
+        justify-content: initial; /* Override center */
+        align-items: initial; /* Override center */
     }
     .hero-headline {
-        font-size: clamp(3.5rem, 8vw, 5.5rem);
+        font-size: clamp(3.5rem, 8vw, 5.5rem); /* Restore desktop size */
+        margin-bottom: 1rem; /* Restore desktop margin */
     }
     .hero-subheadline {
-        font-size: clamp(1.3rem, 3vw, 1.6rem);
+        font-size: clamp(1.3rem, 3vw, 1.6rem); /* Restore desktop size */
     }
     .hero-description {
         font-size: 1.1rem;
         max-width: 550px;
+        margin-left: 0; /* Override auto */
+        margin-right: 0; /* Override auto */
     }
     .hero-main-image {
-        width: 550px;
+        width: 550px; /* Desktop width */
+        max-width: none; /* Override mobile max-width */
+        margin: 0; /* Override auto */
+        transform: rotate(2deg) scale(1.02); /* Restore original desktop transform */
     }
     .product-grid {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Restore desktop columns */
+        gap: 1.5rem; /* Restore desktop gap */
     }
     .product-image-container {
-        height: 280px;
+        height: 280px; /* Restore desktop height */
     }
     .product-name {
-        font-size: clamp(1.4rem, 4vw, 1.7rem);
+        font-size: clamp(1.4rem, 4vw, 1.7rem); /* Restore desktop size */
     }
     .product-price {
-        font-size: 1.5rem;
+        font-size: 1.5rem; /* Restore desktop size */
     }
     .add-to-cart-btn {
-        padding: 12px;
-        font-size: 1rem;
+        padding: 12px; /* Restore desktop padding */
+        font-size: 1rem; /* Restore desktop font size */
     }
     .info-panel-container {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Restore desktop columns */
+        gap: 1.5rem; /* Restore desktop gap */
+        margin-bottom: 3rem; /* Restore desktop margin */
     }
     .nutritional-facts-panel {
-        grid-column: span 2;
+        grid-column: span 2; /* Restore desktop span */
+        margin-bottom: 0; /* Remove mobile margin */
+        max-width: none; /* Restore desktop max-width */
+        overflow-x: visible; /* Restore desktop overflow */
+        font-size: 0.9rem; /* Restore base size */
+        padding: 1.5rem 1rem; /* Restore original padding */
     }
     .drama-column {
-        flex: 1 1 400px;
+        flex: 1 1 400px; /* Restore desktop flex basis */
+        padding: 0; /* Override mobile padding */
     }
     .cart-sidebar {
-        width: clamp(300px, 50vw, 420px);
+        width: clamp(300px, 50vw, 420px); /* Restore desktop width */
+        padding: 1rem; /* Restore desktop padding */
     }
     .cart-item {
-        grid-template-columns: auto 1fr auto;
+        grid-template-columns: auto 1fr auto; /* Restore desktop columns */
     }
     .cart-item-img {
-        grid-row: 1 / 3;
-        width: 75px;
-        height: 75px;
+        grid-row: 1 / 3; /* Restore desktop row span */
+        width: 75px; /* Restore desktop width */
+        height: 75px; /* Restore desktop height */
     }
     .cart-item-info {
-        grid-column: 2 / 3;
-        grid-row: 1 / 2;
+        grid-column: 2 / 3; /* Restore desktop column */
+        grid-row: 1 / 2; /* Restore desktop row */
     }
     .cart-item-actions {
-        grid-column: 3 / 4;
-        grid-row: 1 / 3;
-        flex-direction: column;
+        grid-column: 3 / 4; /* Restore desktop column */
+        grid-row: 1 / 3; /* Restore desktop row span */
+        flex-direction: column; /* Restore desktop direction */
         align-items: center;
-        gap: 0.6rem;
-        margin-top: 0;
+        gap: 0.6rem; /* Restore desktop gap */
+        margin-top: 0; /* Restore desktop margin */
     }
     .action-button {
-        width: 30px;
-        height: 30px;
-        font-size: 1.2rem;
+        width: 30px; /* Restore desktop width */
+        height: 30px; /* Restore desktop height */
+        font-size: 1.2rem; /* Restore desktop size */
     }
     .action-button.danger {
-        width: 26px;
-        height: 26px;
-        margin-left: 0;
-        margin-top: 0.5rem;
+        width: 26px; /* Restore desktop width */
+        height: 26px; /* Restore desktop height */
+        margin-left: 0; /* Restore desktop margin */
+        margin-top: 0.5rem; /* Restore desktop margin */
     }
     .checkout-modal {
-        padding: 2.5rem;
-        max-width: 550px;
+        padding: 2.5rem; /* Restore desktop padding */
+        max-width: 550px; /* Restore desktop max-width */
+        max-height: 85vh; /* Restore desktop height */
     }
     .modal-title {
-        font-size: 2.2rem;
+        font-size: 2.2rem; /* Restore desktop size */
+        margin-bottom: 1.5rem; /* Restore desktop margin */
     }
-}
-
-@media (max-width: 768px) {
-    html {
-        font-size: 15px;
+    #checkout-form .form-group {
+        margin-bottom: 1.2rem; /* Restore desktop margin */
+    }
+    #checkout-form label {
+        margin-bottom: 0.5rem; /* Restore desktop margin */
+        font-size: 0.95rem; /* Restore desktop size */
+    }
+    #checkout-form input,
+    #checkout-form textarea {
+        padding: 12px; /* Restore desktop padding */
+        font-size: 1rem; /* Restore desktop size */
+    }
+    .tiktok-embed-wrapper { /* Latest desktop rule for TikTok wrapper */
+        padding-bottom: 146%; /* Slightly adjusted for desktop */
+    }
+    .info-panel-section {
+      padding-top: 3rem; /* Restore desktop padding */
+      padding-bottom: 3rem; /* Restore desktop padding */
+      background-size: cover; /* Restore desktop size */
+      background-position: center center; /* Restore desktop pos */
+    }
+    .panel-title {
+        font-size: 1.2rem; /* Restore desktop size */
+        margin-bottom: 0.75rem; /* Restore desktop margin */
+    }
+    .serving-info {
+        font-size: 0.8rem; /* Restore desktop size */
+    }
+    .deets-drama-container {
+        padding: 2rem 0 3rem 0; /* Restore desktop padding */
+    }
+    .drama-columns {
+        gap: 2rem; /* Restore desktop gap */
+        padding: 0; /* Override mobile padding */
+    }
+    .drama-column h3 {
+        font-size: 1.4rem; /* Restore desktop size */
+        margin-bottom: 0.75rem; /* Restore desktop margin */
+    }
+    .drama-column p {
+        font-size: 1rem; /* Restore desktop size if needed, currently same as base */
+        line-height: 1.8; /* Restore desktop line-height */
+        word-wrap: normal; /* Override mobile fix */
+    }
+    .drama-column ul {
+        padding-left: 1.5rem; /* Restore desktop padding */
+    }
+    .site-header {
+        padding: 0.5rem 2%; /* Restore desktop padding */
     }
     .header-container {
-        position: relative;
+        padding: 0; /* Override mobile padding */
     }
-    .main-nav {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        background: white;
-        box-shadow: var(--shadow-medium);
-        flex-direction: column;
-        padding: 1rem 0;
-        z-index: 899;
-    }
-    .main-nav.active {
-        display: flex;
-    }
-    .main-nav a {
-        display: block;
-        padding: 1rem 5%;
-        text-align: center;
-        font-size: 1.2rem;
+    .cta-button { /* Desktop CTA button padding */
+        padding: 12px 25px;
     }
 }
 
+/* Mobile Styles (max-width: 768px) - Consolidated */
+@media (max-width: 768px) {
+    /* --- From late additions / fixes --- */
+    .tiktok-video { /* Keep specific fixes if needed */
+        width: 100%;
+        height: auto;
+    }
+    .hero-image { /* Keep specific fixes if needed (Note: .hero-main-image is used more) */
+        display: block;
+        margin: 0 auto;
+    }
+    .additional-facts-bg { /* Keep specific fixes if needed */
+        background-size: contain;
+    }
+    .detail-drama { /* Keep specific fixes if needed (Note: .drama-column used more) */
+        max-width: 100%;
+        padding: 0 10px;
+    }
+    .detail-drama p { /* Keep specific fixes if needed */
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    /* --- Consolidated Overrides --- */
+    html {
+        font-size: 16px; /* Latest rule */
+    }
+    .container {
+        width: 92%; /* Latest rule */
+        padding: 0; /* Latest rule */
+    }
+    /* General spacing adjusted in base rules based on latest mobile overrides */
+
+    .tiktok-embed-wrapper {
+        padding-bottom: 130%; /* Latest rule */
+        max-width: 90%; /* Latest rule */
+    }
+    .info-panel-section {
+        background-size: 200% auto; /* Latest rule */
+        background-position: center top; /* Latest rule */
+        /* padding-bottom: 0; Already applied in base */
+    }
+    /* info-panel-container gap/margin handled in base */
+    /* deets-drama-container padding handled in base */
+    /* deets-drama-columns gap/padding handled in base */
+    /* deets-drama-column padding handled in base */
+    /* deets-drama-column p overrides handled in base */
+    /* deets-drama-column h3 overrides handled in base */
+    /* deets-drama-column ul padding handled in base */
+
+    /* product-grid overrides handled in @media (max-width: 480px) as it's latest */
+    /* nutritional-facts-panel overrides handled in base */
+    /* cart-sidebar overrides handled in base */
+    /* checkout-modal overrides handled in base */
+    /* info-panel overrides handled in base */
+    /* panel-title overrides handled in base */
+    /* serving-info overrides handled in base */
+    /* site-header padding handled in base */
+    /* header-container padding handled in base */
+    /* nav-link overrides handled in base */
+    /* hero-section padding handled in base */
+    /* hero-text padding handled in base */
+    /* hero-headline margin handled in base */
+    /* hero-description margin handled in base */
+    /* cta-button padding handled in base */
+    /* hero-container overrides handled in base */
+    /* hero-headline font-size handled in base */
+    /* hero-subheadline font-size handled in base */
+    /* follow-link margins handled in base */
+}
+
+/* Smaller Mobile Styles (max-width: 480px) - Keep latest block */
 @media (max-width: 480px) {
     h2 {
         font-size: 1.8rem;
@@ -1033,7 +1217,29 @@ p {
     .section-subtitle {
         font-size: 0.9rem;
     }
+    .product-grid {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* Latest rule */
+        gap: 1rem; /* Latest rule */
+    }
+    .product-image-container {
+        height: 160px; /* Latest rule */
+    }
+    .product-name {
+        font-size: 1.1rem; /* Latest rule */
+    }
+    .product-description {
+        font-size: 0.85rem; /* Latest rule */
+    }
+    .hero-main-image {
+        max-width: 85%; /* Latest rule */
+        transform: rotate(1deg) scale(1); /* Latest rule */
+    }
+    .cta-button, .button-style-primary {
+        padding: 10px 20px; /* Latest rule */
+        font-size: 0.95rem; /* Latest rule */
+    }
 }
+
 
 /* --- Animation & Feedback Styles --- */
 .fade-in {
@@ -1228,391 +1434,4 @@ textarea:focus.input-error {
 }
 .notification-info {
     background-color: #546E7A;
-}
-/* General box-sizing for better layout control */
-* {
-  box-sizing: border-box;
-}
-
-/* Media query for mobile devices (max-width: 768px) */
-@media (max-width: 768px) {
-  /* Fix TikTok video being half-visible */
-  .tiktok-video {
-    width: 100%;
-    height: auto;
-  }
-
-  /* Center the hero image on mobile only */
-  .hero-image {
-    display: block;
-    margin: 0 auto;
-  }
-
-  /* Improve background photo quality in additional facts */
-  .additional-facts-bg {
-    background-size: contain; /* Prevents stretching, keeps quality */
-    /* Optional: Uncomment and replace with a smaller image path if available */
-    /* background-image: url('path/to/small-image.jpg'); */
-  }
-
-  /* Fix stretched text in "detail and drama" section */
-  .detail-drama {
-    max-width: 100%;
-    padding: 0 10px;
-  }
-  .detail-drama p {
-    font-size: 14px;
-    line-height: 1.5;
-  }
-}
-/* --- For the hero image to be centered on mobile --- */
-@media (max-width: 768px) {
-  .hero-visual {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .hero-main-image {
-    margin: 0 auto;
-    max-width: 90%;
-  }
-}
-
-/* --- Fix for TikTok video embedding --- */
-.tiktok-embed-wrapper {
-  position: relative;
-  padding-bottom: 177.77%; /* Adjusted for TikTok's taller aspect ratio */
-  height: 0;
-  overflow: hidden;
-  max-width: 340px; /* TikTok's standard width */
-  margin: 1.5rem auto;
-}
-
-@media (min-width: 769px) {
-  .tiktok-embed-wrapper {
-    padding-bottom: 146%; /* Slightly adjusted for desktop */
-  }
-}
-
-/* --- Fix for background image quality --- */
-.info-panel-section {
-  padding: 3rem 0;
-  background-image: url('cookiess.webp');
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-attachment: scroll;
-  position: relative;
-}
-
-@media (max-width: 768px) {
-  .info-panel-section {
-    background-size: 200% auto; /* Reduce stretching on mobile */
-    background-position: center top;
-  }
-}
-
-/* --- Fix for text overflow in drama and details section --- */
-@media (max-width: 768px) {
-  .deets-drama-container {
-    padding: 2rem 4%;
-  }
-  
-  .drama-columns {
-    gap: 1.5rem;
-    padding: 0 2%;
-  }
-  
-  .drama-column {
-    flex: 1 1 100%;
-    padding: 0.5rem;
-  }
-  
-  .drama-column p {
-    font-size: 0.9rem;
-    line-height: 1.6;
-    word-wrap: break-word;
-    width: 100%;
-  }
-  
-  .drama-column h3 {
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .drama-column ul {
-    padding-left: 1.2rem;
-  }
-}
-
-/* --- Additional improvements for mobile --- */
-@media (max-width: 768px) {
-  /* Better product card layout */
-  .product-grid {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
-  }
-  
-  /* Improved nutritional facts panel */
-  .nutritional-facts-panel {
-    max-width: 100%;
-    overflow-x: hidden;
-    font-size: 0.9rem;
-  }
-  
-  /* Fix for cart sidebar width */
-  .cart-sidebar {
-    width: 85%;
-    padding: 1rem 0.75rem;
-  }
-}
-
-/* --- Fix for TikTok video overlay --- */
-.tiktok-feature-section {
-  position: relative;
-  z-index: 1;
-}
-
-.tiktok-embed-wrapper iframe {
-  z-index: 2;
-}
-
-/* --- Improved modal for mobile --- */
-@media (max-width: 768px) {
-  .checkout-modal {
-    padding: 1.25rem 0.75rem;
-    max-height: 80vh;
-  }
-  
-  .modal-title {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-  
-  #checkout-form .form-group {
-    margin-bottom: 0.8rem;
-  }
-  
-  #checkout-form label {
-    margin-bottom: 0.25rem;
-    font-size: 0.9rem;
-  }
-  
-  #checkout-form input,
-  #checkout-form textarea {
-    padding: 10px;
-    font-size: 0.95rem;
-  }
-}
-
-/* --- Better spacing for info panels on mobile --- */
-@media (max-width: 768px) {
-  .info-panel-container {
-    gap: 1rem;
-  }
-  
-  .info-panel {
-    padding: 0.75rem;
-  }
-  
-  .panel-title {
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .serving-info {
-    font-size: 0.75rem;
-  }
-}
-
-/* --- Fix for navigation on mobile --- */
-@media (max-width: 768px) {
-  .site-header {
-    padding: 0.5rem 4%;
-  }
-  
-  .header-container {
-    padding: 0.25rem 0;
-  }
-  
-  .nav-link {
-    font-size: 1.1rem;
-    padding: 0.75rem 5%;
-  }
-}
-
-/* --- Improve hero section on mobile --- */
-@media (max-width: 768px) {
-  .hero-section {
-    padding: 1.5rem 0 2rem 0;
-  }
-  
-  .hero-text {
-    padding: 0 4%;
-  }
-  
-  .hero-headline {
-    margin-bottom: 0.5rem;
-  }
-  
-  .hero-description {
-    margin-bottom: 1rem;
-  }
-  
-  .cta-button {
-    padding: 10px 20px;
-  }
-/* Fix for small ratios and general spacing on mobile */
-@media (max-width: 768px) {
-  html {
-    font-size: 16px; /* Slightly increased from 15px */
-  }
-  
-  .container {
-    width: 92%; /* Slightly increased from 90% */
-    padding: 0;
-  }
-  
-  /* Improve overall spacing */
-  .section-title, .section-subtitle {
-    margin-bottom: 1rem;
-  }
-  
-  .product-section, .info-panel-section, .tiktok-feature-section {
-    padding: 2rem 0;
-  }
-}
-
-/* Fix for TikTok video visibility */
-.tiktok-embed-wrapper {
-  position: relative;
-  /* Changed from 56.25% (16:9) to better fit TikTok dimensions */
-  padding-bottom: 110%; 
-  height: 0;
-  overflow: hidden;
-  max-width: 500px;
-  margin: 1.5rem auto;
-}
-
-@media (max-width: 768px) {
-  .tiktok-embed-wrapper {
-    padding-bottom: 130%; /* Even more vertical space for mobile */
-    max-width: 90%;
-  }
-  
-  .tiktok-embed-wrapper iframe,
-  .tiktok-embed-wrapper embed,
-  .tiktok-embed-wrapper object {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: var(--radius-small);
-  }
-}
-
-/* Fix for the large gap between nutrition facts and dates/drama section */
-.info-panel-section {
-  padding-bottom: 0; /* Remove bottom padding */
-}
-
-@media (max-width: 768px) {
-  .info-panel-section {
-    padding-bottom: 0;
-  }
-  
-  .info-panel-container {
-    margin-bottom: 1rem; /* Reduced from 3rem */
-  }
-  
-  .deets-drama-container {
-    padding-top: 0.5rem; /* Reduced from 2rem */
-  }
-  
-  /* Additional fixes for nutrition panel */
-  .nutritional-facts-panel {
-    margin-bottom: 1rem;
-  }
-}
-
-/* Improve general responsive layout for mobile */
-@media (max-width: 480px) {
-  .product-grid {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 1rem;
-  }
-  
-  .product-image-container {
-    height: 160px; /* Smaller product images for mobile */
-  }
-  
-  .product-name {
-    font-size: 1.1rem;
-  }
-  
-  .product-description {
-    font-size: 0.85rem;
-  }
-  
-  .hero-main-image {
-    max-width: 85%;
-    transform: rotate(1deg) scale(1);
-  }
-  
-  /* Better button sizing for mobile */
-  .cta-button, .button-style-primary {
-    padding: 10px 20px;
-    font-size: 0.95rem;
-  }
-}
-
-/* Fix for hero section layout */
-@media (max-width: 768px) {
-  .hero-section {
-    padding: 1.5rem 0;
-  }
-  
-  .hero-container {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .hero-text {
-    padding: 0 0.5rem;
-  }
-  
-  .hero-headline {
-    font-size: clamp(2.2rem, 7vw, 3rem);
-  }
-  
-  .hero-subheadline {
-    font-size: clamp(1rem, 2.5vw, 1.3rem);
-  }
-}
-
-/* Improved layout for info-panel-section */
-.info-panel-section {
-  position: relative;
-  overflow: hidden;
-}
-
-.info-panel-section::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 20px;
-  background: linear-gradient(to bottom, transparent, var(--brand-bg-light-pink));
-  z-index: 1;
-}
-
-/* Better spacing for social features */
-@media (max-width: 768px) {
-  .follow-link {
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
-  }
 }

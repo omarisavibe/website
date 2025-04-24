@@ -313,18 +313,22 @@ p {
     color: var(--text-light);
     z-index: 1;
 }
+
 .tiktok-embed-wrapper {
     position: relative;
-    /* FIX: Adjusted padding-bottom for TikTok aspect ratio */
-    padding-bottom: 177.77%; /* Approx 9:16 */
+    /* FIX V2: Let's try a slightly taller ratio (e.g., ~180%) and standardize max-width */
+    padding-bottom: 180%; /* Increased slightly from 177.77% */
     height: 0;
     overflow: hidden;
-    /* FIX: Adjusted max-width */
-    max-width: 360px; /* Slightly wider standard width */
+    /* FIX V2: Standardize max-width, remove media query overrides for this */
+    max-width: 380px; /* Standard max width */
+    width: 100%; /* Ensure it can shrink */
     margin: 1.5rem auto;
-    box-shadow: var(--shadow-medium); /* Apply shadow here */
-    border-radius: var(--radius-small); /* Apply radius here */
+    box-shadow: var(--shadow-medium);
+    border-radius: var(--radius-small);
+    background-color: #000; /* Add a black background in case video loads slow */
 }
+
 .tiktok-embed-wrapper iframe,
 .tiktok-embed-wrapper embed,
 .tiktok-embed-wrapper object {
@@ -335,8 +339,8 @@ p {
     height: 100%;
     border: none; /* Remove default iframe border */
     border-radius: inherit; /* Inherit radius from wrapper */
-    /* Shadow removed from here, applied to wrapper */
 }
+
 .follow-link {
     margin-top: 1rem; /* Consolidated mobile margin */
     margin-bottom: 0.5rem; /* Consolidated mobile margin */
@@ -1054,11 +1058,7 @@ p {
         margin: 0; /* Remove mobile auto margin */
         transform: rotate(2deg) scale(1.02); /* Original transform */
     }
-    .tiktok-embed-wrapper {
-        /* Keep aspect ratio, adjust max width */
-        max-width: 400px; /* Or adjust as needed */
-        padding-bottom: 150%; /* Slightly adjusted for desktop, if needed */
-    }
+  
     .product-grid {
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Larger cards */
         gap: 1.5rem;
@@ -1433,7 +1433,5 @@ textarea:focus.input-error {
     font-size: 14px;
     line-height: 1.5;
   }
-  .tiktok-embed-wrapper {
-      max-width: 95%; /* Allow more width on mobile */
-  }
+
 }

@@ -317,7 +317,7 @@ p {
 .tiktok-embed-wrapper {
     position: relative;
     /* FIX V2: Let's try a slightly taller ratio (e.g., ~180%) and standardize max-width */
-    padding-bottom: 180%; /* Increased slightly from 177.77% */
+    padding-bottom: 177.77%; /* Increased slightly from 177.77% */
     height: 0;
     overflow: hidden;
     /* FIX V2: Standardize max-width, remove media query overrides for this */

@@ -316,14 +316,14 @@ p {
 
 .tiktok-embed-wrapper {
     position: relative;
-    /* FIX V3: Adjusted padding-bottom for a less 'tall' aspect ratio (try ~165%) */
-    /* Original was 177.77% (9:16), trying a slightly wider ratio visually */
-    padding-bottom: 165%;
+    /* FIX V2: Let's try a slightly taller ratio (e.g., ~180%) and standardize max-width */
+    padding-bottom: 100%; /* Increased slightly from 177.77% */
+    max-width: 100%;
     height: 0;
+    margin-bottom: 1rem;
     overflow: hidden;
     /* FIX V2: Standardize max-width, remove media query overrides for this */
-    max-width: 380px; /* Standard max width for embed */
-    width: 90%; /* Allow it to shrink slightly on very narrow screens */
+    width: 100%; /* Ensure it can shrink */
     margin: 1.5rem auto;
     box-shadow: var(--shadow-medium);
     border-radius: var(--radius-small);
@@ -343,8 +343,8 @@ p {
 }
 
 .follow-link {
-    margin-top: 1rem; /* Consolidated mobile margin */
-    margin-bottom: 0.5rem; /* Consolidated mobile margin */
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
     font-size: 1.1rem;
     font-weight: 600;
     text-align: center;
@@ -421,8 +421,8 @@ p {
 
 /* --- Info Panel Section --- */
 .info-panel-section {
-    /* FIX: Ensure base mobile padding is correct, slightly reduce bottom padding */
-    padding: 2rem 0 1rem 0; /* Top padding, small bottom padding */
+    padding-bottom: 1rem !important; /* Add small bottom padding */
+    padding: 2rem 0 0 0; /* Consolidated mobile top padding, zero bottom */
     background-image: url('cookiess.webp');
     /* Background properties handled in media queries for quality */
     background-size: 200% auto; /* Mobile background size */
@@ -540,8 +540,8 @@ p {
 
 /* --- Deets & Drama Below Panels --- */
 .deets-drama-container {
-    /* FIX: Reduced top padding slightly for mobile to minimize gap */
-    padding-top: 1.5rem; /* Was 1rem, adjusted slightly */
+    /* FIX: Adjusted top padding to control gap */
+    padding-top: 1rem; /* Moderate default top padding */
     padding-bottom: 3rem; /* Base bottom padding */
     background-color: var(--brand-bg-light-pink);
     padding-left: 4%; /* Consolidated mobile side padding */
@@ -581,7 +581,7 @@ p {
     width: 100%; /* Mobile fix */
 }
 .drama-column ul {
-    list-style: '🍪 ';
+    list-style: 'ðŸª ';
     padding-left: 1.2rem; /* Consolidated mobile padding */
     margin-top: 0.5rem;
 }
@@ -590,7 +590,7 @@ p {
     font-weight: 600;
 }
 .storage-column ul {
-    list-style: '🔒 ';
+    list-style: 'ðŸ”’ ';
 }
 
 /* --- Footer --- */
@@ -722,7 +722,6 @@ p {
     display: flex;
     flex-direction: row; /* Mobile */
     justify-content: center;
-    align-items: center; /* Vertically align buttons/qty */
     gap: 1rem; /* Mobile */
     margin-top: 0.5rem; /* Mobile */
 }
@@ -747,7 +746,6 @@ p {
     box-shadow: var(--shadow-light);
     position: relative;
     overflow: hidden;
-    line-height: 1; /* Ensure text is centered */
 }
 .action-button:hover {
     background: #17a791;
@@ -979,17 +977,6 @@ p {
     .container {
         width: 94%; /* Slightly less padding */
     }
-    /* Ensure padding between sections is appropriate for tablets */
-    .info-panel-section {
-        padding-bottom: 1.5rem; /* Slightly more padding than small mobile */
-    }
-    .deets-drama-container {
-        padding-top: 2rem; /* Slightly more padding than small mobile */
-    }
-    .tiktok-embed-wrapper {
-         /* Keep max-width 380px unless wider is desired on tablets */
-         width: 80%; /* Allow slightly more width relative to container */
-    }
 }
 
 
@@ -1072,7 +1059,7 @@ p {
         margin: 0; /* Remove mobile auto margin */
         transform: rotate(2deg) scale(1.02); /* Original transform */
     }
-
+  
     .product-grid {
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Larger cards */
         gap: 1.5rem;
@@ -1091,16 +1078,15 @@ p {
         font-size: 1rem;
     }
     .info-panel-section {
-        /* Restore desktop padding - !important removed from base style */
-        padding: 3rem 0 3rem 0;
+        padding: 3rem 0 3rem 0; /* Restore desktop padding */
         background-size: cover; /* Restore desktop background */
         background-position: center center;
     }
     .info-panel-container {
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Desktop grid */
         gap: 1.5rem;
-        /* FIX: Restore bottom margin for desktop (implicit via section padding) */
-        /* margin-bottom: 3rem; */ /* Let section padding handle spacing */
+        /* FIX: Restore bottom margin for desktop */
+        margin-bottom: 3rem;
         padding: 0; /* Remove mobile padding */
     }
     .nutritional-facts-panel {
@@ -1212,10 +1198,6 @@ p {
         margin-top: 1.5rem; /* Restore base margin */
         margin-bottom: 0; /* Remove mobile margin */
     }
-    .tiktok-embed-wrapper {
-         max-width: 420px; /* Allow wider embed on desktop */
-         width: 100%; /* Use available width up to max */
-    }
 }
 
 /* Smaller Mobile Styles (max-width: 480px) */
@@ -1232,11 +1214,6 @@ p {
     }
     /* Product grid/image sizes already set for smallest mobile */
     /* Button sizes already set for smallest mobile */
-
-     /* Ensure TikTok embed width adjusts on very small screens */
-    .tiktok-embed-wrapper {
-        width: 95%; /* Take slightly more width */
-    }
 }
 
 
@@ -1436,19 +1413,36 @@ textarea:focus.input-error {
     background-color: #546E7A;
 }
 
-/* --- Specific Mobile Fixes (Keep last - CLEANED UP) --- */
-/* FIX: Removed the problematic max-width: 768px block that was adding incorrect padding */
-/* @media (max-width: 768px) { */
-  /* Removed rules from here that were overriding base mobile styles incorrectly */
-  /* e.g., removed:
-    .deets-drama-container { padding-top: 2rem; }
-    .info-panel-section { padding-bottom: 3rem !important; }
-  */
-  /* Other specific rules if needed can go here, but the gap issue was likely caused by the removed rules */
-/* } */
-
-
-/* --- Final Check for Overrides --- */
-/* Ensure base mobile padding is respected unless explicitly overridden by min-width queries */
-/* .info-panel-section retains padding-bottom: 1rem from base mobile */
-/* .deets-drama-container retains padding-top: 1.5rem from base mobile */
+/* --- Specific Mobile Fixes (Keep last) --- */
+@media (max-width: 768px) {
+  .tiktok-video { /* Keep specific class if used elsewhere */
+    width: 100%;
+    height: auto;
+  }
+  .hero-image { /* Keep specific class if used elsewhere */
+    display: block;
+    margin: 0 auto;
+  }
+  .additional-facts-bg { /* Keep specific class if used elsewhere */
+    background-size: contain;
+  }
+  .detail-drama { /* Keep specific class if used elsewhere */
+    max-width: 100%;
+    padding: 0 10px;
+  }
+  .tiktok-embed-wrapper {
+      padding-bottom: 100%; /* or experiment with 75% */
+      max-width: 100%;
+  }
+}
+  .detail-drama p { /* Keep specific class if used elsewhere */
+    font-size: 14px;
+    line-height: 1.5;
+  }
+.deets-drama-container {
+        padding-top: 2rem; /* Keep larger padding for desktop */
+    }
+.info-panel-section {
+        padding-bottom: 3rem !important; /* Restore desktop padding */
+    }
+}

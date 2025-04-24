@@ -316,21 +316,19 @@ p {
 
 .tiktok-embed-wrapper {
     position: relative;
-    /* FIX V2: Let's try a slightly taller ratio (e.g., ~180%) and standardize max-width */
-    padding-bottom: 100%; /* Increased slightly from 177.77% */
-    max-width: 100%;
+    padding-bottom: 100%; /* More standard 1:1 aspect ratio */
     height: 0;
-    margin-bottom: 1rem;
     overflow: hidden;
-    /* FIX V2: Standardize max-width, remove media query overrides for this */
-    width: 100%; /* Ensure it can shrink */
-    margin: 1.5rem auto;
+    max-width: 380px; /* Limit for large screens */
+    width: 100%;
+    margin: 1rem auto; /* Center and control spacing */
     box-shadow: var(--shadow-medium);
     border-radius: var(--radius-small);
-    background-color: #000; /* Add a black background in case video loads slow */
+    background-color: #000; /* fallback */
 }
 
 .tiktok-embed-wrapper iframe,
+.tiktok-embed-wrapper blockquote,
 .tiktok-embed-wrapper embed,
 .tiktok-embed-wrapper object {
     position: absolute;
@@ -338,8 +336,8 @@ p {
     left: 0;
     width: 100%;
     height: 100%;
-    border: none; /* Remove default iframe border */
-    border-radius: inherit; /* Inherit radius from wrapper */
+    border: none;
+    border-radius: inherit;
 }
 
 .follow-link {

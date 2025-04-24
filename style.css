@@ -1,5 +1,5 @@
 /* --- ==== VIBE TREATS CSS - MOBILE OPTIMIZED EDITION ==== --- */
-/* --- CONSOLIDATED - Latest rules take precedence --- */
+/* --- CONSOLIDATED & FIXED - Latest rules take precedence --- */
 
 /* --- CSS Variables (Brand Palette) --- */
 :root {
@@ -28,7 +28,7 @@
 }
 html {
     scroll-behavior: smooth;
-    font-size: 16px; /* Note: Original had 15px in a max-width: 768px query, but 16px in a later one. Keeping 16px as latest. */
+    font-size: 16px; /* Base font size */
 }
 body {
     font-family: var(--body-font);
@@ -66,7 +66,7 @@ h1, h2, h3, h4 {
     letter-spacing: 1px;
 }
 h2 {
-    font-size: clamp(2rem, 5vw, 2.8rem);
+    font-size: clamp(2rem, 5vw, 2.8rem); /* Base H2 Size */
     color: var(--brand-teal);
     text-align: center;
     margin-bottom: 2rem;
@@ -77,9 +77,10 @@ p {
 
 /* --- Utility Classes --- */
 .container {
-    width: 95%; /* Note: Original had 90% then 92% in max-width: 768px queries. Keeping the global 95% as base. */
+    width: 95%; /* Base width */
     max-width: 1300px;
     margin: 0 auto;
+    padding: 0; /* Ensure no extra padding */
 }
 .dark-section {
     background-color: var(--brand-teal);
@@ -95,14 +96,14 @@ p {
     color: var(--text-light);
 }
 .section-title {
-    margin-bottom: 1rem; /* Note: Original had 1rem, then 1rem in max-width: 768px. Keeping 1rem. */
+    margin-bottom: 1rem; /* Base section title margin */
 }
 .section-subtitle {
-    font-size: 1rem;
+    font-size: 1rem; /* Base subtitle size */
     color: var(--text-grey);
     text-align: center;
     margin-top: -1.5rem;
-    margin-bottom: 1rem; /* Note: Original had 2rem, then 1rem in max-width: 768px. Keeping 1rem as latest mobile rule override. */
+    margin-bottom: 1rem; /* Consolidated mobile margin */
     max-width: 90%;
     margin-left: auto;
     margin-right: auto;
@@ -123,9 +124,9 @@ p {
 /* --- Buttons --- */
 .cta-button, .button-style-primary {
     display: inline-block;
-    padding: 12px 25px;
+    padding: 10px 20px; /* Consolidated mobile padding */
     font-family: var(--heading-font);
-    font-size: 1rem;
+    font-size: 0.95rem; /* Consolidated mobile font size */
     letter-spacing: 1px;
     border: none;
     border-radius: 50px;
@@ -168,7 +169,7 @@ p {
 /* --- Header --- */
 .site-header {
     background-color: var(--text-light);
-    padding: 0.5rem 2%; /* Base padding */
+    padding: 0.5rem 4%; /* Consolidated mobile padding */
     box-shadow: var(--shadow-light);
     position: sticky;
     top: 0;
@@ -180,8 +181,8 @@ p {
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    position: relative; /* Added in mobile fix */
-    padding: 0.25rem 0; /* Added in mobile fix */
+    position: relative;
+    padding: 0.25rem 0; /* Consolidated mobile padding */
 }
 .logo-area {
     display: flex;
@@ -189,12 +190,11 @@ p {
     gap: 10px;
 }
 .logo-main {
-    height: 40px;
+    height: 40px; /* Base height */
     width: auto;
 }
 .main-nav {
-    display: none; /* Base: hidden for mobile-first */
-    /* Active state styles are handled in media queries */
+    display: none; /* Mobile first: hide */
     position: absolute;
     top: 100%;
     left: 0;
@@ -206,17 +206,17 @@ p {
     z-index: 899;
 }
 .main-nav.active {
-    display: flex; /* Display when active on mobile */
+    display: flex; /* Show when active */
 }
 .nav-link {
     font-weight: 600;
     color: var(--text-dark);
-    margin: 0.5rem 0; /* Base margin for mobile stacked nav */
+    margin: 0.5rem 0; /* Mobile vertical margin */
     transition: color 0.2s ease;
-    display: block; /* For mobile nav */
-    padding: 0.75rem 5%; /* Latest mobile nav padding */
-    text-align: center; /* For mobile nav */
-    font-size: 1.1rem; /* Latest mobile nav font size */
+    display: block; /* Mobile: block level */
+    padding: 0.75rem 5%; /* Consolidated mobile padding */
+    text-align: center; /* Mobile: centered */
+    font-size: 1.1rem; /* Consolidated mobile font size */
 }
 .nav-link:hover, .nav-link.active {
     color: var(--brand-pink);
@@ -224,16 +224,16 @@ p {
 .cart-toggle-button {
     background-color: var(--brand-teal);
     color: var(--text-light);
-    padding: 8px 15px;
+    padding: 8px 15px; /* Base padding */
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.9rem; /* Base font size */
     white-space: nowrap;
 }
 .cart-toggle-button:hover:not(:disabled) {
     background-color: #17a791;
 }
 .mobile-menu-toggle {
-    display: block; /* Base: shown for mobile-first */
+    display: block; /* Mobile first: show */
     background: none;
     border: none;
     font-size: 1.6rem;
@@ -243,25 +243,26 @@ p {
 /* --- Hero Section --- */
 .hero-section {
     background: linear-gradient(135deg, var(--brand-bg-light-pink) 60%, #ffddee 100%);
-    padding: 1.5rem 0; /* Latest mobile padding */
+    padding: 1.5rem 0; /* Consolidated mobile padding */
     overflow: hidden;
 }
 .hero-container {
     display: flex;
     align-items: center;
-    gap: 1rem; /* Latest mobile gap */
-    flex-direction: column; /* Latest mobile direction */
+    gap: 1rem; /* Consolidated mobile gap */
+    flex-direction: column; /* Mobile: stack */
 }
 .hero-text {
     flex: 1 1 100%;
     text-align: center;
-    padding: 0 0.5rem; /* Latest mobile padding */
+    padding: 0 0.5rem; /* Consolidated mobile padding */
 }
 .hero-headline {
-    font-size: clamp(2.2rem, 7vw, 3rem); /* Latest mobile clamp */
+    /* FIX: Increased font size for mobile */
+    font-size: clamp(2.5rem, 8vw, 3.5rem);
     color: var(--brand-pink);
     line-height: 1;
-    margin-bottom: 0.5rem; /* Latest mobile margin */
+    margin-bottom: 0.5rem; /* Consolidated mobile margin */
     transform: rotate(-2deg);
 }
 .hero-headline span {
@@ -269,15 +270,16 @@ p {
 }
 .hero-subheadline {
     font-family: var(--body-font);
-    font-size: clamp(1rem, 2.5vw, 1.3rem); /* Latest mobile clamp */
+    /* FIX: Increased font size for mobile */
+    font-size: clamp(1.1rem, 3vw, 1.5rem);
     color: var(--brand-teal);
     margin-bottom: 1rem;
     font-weight: 700;
 }
 .hero-description {
     color: var(--text-grey);
-    margin-bottom: 1rem; /* Latest mobile margin */
-    font-size: 1rem;
+    margin-bottom: 1rem; /* Consolidated mobile margin */
+    font-size: 1rem; /* Base font size */
     max-width: 90%;
     margin-left: auto;
     margin-right: auto;
@@ -285,18 +287,19 @@ p {
 .hero-visual {
     flex: 1 1 100%;
     text-align: center;
-    display: flex; /* Added in mobile fix */
-    justify-content: center; /* Added in mobile fix */
-    align-items: center; /* Added in mobile fix */
+    display: flex; /* Mobile: use flex to center */
+    justify-content: center;
+    align-items: center;
 }
 .hero-main-image {
     border-radius: var(--radius-main);
     box-shadow: var(--shadow-heavy);
-    max-width: 90%; /* Latest mobile max-width */
-    width: clamp(250px, 80vw, 400px);
-    transform: rotate(1deg) scale(1); /* Latest mobile transform */
+    /* FIX: Adjusted size for mobile */
+    width: clamp(280px, 85vw, 450px); /* Adjusted clamp */
+    max-width: 95%; /* Adjusted max-width */
+    transform: rotate(1deg) scale(1); /* Consolidated mobile transform */
     transition: transform 0.3s ease;
-    margin: 0 auto; /* Added in mobile fix */
+    margin: 0 auto; /* Mobile: center */
 }
 .hero-main-image:hover {
     transform: rotate(0deg) scale(1.05);
@@ -304,19 +307,23 @@ p {
 
 /* --- TikTok Feature Section --- */
 .tiktok-feature-section {
-    padding: 2rem 0; /* Latest mobile padding */
+    padding: 2rem 0; /* Consolidated mobile padding */
     position: relative;
     background-color: var(--brand-teal);
     color: var(--text-light);
-    z-index: 1; /* Added fix */
+    z-index: 1;
 }
 .tiktok-embed-wrapper {
     position: relative;
-    padding-bottom: 110%; /* Latest base padding-bottom */
+    /* FIX: Adjusted padding-bottom for TikTok aspect ratio */
+    padding-bottom: 177.77%; /* Approx 9:16 */
     height: 0;
     overflow: hidden;
-    max-width: 500px; /* Latest base max-width */
+    /* FIX: Adjusted max-width */
+    max-width: 360px; /* Slightly wider standard width */
     margin: 1.5rem auto;
+    box-shadow: var(--shadow-medium); /* Apply shadow here */
+    border-radius: var(--radius-small); /* Apply radius here */
 }
 .tiktok-embed-wrapper iframe,
 .tiktok-embed-wrapper embed,
@@ -326,13 +333,13 @@ p {
     left: 0;
     width: 100%;
     height: 100%;
-    border-radius: var(--radius-small);
-    box-shadow: var(--shadow-medium);
-    z-index: 2; /* Added fix */
+    border: none; /* Remove default iframe border */
+    border-radius: inherit; /* Inherit radius from wrapper */
+    /* Shadow removed from here, applied to wrapper */
 }
 .follow-link {
-    margin-top: 1rem; /* Latest mobile margin */
-    margin-bottom: 0.5rem; /* Latest mobile margin */
+    margin-top: 1rem; /* Consolidated mobile margin */
+    margin-bottom: 0.5rem; /* Consolidated mobile margin */
     font-size: 1.1rem;
     font-weight: 600;
     text-align: center;
@@ -340,12 +347,13 @@ p {
 
 /* --- Product Section --- */
 .product-section {
-    padding: 2rem 0; /* Latest mobile padding */
+    padding: 2rem 0; /* Consolidated mobile padding */
 }
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); /* Base */
-    gap: 1.5rem; /* Base */
+    /* Grid columns handled in media queries */
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* Smallest mobile */
+    gap: 1rem; /* Smallest mobile gap */
     margin-top: 1rem;
 }
 .product-card {
@@ -364,7 +372,7 @@ p {
 .product-image-container {
     background-color: #f0f0f0;
     position: relative;
-    height: 200px; /* Base */
+    height: 160px; /* Smallest mobile height */
     overflow: hidden;
 }
 .product-main-image {
@@ -383,62 +391,60 @@ p {
     flex-direction: column;
 }
 .product-name {
-    font-size: clamp(1.2rem, 4vw, 1.5rem); /* Base */
+    font-size: 1.1rem; /* Smallest mobile size */
     color: var(--brand-pink);
     margin-bottom: 0.5rem;
 }
 .product-description {
     color: var(--text-grey);
-    font-size: 0.9rem; /* Base */
+    font-size: 0.85rem; /* Smallest mobile size */
     margin-bottom: 1rem;
     flex-grow: 1;
     line-height: 1.6;
 }
 .product-price {
     font-weight: 800;
-    font-size: 1.3rem; /* Base */
+    font-size: 1.3rem; /* Base size */
     color: var(--brand-teal);
     margin-bottom: 1rem;
 }
 .add-to-cart-btn {
     width: 100%;
-    padding: 10px; /* Base */
-    font-size: 0.9rem; /* Base */
+    padding: 10px; /* Base padding */
+    font-size: 0.9rem; /* Base font size */
 }
 
 /* --- Info Panel Section --- */
 .info-panel-section {
-    padding: 2rem 0 0 0; /* Latest mobile padding (top) and zero bottom padding */
+    /* FIX: Remove bottom padding globally to fix gap */
+    padding: 2rem 0 0 0; /* Consolidated mobile top padding, zero bottom */
     background-image: url('cookiess.webp');
-    background-size: cover; /* Base */
-    background-position: center center; /* Base */
+    /* Background properties handled in media queries for quality */
+    background-size: 200% auto; /* Mobile background size */
+    background-position: center top; /* Mobile background position */
     background-repeat: no-repeat;
     background-attachment: scroll;
     position: relative;
-    overflow: hidden; /* Added fix */
+    overflow: hidden; /* Prevent potential overflow issues */
 }
-.info-panel-section::after { /* Added fix */
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 20px;
-  background: linear-gradient(to bottom, transparent, var(--brand-bg-light-pink));
-  z-index: 1;
-}
+/* FIX: Removed gradient overlay, as it might contribute to spacing issues */
+/* .info-panel-section::after { ... } */
+
 .info-panel-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Base */
-    gap: 1rem; /* Latest mobile gap */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Base columns */
+    gap: 1rem; /* Consolidated mobile gap */
     align-items: stretch;
-    margin-bottom: 1rem; /* Latest mobile margin */
+    /* FIX: Remove bottom margin globally to fix gap */
+    margin-bottom: 0;
     position: relative;
-    z-index: 2; /* Ensure panels are above gradient */
+    z-index: 2;
+    /* Added container padding for mobile */
+    padding: 0 4%;
 }
 .info-panel {
     background-color: #ffffff;
-    padding: 0.75rem; /* Latest mobile padding */
+    padding: 0.75rem; /* Consolidated mobile padding */
     border-radius: var(--radius-main);
     box-shadow: var(--shadow-light);
     border: 1px solid var(--border-color);
@@ -451,20 +457,21 @@ p {
 }
 .panel-title {
     font-family: var(--heading-font);
-    font-size: 1.1rem; /* Latest mobile size */
-    margin-bottom: 0.5rem; /* Latest mobile margin */
+    font-size: 1.1rem; /* Consolidated mobile size */
+    margin-bottom: 0.5rem; /* Consolidated mobile margin */
     color: var(--brand-pink);
 }
 .nutritional-facts-panel {
     border: 2px solid var(--text-dark);
-    padding: 1.5rem 1rem; /* Base */
-    max-width: 100%; /* Added mobile fix */
-    overflow-x: hidden; /* Added mobile fix */
-    font-size: 0.9rem; /* Added mobile fix */
-    margin-bottom: 1rem; /* Added mobile fix */
+    padding: 1.5rem 1rem; /* Base padding */
+    max-width: 100%; /* Mobile fix */
+    overflow-x: hidden; /* Mobile fix */
+    font-size: 0.9rem; /* Mobile fix */
+    /* FIX: Removed specific bottom margin here */
+    /* margin-bottom: 1rem; */
 }
 .serving-info {
-    font-size: 0.75rem; /* Latest mobile size */
+    font-size: 0.75rem; /* Consolidated mobile size */
     font-weight: 600;
     text-align: center;
     margin-bottom: 0.25rem;
@@ -528,11 +535,12 @@ p {
 
 /* --- Deets & Drama Below Panels --- */
 .deets-drama-container {
-    padding-top: 0.5rem; /* Latest mobile padding */
-    padding-bottom: 3rem; /* Base */
+    /* FIX: Adjusted top padding to control gap */
+    padding-top: 2rem; /* Moderate default top padding */
+    padding-bottom: 3rem; /* Base bottom padding */
     background-color: var(--brand-bg-light-pink);
-    padding-left: 4%; /* Added mobile fix */
-    padding-right: 4%; /* Added mobile fix */
+    padding-left: 4%; /* Consolidated mobile side padding */
+    padding-right: 4%; /* Consolidated mobile side padding */
 }
 .deets-drama-container h2 {
     color: var(--brand-pink);
@@ -541,20 +549,20 @@ p {
 .drama-columns {
     display: flex;
     flex-wrap: wrap;
-    gap: 1.5rem; /* Latest mobile gap */
+    gap: 1.5rem; /* Consolidated mobile gap */
     max-width: 1100px;
     margin: 0 auto;
-    padding: 0 2%; /* Added mobile fix */
+    padding: 0 2%; /* Consolidated mobile inner padding */
 }
 .drama-column {
-    flex: 1 1 100%; /* Base */
+    flex: 1 1 100%; /* Base flex */
     text-align: left;
-    padding: 0.5rem; /* Added mobile fix */
+    padding: 0.5rem; /* Consolidated mobile padding */
 }
 .drama-column h3 {
-    font-size: 1.2rem; /* Latest mobile size */
+    font-size: 1.2rem; /* Consolidated mobile size */
     color: var(--brand-teal);
-    margin-bottom: 0.5rem; /* Latest mobile margin */
+    margin-bottom: 0.5rem; /* Consolidated mobile margin */
     border-bottom: 2px solid var(--brand-yellow);
     padding-bottom: 0.3rem;
     display: inline-block;
@@ -562,14 +570,14 @@ p {
 .drama-column p {
     color: var(--text-grey);
     margin-bottom: 0.75rem;
-    line-height: 1.6; /* Latest mobile line-height */
-    font-size: 0.9rem; /* Latest mobile font-size */
-    word-wrap: break-word; /* Added mobile fix */
-    width: 100%; /* Added mobile fix */
+    line-height: 1.6; /* Consolidated mobile line-height */
+    font-size: 0.9rem; /* Consolidated mobile font-size */
+    word-wrap: break-word; /* Mobile fix */
+    width: 100%; /* Mobile fix */
 }
 .drama-column ul {
     list-style: '🍪 ';
-    padding-left: 1.2rem; /* Latest mobile padding */
+    padding-left: 1.2rem; /* Consolidated mobile padding */
     margin-top: 0.5rem;
 }
 .drama-column li {
@@ -639,12 +647,12 @@ p {
     position: fixed;
     top: 0;
     right: -100%;
-    width: 85%; /* Latest mobile width */
+    width: 85%; /* Consolidated mobile width */
     height: 100%;
     background-color: white;
     box-shadow: -6px 0 20px rgba(0,0,0,0.15);
     z-index: 999;
-    padding: 1rem 0.75rem; /* Latest mobile padding */
+    padding: 1rem 0.75rem; /* Consolidated mobile padding */
     transition: right 0.5s cubic-bezier(0.23, 1, 0.32, 1);
     overflow-y: auto;
     display: flex;
@@ -668,7 +676,8 @@ p {
 }
 .cart-item {
     display: grid;
-    grid-template-columns: auto 1fr; /* Base */
+    /* Grid layout handled in media query */
+    grid-template-columns: auto 1fr; /* Mobile */
     align-items: center;
     gap: 0.8rem;
     margin-bottom: 1rem;
@@ -679,15 +688,17 @@ p {
     border-bottom: none;
 }
 .cart-item-img {
-    grid-row: 1 / 2; /* Base */
-    width: 60px; /* Base */
-    height: 60px; /* Base */
+    /* Grid layout handled in media query */
+    grid-row: 1 / 2; /* Mobile */
+    width: 60px; /* Mobile */
+    height: 60px; /* Mobile */
     object-fit: cover;
     border-radius: var(--radius-small);
 }
 .cart-item-info {
-    grid-column: 2 / 3; /* Base */
-    grid-row: 1 / 2; /* Base */
+    /* Grid layout handled in media query */
+    grid-column: 2 / 3; /* Mobile */
+    grid-row: 1 / 2; /* Mobile */
 }
 .cart-item-info h4 {
     font-size: 1rem;
@@ -700,13 +711,14 @@ p {
     margin: 0;
 }
 .cart-item-actions {
-    grid-column: 1 / 3; /* Base */
-    grid-row: 2 / 3; /* Base */
+    /* Grid layout handled in media query */
+    grid-column: 1 / 3; /* Mobile */
+    grid-row: 2 / 3; /* Mobile */
     display: flex;
-    flex-direction: row; /* Base */
+    flex-direction: row; /* Mobile */
     justify-content: center;
-    gap: 1rem; /* Base */
-    margin-top: 0.5rem; /* Base */
+    gap: 1rem; /* Mobile */
+    margin-top: 0.5rem; /* Mobile */
 }
 .cart-item-actions .item-quantity {
     font-weight: 700;
@@ -717,10 +729,10 @@ p {
     color: white;
     border: none;
     border-radius: 50%;
-    width: 28px; /* Base */
-    height: 28px; /* Base */
+    width: 28px; /* Base size */
+    height: 28px; /* Base size */
     cursor: pointer;
-    font-size: 1.1rem; /* Base */
+    font-size: 1.1rem; /* Base size */
     font-weight: bold;
     display: flex;
     justify-content: center;
@@ -740,10 +752,10 @@ p {
 .action-button.danger {
     background: #f0f0f0;
     color: var(--brand-pink);
-    font-size: 1.3rem; /* Base */
-    width: 24px; /* Base */
-    height: 24px; /* Base */
-    margin-left: 1rem; /* Base */
+    font-size: 1.3rem; /* Base size */
+    width: 24px; /* Base size */
+    height: 24px; /* Base size */
+    margin-left: 1rem; /* Base margin */
 }
 .action-button.danger:hover {
     background: var(--brand-pink);
@@ -770,13 +782,13 @@ p {
 /* --- Checkout Modal --- */
 .checkout-modal {
     background: white;
-    padding: 1.25rem 0.75rem; /* Latest mobile padding */
+    padding: 1.25rem 0.75rem; /* Consolidated mobile padding */
     border-radius: var(--radius-main);
     max-width: 90vw;
     width: 100%;
     z-index: 1001;
     position: relative;
-    max-height: 80vh; /* Latest mobile height */
+    max-height: 80vh; /* Consolidated mobile height */
     overflow-y: auto;
     box-shadow: var(--shadow-medium);
     opacity: 0;
@@ -793,9 +805,9 @@ p {
 .modal-title {
     font-family: var(--heading-font);
     color: var(--brand-teal);
-    margin-bottom: 1rem; /* Latest mobile margin */
+    margin-bottom: 1rem; /* Consolidated mobile margin */
     text-align: center;
-    font-size: 1.5rem; /* Latest mobile size */
+    font-size: 1.5rem; /* Consolidated mobile size */
 }
 .close-modal-button {
     position: absolute;
@@ -813,22 +825,22 @@ p {
     transform: rotate(90deg);
 }
 #checkout-form .form-group {
-    margin-bottom: 0.8rem; /* Latest mobile margin */
+    margin-bottom: 0.8rem; /* Consolidated mobile margin */
 }
 #checkout-form label {
     display: block;
-    margin-bottom: 0.25rem; /* Latest mobile margin */
+    margin-bottom: 0.25rem; /* Consolidated mobile margin */
     font-weight: 600;
-    font-size: 0.9rem; /* Latest mobile size */
+    font-size: 0.9rem; /* Consolidated mobile size */
 }
 #checkout-form input,
 #checkout-form textarea {
     width: 100%;
-    padding: 10px; /* Latest mobile padding */
+    padding: 10px; /* Consolidated mobile padding */
     border: 2px solid #ddd;
     border-radius: var(--radius-small);
     font-family: var(--body-font);
-    font-size: 0.95rem; /* Latest mobile size */
+    font-size: 0.95rem; /* Consolidated mobile size */
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     background-color: #fff;
 }
@@ -939,145 +951,227 @@ p {
 
 /* --- Responsiveness --- */
 
+/* --- Base (Mobile-First) Styles Applied Above --- */
+
+
+/* Tablet & Smaller Desktop (min-width: 481px) */
+@media (min-width: 481px) {
+    .product-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Slightly larger cards */
+        gap: 1.25rem;
+    }
+    .product-image-container {
+        height: 180px;
+    }
+    .product-name {
+        font-size: 1.2rem;
+    }
+    .product-description {
+        font-size: 0.9rem;
+    }
+    .container {
+        width: 94%; /* Slightly less padding */
+    }
+}
+
+
 /* Desktop Styles (min-width: 769px) */
 @media (min-width: 769px) {
+    html {
+        font-size: 16px; /* Ensure base size */
+    }
+    .container {
+        width: 95%; /* Restore original width */
+        max-width: 1300px;
+        padding: 0; /* Remove mobile padding */
+    }
+    .cta-button, .button-style-primary {
+        padding: 12px 25px; /* Restore desktop padding */
+        font-size: 1rem; /* Restore desktop font size */
+    }
+    .logo-main {
+        height: 60px; /* Larger logo */
+    }
+    .site-header {
+        padding: 0.5rem 2%; /* Restore desktop padding */
+    }
+    .header-container {
+        padding: 0; /* Remove mobile padding */
+    }
+    .mobile-menu-toggle {
+        display: none; /* Hide mobile toggle */
+    }
     .main-nav {
-        display: block;
-        position: static; /* Override absolute positioning */
+        display: block; /* Show desktop nav */
+        position: static;
         width: auto;
         background: none;
         box-shadow: none;
-        flex-direction: row; /* Horizontal nav */
+        flex-direction: row;
         padding: 0;
         z-index: auto;
     }
-    .mobile-menu-toggle {
-        display: none;
-    }
     .nav-link {
+        display: inline-block;
         margin: 0 0.8rem; /* Horizontal spacing */
-        display: inline-block; /* Override block */
-        padding: 0; /* Override mobile padding */
-        text-align: left; /* Override center */
-        font-size: 1rem; /* Override mobile size */
-    }
-    .logo-main {
-        height: 60px;
+        padding: 0; /* Remove mobile padding */
+        text-align: left;
+        font-size: 1rem; /* Restore desktop size */
     }
     .cart-toggle-button {
         padding: 10px 20px;
         font-size: 1rem;
     }
     .hero-container {
-        flex-direction: row; /* Override mobile column */
+        flex-direction: row; /* Side-by-side layout */
         text-align: left;
-        gap: 2rem; /* Restore desktop gap */
+        gap: 2rem;
     }
     .hero-text {
         flex: 1 1 500px;
-        padding: 0; /* Override mobile padding */
+        padding: 0; /* Remove mobile padding */
     }
     .hero-visual {
         flex: 1 1 400px;
-        display: block; /* Override flex */
-        justify-content: initial; /* Override center */
-        align-items: initial; /* Override center */
+        display: block; /* Override mobile flex centering */
     }
     .hero-headline {
-        font-size: clamp(3.5rem, 8vw, 5.5rem); /* Restore desktop size */
-        margin-bottom: 1rem; /* Restore desktop margin */
+        font-size: clamp(3.5rem, 8vw, 5.5rem); /* Larger headline */
+        margin-bottom: 1rem;
     }
     .hero-subheadline {
-        font-size: clamp(1.3rem, 3vw, 1.6rem); /* Restore desktop size */
+        font-size: clamp(1.3rem, 3vw, 1.6rem); /* Larger subheadline */
     }
     .hero-description {
         font-size: 1.1rem;
         max-width: 550px;
-        margin-left: 0; /* Override auto */
-        margin-right: 0; /* Override auto */
+        margin-left: 0; /* Align left */
+        margin-right: 0;
     }
     .hero-main-image {
-        width: 550px; /* Desktop width */
+        width: 550px; /* Fixed width for desktop */
         max-width: none; /* Override mobile max-width */
-        margin: 0; /* Override auto */
-        transform: rotate(2deg) scale(1.02); /* Restore original desktop transform */
+        margin: 0; /* Remove mobile auto margin */
+        transform: rotate(2deg) scale(1.02); /* Original transform */
+    }
+    .tiktok-embed-wrapper {
+        /* Keep aspect ratio, adjust max width */
+        max-width: 400px; /* Or adjust as needed */
+        padding-bottom: 150%; /* Slightly adjusted for desktop, if needed */
     }
     .product-grid {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Restore desktop columns */
-        gap: 1.5rem; /* Restore desktop gap */
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Larger cards */
+        gap: 1.5rem;
     }
     .product-image-container {
-        height: 280px; /* Restore desktop height */
+        height: 280px;
     }
     .product-name {
-        font-size: clamp(1.4rem, 4vw, 1.7rem); /* Restore desktop size */
+        font-size: clamp(1.4rem, 4vw, 1.7rem);
     }
     .product-price {
-        font-size: 1.5rem; /* Restore desktop size */
+        font-size: 1.5rem;
     }
     .add-to-cart-btn {
-        padding: 12px; /* Restore desktop padding */
-        font-size: 1rem; /* Restore desktop font size */
+        padding: 12px;
+        font-size: 1rem;
+    }
+    .info-panel-section {
+        padding: 3rem 0 3rem 0; /* Restore desktop padding */
+        background-size: cover; /* Restore desktop background */
+        background-position: center center;
     }
     .info-panel-container {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Restore desktop columns */
-        gap: 1.5rem; /* Restore desktop gap */
-        margin-bottom: 3rem; /* Restore desktop margin */
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Desktop grid */
+        gap: 1.5rem;
+        /* FIX: Restore bottom margin for desktop */
+        margin-bottom: 3rem;
+        padding: 0; /* Remove mobile padding */
     }
     .nutritional-facts-panel {
-        grid-column: span 2; /* Restore desktop span */
-        margin-bottom: 0; /* Remove mobile margin */
-        max-width: none; /* Restore desktop max-width */
-        overflow-x: visible; /* Restore desktop overflow */
+        grid-column: span 2; /* Span columns */
+        overflow-x: visible; /* Restore overflow */
         font-size: 0.9rem; /* Restore base size */
-        padding: 1.5rem 1rem; /* Restore original padding */
+        margin-bottom: 0; /* Remove potential mobile margin */
+    }
+    .info-panel {
+        padding: 1rem; /* Restore base padding */
+    }
+    .panel-title {
+        font-size: 1.2rem; /* Restore base size */
+        margin-bottom: 0.75rem; /* Restore base margin */
+    }
+    .serving-info {
+        font-size: 0.8rem; /* Restore base size */
+    }
+    .deets-drama-container {
+        /* FIX: Restore top padding for desktop */
+        padding-top: 3rem;
+        padding-left: 0; /* Remove mobile padding */
+        padding-right: 0; /* Remove mobile padding */
+    }
+    .drama-columns {
+        gap: 2rem; /* Desktop gap */
+        padding: 0; /* Remove mobile padding */
     }
     .drama-column {
-        flex: 1 1 400px; /* Restore desktop flex basis */
-        padding: 0; /* Override mobile padding */
+        flex: 1 1 400px; /* Desktop flex basis */
+        padding: 0; /* Remove mobile padding */
+    }
+    .drama-column h3 {
+        font-size: 1.4rem; /* Restore desktop size */
+        margin-bottom: 0.75rem; /* Restore desktop margin */
+    }
+    .drama-column p {
+        font-size: 1rem; /* Restore desktop size */
+        line-height: 1.8; /* Restore desktop line-height */
+        word-wrap: normal; /* Override mobile fix */
+    }
+    .drama-column ul {
+        padding-left: 1.5rem; /* Restore desktop padding */
     }
     .cart-sidebar {
-        width: clamp(300px, 50vw, 420px); /* Restore desktop width */
-        padding: 1rem; /* Restore desktop padding */
+        width: clamp(300px, 50vw, 420px); /* Desktop width */
+        padding: 1rem; /* Desktop padding */
     }
     .cart-item {
-        grid-template-columns: auto 1fr auto; /* Restore desktop columns */
+        grid-template-columns: auto 1fr auto; /* Desktop layout */
     }
     .cart-item-img {
-        grid-row: 1 / 3; /* Restore desktop row span */
-        width: 75px; /* Restore desktop width */
-        height: 75px; /* Restore desktop height */
+        grid-row: 1 / 3;
+        width: 75px;
+        height: 75px;
     }
     .cart-item-info {
-        grid-column: 2 / 3; /* Restore desktop column */
-        grid-row: 1 / 2; /* Restore desktop row */
+        grid-column: 2 / 3;
+        grid-row: 1 / 2;
     }
     .cart-item-actions {
-        grid-column: 3 / 4; /* Restore desktop column */
-        grid-row: 1 / 3; /* Restore desktop row span */
-        flex-direction: column; /* Restore desktop direction */
+        grid-column: 3 / 4;
+        grid-row: 1 / 3;
+        flex-direction: column;
         align-items: center;
-        gap: 0.6rem; /* Restore desktop gap */
-        margin-top: 0; /* Restore desktop margin */
+        gap: 0.6rem;
+        margin-top: 0;
     }
     .action-button {
-        width: 30px; /* Restore desktop width */
-        height: 30px; /* Restore desktop height */
-        font-size: 1.2rem; /* Restore desktop size */
+        width: 30px;
+        height: 30px;
+        font-size: 1.2rem;
     }
     .action-button.danger {
-        width: 26px; /* Restore desktop width */
-        height: 26px; /* Restore desktop height */
-        margin-left: 0; /* Restore desktop margin */
-        margin-top: 0.5rem; /* Restore desktop margin */
+        width: 26px;
+        height: 26px;
+        margin-left: 0;
+        margin-top: 0.5rem;
     }
     .checkout-modal {
-        padding: 2.5rem; /* Restore desktop padding */
-        max-width: 550px; /* Restore desktop max-width */
+        padding: 2.5rem;
+        max-width: 550px;
         max-height: 85vh; /* Restore desktop height */
     }
     .modal-title {
-        font-size: 2.2rem; /* Restore desktop size */
+        font-size: 2.2rem;
         margin-bottom: 1.5rem; /* Restore desktop margin */
     }
     #checkout-form .form-group {
@@ -1092,156 +1186,38 @@ p {
         padding: 12px; /* Restore desktop padding */
         font-size: 1rem; /* Restore desktop size */
     }
-    .tiktok-embed-wrapper { /* Latest desktop rule for TikTok wrapper */
-        padding-bottom: 146%; /* Slightly adjusted for desktop */
+    .section-subtitle {
+        font-size: 1rem; /* Restore base size */
+        margin-bottom: 2rem; /* Restore base margin */
     }
-    .info-panel-section {
-      padding-top: 3rem; /* Restore desktop padding */
-      padding-bottom: 3rem; /* Restore desktop padding */
-      background-size: cover; /* Restore desktop size */
-      background-position: center center; /* Restore desktop pos */
+    h2 {
+       font-size: clamp(2rem, 5vw, 2.8rem); /* Restore base size */
     }
-    .panel-title {
-        font-size: 1.2rem; /* Restore desktop size */
-        margin-bottom: 0.75rem; /* Restore desktop margin */
-    }
-    .serving-info {
-        font-size: 0.8rem; /* Restore desktop size */
-    }
-    .deets-drama-container {
-        padding: 2rem 0 3rem 0; /* Restore desktop padding */
-    }
-    .drama-columns {
-        gap: 2rem; /* Restore desktop gap */
-        padding: 0; /* Override mobile padding */
-    }
-    .drama-column h3 {
-        font-size: 1.4rem; /* Restore desktop size */
-        margin-bottom: 0.75rem; /* Restore desktop margin */
-    }
-    .drama-column p {
-        font-size: 1rem; /* Restore desktop size if needed, currently same as base */
-        line-height: 1.8; /* Restore desktop line-height */
-        word-wrap: normal; /* Override mobile fix */
-    }
-    .drama-column ul {
-        padding-left: 1.5rem; /* Restore desktop padding */
-    }
-    .site-header {
-        padding: 0.5rem 2%; /* Restore desktop padding */
-    }
-    .header-container {
-        padding: 0; /* Override mobile padding */
-    }
-    .cta-button { /* Desktop CTA button padding */
-        padding: 12px 25px;
+    .follow-link {
+        margin-top: 1.5rem; /* Restore base margin */
+        margin-bottom: 0; /* Remove mobile margin */
     }
 }
 
-/* Mobile Styles (max-width: 768px) - Consolidated */
-@media (max-width: 768px) {
-    /* --- From late additions / fixes --- */
-    .tiktok-video { /* Keep specific fixes if needed */
-        width: 100%;
-        height: auto;
-    }
-    .hero-image { /* Keep specific fixes if needed (Note: .hero-main-image is used more) */
-        display: block;
-        margin: 0 auto;
-    }
-    .additional-facts-bg { /* Keep specific fixes if needed */
-        background-size: contain;
-    }
-    .detail-drama { /* Keep specific fixes if needed (Note: .drama-column used more) */
-        max-width: 100%;
-        padding: 0 10px;
-    }
-    .detail-drama p { /* Keep specific fixes if needed */
-        font-size: 14px;
-        line-height: 1.5;
-    }
-
-    /* --- Consolidated Overrides --- */
-    html {
-        font-size: 16px; /* Latest rule */
-    }
-    .container {
-        width: 92%; /* Latest rule */
-        padding: 0; /* Latest rule */
-    }
-    /* General spacing adjusted in base rules based on latest mobile overrides */
-
-    .tiktok-embed-wrapper {
-        padding-bottom: 130%; /* Latest rule */
-        max-width: 90%; /* Latest rule */
-    }
-    .info-panel-section {
-        background-size: 200% auto; /* Latest rule */
-        background-position: center top; /* Latest rule */
-        /* padding-bottom: 0; Already applied in base */
-    }
-    /* info-panel-container gap/margin handled in base */
-    /* deets-drama-container padding handled in base */
-    /* deets-drama-columns gap/padding handled in base */
-    /* deets-drama-column padding handled in base */
-    /* deets-drama-column p overrides handled in base */
-    /* deets-drama-column h3 overrides handled in base */
-    /* deets-drama-column ul padding handled in base */
-
-    /* product-grid overrides handled in @media (max-width: 480px) as it's latest */
-    /* nutritional-facts-panel overrides handled in base */
-    /* cart-sidebar overrides handled in base */
-    /* checkout-modal overrides handled in base */
-    /* info-panel overrides handled in base */
-    /* panel-title overrides handled in base */
-    /* serving-info overrides handled in base */
-    /* site-header padding handled in base */
-    /* header-container padding handled in base */
-    /* nav-link overrides handled in base */
-    /* hero-section padding handled in base */
-    /* hero-text padding handled in base */
-    /* hero-headline margin handled in base */
-    /* hero-description margin handled in base */
-    /* cta-button padding handled in base */
-    /* hero-container overrides handled in base */
-    /* hero-headline font-size handled in base */
-    /* hero-subheadline font-size handled in base */
-    /* follow-link margins handled in base */
-}
-
-/* Smaller Mobile Styles (max-width: 480px) - Keep latest block */
+/* Smaller Mobile Styles (max-width: 480px) */
 @media (max-width: 480px) {
     h2 {
-        font-size: 1.8rem;
+        font-size: 1.8rem; /* Smaller H2 */
     }
     .section-subtitle {
-        font-size: 0.9rem;
+        font-size: 0.9rem; /* Smaller subtitle */
     }
-    .product-grid {
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* Latest rule */
-        gap: 1rem; /* Latest rule */
-    }
-    .product-image-container {
-        height: 160px; /* Latest rule */
-    }
-    .product-name {
-        font-size: 1.1rem; /* Latest rule */
-    }
-    .product-description {
-        font-size: 0.85rem; /* Latest rule */
-    }
+    /* Hero sizes adjusted in base mobile styles */
     .hero-main-image {
-        max-width: 85%; /* Latest rule */
-        transform: rotate(1deg) scale(1); /* Latest rule */
+       /* Max width already adjusted */
     }
-    .cta-button, .button-style-primary {
-        padding: 10px 20px; /* Latest rule */
-        font-size: 0.95rem; /* Latest rule */
-    }
+    /* Product grid/image sizes already set for smallest mobile */
+    /* Button sizes already set for smallest mobile */
 }
 
 
 /* --- Animation & Feedback Styles --- */
+/* ... (Keep all existing animation/feedback styles) ... */
 .fade-in {
     opacity: 0;
     animation: fadeInAnimation 0.6s ease-out forwards;
@@ -1434,4 +1410,30 @@ textarea:focus.input-error {
 }
 .notification-info {
     background-color: #546E7A;
+}
+
+/* --- Specific Mobile Fixes (Keep last) --- */
+@media (max-width: 768px) {
+  .tiktok-video { /* Keep specific class if used elsewhere */
+    width: 100%;
+    height: auto;
+  }
+  .hero-image { /* Keep specific class if used elsewhere */
+    display: block;
+    margin: 0 auto;
+  }
+  .additional-facts-bg { /* Keep specific class if used elsewhere */
+    background-size: contain;
+  }
+  .detail-drama { /* Keep specific class if used elsewhere */
+    max-width: 100%;
+    padding: 0 10px;
+  }
+  .detail-drama p { /* Keep specific class if used elsewhere */
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .tiktok-embed-wrapper {
+      max-width: 95%; /* Allow more width on mobile */
+  }
 }

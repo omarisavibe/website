@@ -1429,7 +1429,7 @@ textarea:focus.input-error {
     padding: 0 10px;
   }
   .tiktok-embed-wrapper {
-      padding-bottom: 100%; /* or experiment with 75% */
+      padding-bottom: 120%; /* or experiment with 75% */
       max-width: 100%;
   }
 }

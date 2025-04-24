@@ -420,7 +420,7 @@ p {
 
 /* --- Info Panel Section --- */
 .info-panel-section {
-    /* FIX: Remove bottom padding globally to fix gap */
+    padding-bottom: 1rem !important; /* Add small bottom padding */
     padding: 2rem 0 0 0; /* Consolidated mobile top padding, zero bottom */
     background-image: url('cookiess.webp');
     /* Background properties handled in media queries for quality */
@@ -540,7 +540,7 @@ p {
 /* --- Deets & Drama Below Panels --- */
 .deets-drama-container {
     /* FIX: Adjusted top padding to control gap */
-    padding-top: 2rem; /* Moderate default top padding */
+    padding-top: 1rem; /* Moderate default top padding */
     padding-bottom: 3rem; /* Base bottom padding */
     background-color: var(--brand-bg-light-pink);
     padding-left: 4%; /* Consolidated mobile side padding */
@@ -1433,5 +1433,10 @@ textarea:focus.input-error {
     font-size: 14px;
     line-height: 1.5;
   }
-
+.deets-drama-container {
+        padding-top: 2rem; /* Keep larger padding for desktop */
+    }
+.info-panel-section {
+        padding-bottom: 3rem !important; /* Restore desktop padding */
+    }
 }

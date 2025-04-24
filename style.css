@@ -1,11 +1,11 @@
-/* --- ==== VIBE TREATS CSS ==== --- */
+/* --- ==== VIBE TREATS CSS - MAX VIBE EDITION ==== --- */
 
 /* --- CSS Variables (Brand Palette) --- */
 :root {
-    --brand-teal: #1DB9A3; /* Slightly softer teal from box? */
-    --brand-pink: #FF3399; /* Your signature vibrant pink */
+    --brand-teal: #1DB9A3;
+    --brand-pink: #FF3399;
     --brand-yellow: #FFF000;
-    --brand-bg-light-pink: #FFF5F9; /* Very light pink background */
+    --brand-bg-light-pink: #FFF5F9;
     --text-dark: #222222;
     --text-light: #ffffff;
     --text-grey: #555555;
@@ -16,11 +16,12 @@
     --radius-small: 6px;
     --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.05);
     --shadow-medium: 0 6px 20px rgba(0, 0, 0, 0.1);
+    --shadow-heavy: 0 8px 25px rgba(0, 0, 0, 0.15); /* Added heavier shadow option */
 }
 
 /* --- Basic Reset & Body --- */
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; font-size: 16px; /* Base font size */ }
 body {
     font-family: var(--body-font);
     color: var(--text-dark);
@@ -29,20 +30,31 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    overflow-x: hidden; /* Prevent horizontal scroll */
+    overflow-x: hidden; /* Critical for preventing horizontal scroll */
 }
 main { flex-grow: 1; }
-img { max-width: 100%; height: auto; display: block; }
+img { max-width: 100%; height: auto; display: block; vertical-align: middle; /* Prevents small space under images */ }
 a { color: var(--brand-pink); text-decoration: none; transition: color 0.2s ease; }
 a:hover { color: var(--brand-teal); }
 h1, h2, h3 { font-family: var(--heading-font); line-height: 1.2; letter-spacing: 1px; }
-h2 { font-size: 2.8rem; color: var(--brand-teal); text-align: center; margin-bottom: 2.5rem; }
+h2 { font-size: clamp(2.2rem, 5vw, 2.8rem); /* Responsive font size */ color: var(--brand-teal); text-align: center; margin-bottom: 2.5rem; }
+p { margin-bottom: 1rem; } /* Default paragraph margin */
+
+/* --- Utility Classes --- */
+.container { width: 90%; max-width: 1300px; margin: 0 auto; }
+.dark-section { background-color: var(--brand-teal); color: var(--text-light); }
+.dark-section h2 { color: var(--text-light); }
+.dark-section a { color: var(--brand-yellow); }
+.dark-section a:hover { color: var(--text-light); }
+.section-title { margin-bottom: 1rem; }
+.section-subtitle { font-size: 1.1rem; color: var(--text-grey); text-align: center; margin-top: -1.5rem; margin-bottom: 3rem; max-width: 700px; margin-left: auto; margin-right: auto;}
+.dark-section .section-subtitle { color: rgba(255, 255, 255, 0.85); }
+.highlight { color: var(--brand-pink); font-weight: 700; }
+.banter { font-size: 0.85em; color: var(--text-grey); font-style: italic; }
 
 /* --- Buttons --- */
-.cta-button {
+.cta-button, .button-style-primary { /* Base style for different buttons */
     display: inline-block;
-    background-color: var(--brand-pink);
-    color: var(--text-light);
     padding: 14px 30px;
     font-family: var(--heading-font);
     font-size: 1.1rem;
@@ -50,432 +62,574 @@ h2 { font-size: 2.8rem; color: var(--brand-teal); text-align: center; margin-bot
     border: none;
     border-radius: 50px; /* Pill shape */
     cursor: pointer;
-    transition: transform 0.2s ease-out, background-color 0.2s ease;
+    text-align: center;
+    transition: transform 0.2s ease-out, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.cta-button { /* Primary Action Button */
+    background-color: var(--brand-pink);
+    color: var(--text-light);
     box-shadow: 0 4px 10px rgba(255, 51, 153, 0.3);
 }
 .cta-button:hover {
     background-color: #e60073; /* Darker pink */
-    transform: translateY(-3px);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 6px 15px rgba(255, 51, 153, 0.4);
 }
-.cta-button:active {
-    transform: translateY(0);
-}
-.cta-button.main-cta {
+.cta-button:active { transform: translateY(0) scale(1); }
+
+.cta-button.main-cta { /* Yellow Hero Button */
      background-color: var(--brand-yellow);
      color: var(--text-dark);
      box-shadow: 0 4px 10px rgba(255, 240, 0, 0.4);
 }
 .cta-button.main-cta:hover {
      background-color: #e6d300; /* Darker yellow */
+     box-shadow: 0 6px 15px rgba(255, 240, 0, 0.5);
 }
+/* Add .button-style-secondary, etc. if needed */
 
 /* --- Header --- */
-header {
+.site-header { /* Renamed from 'header' */
     background-color: var(--text-light);
     padding: 0.8rem 5%;
     box-shadow: var(--shadow-light);
-    position: sticky; /* Keep header visible */
+    position: sticky;
     top: 0;
     z-index: 900;
+    width: 100%;
 }
-.header-content {
+.header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1300px;
-    margin: 0 auto;
 }
-.logo-container {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-.logo-img {
-    height: 60px; /* Significantly larger logo */
-    width: auto;
-}
-.tagline {
-    font-family: var(--body-font);
-    font-size: 0.9rem;
-    color: var(--text-grey);
-    font-weight: 600;
-    display: none; /* Hide on mobile */
-}
+.logo-area { display: flex; align-items: center; gap: 15px; }
+.logo-main { height: 60px; width: auto; }
+.main-nav { display: none; /* Handled by mobile toggle later */ }
+.nav-link { font-weight: 600; color: var(--text-dark); margin: 0 0.8rem; transition: color 0.2s ease; }
+.nav-link:hover, .nav-link.active { color: var(--brand-pink); }
 .cart-toggle-button {
     background-color: var(--brand-teal);
     color: var(--text-light);
     padding: 10px 20px;
-    border: none;
     border-radius: var(--radius-main);
-    cursor: pointer;
     font-weight: 600;
     font-size: 1rem;
-    transition: background-color 0.2s ease;
+    white-space: nowrap; /* Prevent text wrapping */
 }
-.cart-toggle-button:hover {
-    background-color: #17a791; /* Darker teal */
-}
+.cart-toggle-button:hover { background-color: #17a791; transform: scale(1.03); }
+.mobile-menu-toggle { display: block; /* Show on mobile, hide later */ background: none; border: none; font-size: 1.8rem; cursor: pointer;}
 
-/* --- Intro Section --- */
-.intro-section {
+/* --- Hero Section --- */
+.hero-section {
+    background: linear-gradient(135deg, var(--brand-bg-light-pink) 60%, #ffddee 100%); /* Subtle gradient */
+    padding: 4rem 0 6rem 0; /* Padding on container now */
+    overflow: hidden; /* Contain animations */
+}
+.hero-container {
     display: flex;
     align-items: center;
-    padding: 4rem 5% 6rem 5%;
     gap: 3rem;
-    max-width: 1300px;
-    margin: 0 auto;
-    flex-wrap: wrap; /* Wrap on smaller screens */
+    flex-wrap: wrap; /* Allow wrapping */
 }
-.intro-text {
-    flex: 1;
-    min-width: 300px; /* Prevent excessive squishing */
+.hero-text {
+    flex: 1 1 500px; /* Flex grow, shrink, basis */
 }
-.intro-text h1 {
-    font-size: 4.5rem; /* Big heading */
+.hero-headline {
+    font-size: clamp(3.5rem, 8vw, 5.5rem); /* Responsive h1 */
     color: var(--brand-pink);
-    line-height: 1.1;
-    margin-bottom: 1rem;
+    line-height: 1;
+    margin-bottom: 1.5rem;
+    transform: rotate(-2deg); /* Slight tilt for personality */
 }
-.intro-text h2 {
-    font-family: var(--body-font); /* Poppins for subheading */
-    font-size: 1.5rem;
+.hero-headline span { display: block; /* Stack the words */ }
+.hero-subheadline {
+    font-family: var(--body-font);
+    font-size: clamp(1.3rem, 3vw, 1.6rem);
     color: var(--brand-teal);
     margin-bottom: 1.5rem;
-    text-align: left;
-    font-weight: 600;
+    font-weight: 700;
 }
-.intro-text p {
+.hero-description {
     color: var(--text-grey);
     margin-bottom: 2.5rem;
     font-size: 1.1rem;
+    max-width: 550px;
 }
-.intro-visual {
-    flex: 1;
-    text-align: center; /* Center image when it wraps */
-     min-width: 300px;
-}
-.intro-visual img {
-    border-radius: var(--radius-main);
-    box-shadow: var(--shadow-medium);
-     max-width: 550px; /* Control max size */
-}
-
-/* --- TikTok Section --- */
-.tiktok-section {
-    padding: 5rem 5%;
-    background-color: var(--brand-teal);
+.hero-visual {
+    flex: 1 1 400px; /* Flex settings */
     text-align: center;
 }
-.tiktok-section h2 {
-    color: var(--text-light);
-    margin-bottom: 2rem;
-}
-.tiktok-embed-container {
-    max-width: 450px; /* Control embed width */
-    margin: 0 auto 1.5rem auto;
-    background: var(--text-dark); /* Dark background for embed */
+.hero-main-image {
     border-radius: var(--radius-main);
-    overflow: hidden; /* Ensures embed respects border-radius */
-    box-shadow: var(--shadow-medium);
+    box-shadow: var(--shadow-heavy);
+    max-width: 100%; /* Ensure responsiveness */
+    width: 550px; /* Max desired width */
+    transform: rotate(2deg) scale(1.02); /* Counter-tilt visual */
+     transition: transform 0.3s ease;
 }
-/* Style the blockquote if tiktok script fails */
+.hero-main-image:hover {
+     transform: rotate(0deg) scale(1.05); /* Slight hover effect */
+}
+
+/* --- TikTok Feature Section (Revised for blending) --- */
+.tiktok-feature-section {
+    padding: 5rem 0; /* Padding on container */
+    position: relative; /* For potential pseudo-elements */
+}
+.tiktok-embed-wrapper {
+    max-width: 480px; /* Let the embed define width, but constrain container */
+    margin: 2rem auto;
+    /* REMOVED Background, border-radius, shadow */
+    /* Allow embed's styling to show directly against the teal background */
+}
 .tiktok-embed {
-    background: #fff; /* Default background if no script */
-     border: 1px solid var(--border-color);
-     box-shadow: none;
-}
-.tiktok-follow {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 1.1rem;
-}
-.tiktok-follow a {
-    color: var(--brand-yellow);
-    font-weight: bold;
-}
-.tiktok-follow a:hover {
-    color: var(--text-light);
-}
+     /* Ensure it takes container width, remove default margins */
+    max-width: 100% !important;
+    min-width: unset !important; /* Override embed defaults */
+    width: 100%;
+     display: block; /* Prevent extra space */
+     margin: 0 !important; /* Override embed defaults */
+     box-shadow: var(--shadow-medium); /* Add shadow to the embed itself */
+     border-radius: var(--radius-small); /* Optional: Slight rounding */
+     /* Remove any border or background added previously for fallback */
+     background: none;
+     border: none;
+ }
+ .follow-link {
+     margin-top: 2rem;
+     font-size: 1.2rem; /* Make it slightly larger */
+     font-weight: 600;
+ }
+ .follow-link a { /* Keep yellow link */ }
 
-
-/* --- Treats (Products) Section --- */
-.treats-section {
-    padding: 6rem 5%;
-    max-width: 1300px;
-    margin: 0 auto;
+/* --- Product Section --- */
+.product-section {
+    padding: 6rem 0;
 }
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    /* More responsive columns: min 280px, max 1fr */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
     gap: 2.5rem;
-    margin-top: 2rem;
+    margin-top: 1rem; /* Reduced margin */
 }
 .product-card {
     background-color: var(--text-light);
     border-radius: var(--radius-main);
-    overflow: hidden; /* Clip image corners */
+    overflow: hidden;
     box-shadow: var(--shadow-light);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
     flex-direction: column;
 }
 .product-card:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-medium);
+    transform: translateY(-10px) rotate(-1deg); /* Tilt on hover */
+    box-shadow: var(--shadow-heavy);
 }
-.product-image img { /* Class for product images */
+.product-image-container {
+     background-color: #f0f0f0; /* Loading placeholder */
+     position: relative;
+     height: 280px; /* Slightly taller */
+     overflow: hidden;
+}
+.product-main-image { /* Updated class name */
     width: 100%;
-    height: 250px; /* Taller images */
+    height: 100%;
     object-fit: cover;
+     transition: transform 0.4s ease; /* Zoom effect on hover */
 }
-.product-info {
+.product-card:hover .product-main-image {
+     transform: scale(1.05);
+}
+.product-details { /* Renamed from product-info */
     padding: 1.5rem;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
 }
-.product-info h3 {
-    font-size: 1.8rem;
+.product-name { /* Renamed */
+    font-size: clamp(1.4rem, 4vw, 1.7rem);
     color: var(--brand-pink);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
 }
-.product-info .description {
+.product-description { /* Renamed */
     color: var(--text-grey);
     font-size: 0.95rem;
     margin-bottom: 1rem;
-    flex-grow: 1; /* Pushes price/button down */
+    flex-grow: 1;
+    line-height: 1.6;
 }
-.product-info .price {
-    font-weight: 700;
-    font-size: 1.4rem;
+.product-price { /* Renamed */
+    font-weight: 800; /* Bolder price */
+    font-size: 1.5rem;
     color: var(--brand-teal);
     margin-bottom: 1.5rem;
 }
-.product-info .add-to-cart-btn { /* Specific class for add button */
+.add-to-cart-btn { /* Renamed & styled */
     width: 100%;
-    padding: 12px; /* Slightly smaller */
+    padding: 12px;
+    font-size: 1rem;
 }
 
-/* --- Drama (About) Section --- */
-.drama-section {
-    padding: 5rem 5%;
-    background-color: var(--text-light);
+/* --- Info Panel Section (#the-real-tea) --- */
+.info-panel-section {
+     padding: 5rem 0;
+     background: linear-gradient(180deg, var(--brand-bg-light-pink) 80%, #fff 100%); /* Fade to white */
 }
-.drama-section h2 { color: var(--brand-pink); }
-.drama-content {
-    display: flex;
-    gap: 3rem;
-    max-width: 1100px;
-    margin: 0 auto;
-    text-align: left;
-    flex-wrap: wrap;
-}
-.actual-ingredients, .more-info {
-    flex: 1;
-    min-width: 280px;
-    background-color: #fafafa; /* Slightly off-white bg for contrast */
-    padding: 1.5rem;
-    border-radius: var(--radius-main);
-    border: 1px solid var(--border-color);
-}
-.actual-ingredients h3, .more-info h3 {
-    font-family: var(--heading-font);
+.info-panel-container {
+     display: grid;
+     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+     gap: 2rem;
+     align-items: stretch; /* Make panels equal height if possible */
+     margin-bottom: 4rem; /* Space before Deets/Drama */
+ }
+ .info-panel {
+     background-color: #ffffff;
+     padding: 1.5rem;
+     border-radius: var(--radius-main);
+     box-shadow: var(--shadow-light);
+     border: 1px solid var(--border-color);
+ }
+ .info-panel-graphic {
+     width: 100%;
+     height: auto;
+     border-radius: var(--radius-small);
+     margin-bottom: 1rem;
+     /* Assuming your panel images have backgrounds. If not, add background-color */
+ }
+ .panel-title {
+     font-family: var(--heading-font);
+     font-size: 1.4rem;
+     margin-bottom: 1rem;
+     color: var(--brand-pink);
+ }
+ .nutritional-facts-panel .panel-title { /* Center title */
+     text-align: center;
+     color: var(--brand-teal);
+ }
+ .nutritional-facts-panel {
+     background-color: #f8f9fa; /* Slightly different bg */
+     border: 2px solid var(--text-dark); /* Add border like real labels */
+ }
+ .serving-info { font-size: 0.85rem; font-weight: 600; text-align: center; margin-bottom: 0.25rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 0.5rem;}
+ .facts-table { margin: 1rem 0; font-size: 0.95rem; }
+ .fact-row { display: flex; justify-content: space-between; padding: 0.3rem 0; border-bottom: 1px dotted #ccc; }
+ .fact-row.header span { font-size: 0.8rem; text-transform: uppercase; color: var(--text-grey);}
+ .fact-row:last-child { border-bottom: 2px solid var(--text-dark); } /* Thick line at end */
+ .fact-row span:first-child { padding-right: 1rem; }
+ .facts-footer { font-size: 0.75rem; color: var(--text-grey); text-align: center; margin-top: 1rem; margin-bottom: 0; line-height: 1.3; }
+
+ .side-panel h4 { margin-top: 1.5rem; margin-bottom: 0.5rem; font-weight: 700; color: var(--brand-teal); }
+ .side-panel ul { list-style: none; padding: 0; }
+ .side-panel li { font-size: 0.9rem; margin-bottom: 0.3rem; color: var(--text-grey); }
+ .side-panel p { font-size: 0.9rem; line-height: 1.5; margin-bottom: 0.5rem; }
+ .disclaimer { font-size: 0.75rem; font-style: italic; color: #888; margin-top: 1rem; }
+
+ /* Deets & Drama Below Panels */
+ .deets-drama-container {} /* Uses standard container */
+ .deets-drama-container h2 { color: var(--brand-pink); } /* Different H2 color */
+ .drama-columns {
+     display: flex;
+     flex-wrap: wrap;
+     gap: 3rem;
+     max-width: 1100px;
+     margin: 0 auto;
+ }
+ .drama-column {
+     flex: 1 1 400px; /* Grow, shrink, basis */
+     text-align: left;
+ }
+ .drama-column h3 {
+    font-size: 1.6rem;
     color: var(--brand-teal);
     margin-bottom: 1rem;
-    font-size: 1.5rem;
     border-bottom: 2px solid var(--brand-yellow);
-    display: inline-block; /* Make border only wrap text */
     padding-bottom: 0.3rem;
+    display: inline-block;
 }
-.actual-ingredients .shocking {
-     font-family: var(--body-font);
-     font-size: 0.8em;
-     color: var(--text-grey);
-     font-style: italic;
-}
-.actual-ingredients ul { list-style: none; }
-.actual-ingredients li { margin-bottom: 0.5rem; font-weight: 600; }
-.actual-ingredients .detail {
-    font-weight: 400;
-    font-size: 0.9em;
-    color: var(--text-grey);
-}
-.more-info p {
-     margin-bottom: 1rem;
-     color: var(--text-grey);
-     font-weight: 600;
-}
+ .drama-column p { color: var(--text-grey); margin-bottom: 1rem; line-height: 1.8;}
+ .drama-column ul { list-style: '🍪 '; padding-left: 1.5rem; margin-top: 0.5rem; }
+ .drama-column li { margin-bottom: 0.5rem; font-weight: 600;}
+ .storage-column ul { list-style: '🔒 '; }
 
 
 /* --- Footer --- */
-footer {
+.site-footer { /* Renamed */
     background-color: var(--text-dark);
     color: rgba(255, 255, 255, 0.7);
     text-align: center;
-    padding: 2rem 5%;
+    padding: 2.5rem 5%;
     margin-top: 4rem;
     font-size: 0.9rem;
 }
-footer p { margin-bottom: 0.5rem; }
-.footer-joke { font-style: italic; opacity: 0.8; }
-.footer-admin-link {
-     display: block;
-     margin-top: 1rem;
-     color: var(--brand-teal);
-     font-size: 0.8rem;
-     opacity: 0.6;
-}
-.footer-admin-link:hover { opacity: 1; }
+.site-footer p { margin-bottom: 0.5rem; }
+.copyright {}
+.footer-tagline { font-weight: 600; color: var(--brand-teal); }
+.footer-smallprint { font-style: italic; opacity: 0.8; font-size: 0.8rem;}
+.admin-secret-link { display: inline-block; margin-top: 1rem; color: rgba(255, 255, 255, 0.4); font-size: 1.5rem; opacity: 0.6; text-decoration: none; }
+.admin-secret-link:hover { opacity: 1; color: var(--brand-yellow); }
 
 
 /* --- Cart Sidebar & Overlay --- */
-.cart-overlay { /* Basic functionality is fine, adjust if needed */
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); z-index: 998;
-    opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0s 0.3s;
+/* Base Overlay Style */
+.cart-overlay, .checkout-overlay {
+    position: fixed; inset: 0; /* Covers everything */
+    background-color: rgba(34, 34, 34, 0.7); /* Darker overlay */
+    z-index: 998;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0s 0.4s;
 }
-.cart-overlay.active { opacity: 1; visibility: visible; transition: opacity 0.3s ease; }
+body.overlay-active .cart-overlay,
+body.overlay-active .checkout-overlay {
+    opacity: 1; visibility: visible; transition: opacity 0.4s ease;
+}
 
-.cart-sidebar { /* Style adjustments */
-    position: fixed; top: 0; right: -450px; /* Start off-screen */
-    width: 400px; max-width: 95%; height: 100%;
-    background-color: white; box-shadow: -5px 0 15px rgba(0,0,0,0.15);
-    z-index: 999; padding: 1.5rem; transition: right 0.4s ease-in-out;
+.cart-sidebar {
+    position: fixed; top: 0; right: -100%; /* Start further off */
+    width: clamp(300px, 90vw, 420px); /* Responsive width */
+    height: 100%;
+    background-color: white;
+    box-shadow: -6px 0 20px rgba(0,0,0,0.15);
+    z-index: 999;
+    padding: 1.5rem;
+    transition: right 0.5s cubic-bezier(0.23, 1, 0.32, 1); /* Smoother ease */
     overflow-y: auto; display: flex; flex-direction: column;
 }
-.cart-sidebar.active { right: 0; }
+body.cart-open .cart-sidebar { right: 0; } /* Control via body class */
 
-.cart-sidebar h2 { /* Styling heading */
+.sidebar-title { /* Class for cart title */
     font-family: var(--heading-font); color: var(--brand-pink);
     margin-bottom: 1.5rem; text-align: center; font-size: 2rem;
     border-bottom: 3px solid var(--brand-yellow); padding-bottom: 0.5rem;
 }
-#cart-items { flex-grow: 1; margin-bottom: 1rem; } /* Let items fill space */
-
-.cart-item { /* Slight visual tweaks */
-    display: flex; align-items: center; gap: 1rem;
+.cart-items-container { flex-grow: 1; margin-bottom: 1rem; }
+.cart-item {
+    display: grid; /* Using grid for better layout */
+    grid-template-columns: auto 1fr auto;
+    align-items: center; gap: 1rem;
     margin-bottom: 1rem; border-bottom: 1px solid var(--border-color);
     padding-bottom: 1rem;
 }
 .cart-item:last-child { border-bottom: none; }
-.cart-item-img { /* Class added in JS */
-    width: 70px; height: 70px; object-fit: cover;
+.cart-item-img {
+    grid-row: 1 / 3; /* Span two rows */
+    width: 75px; height: 75px; object-fit: cover;
     border-radius: var(--radius-small);
 }
-.cart-item-info h4 { font-size: 1.1rem; margin-bottom: 0.25rem; font-weight: 600; }
-.cart-item-info p { font-size: 0.9rem; color: var(--text-grey); }
-.cart-item-actions { display: flex; align-items: center; gap: 0.5rem; }
-.cart-item-actions span { font-weight: 600; min-width: 15px; text-align: center; }
-.cart-item-actions button { /* Action buttons */
+.cart-item-info { grid-column: 2 / 3; }
+.cart-item-info h4 { font-size: 1.1rem; margin-bottom: 0.25rem; font-weight: 700; }
+.cart-item-info p { font-size: 0.95rem; color: var(--text-grey); margin: 0; }
+.cart-item-actions { grid-column: 3 / 4; grid-row: 1 / 3; /* Align to right */ display: flex; flex-direction: column; align-items: center; gap: 0.6rem;}
+.cart-item-actions span.item-quantity { /* Class added in JS */ font-weight: 700; font-size: 1.1rem; order: 2; /* Center element */ }
+.action-button { /* Base style for cart action buttons */
     background: var(--brand-teal); color: white; border: none;
-    border-radius: 50%; /* Circular */ width: 28px; height: 28px;
-    cursor: pointer; font-size: 1.1rem; font-weight: bold;
-    display: flex; justify-content: center; align-items: center;
-    line-height: 1; transition: background-color 0.2s ease;
+    border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 1.2rem; font-weight: bold;
+    display: flex; justify-content: center; align-items: center; line-height: 1;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    box-shadow: var(--shadow-light);
 }
-.cart-item-actions button:hover { background: #17a791; }
-.cart-item-actions .remove-item {
-    background: #e0e0e0; color: var(--text-grey); font-size: 1.3rem;
+.action-button:hover { background: #17a791; transform: scale(1.05); }
+.action-button:active { transform: scale(0.95); }
+.action-button.increase-quantity { order: 1; /* Top */ }
+.action-button.decrease-quantity { order: 3; /* Bottom */ }
+.action-button.danger { /* Specific style for remove */
+    background: #f0f0f0; color: var(--brand-pink); font-size: 1.4rem; width: 26px; height: 26px; margin-top: 0.5rem; order: 4; /* Last */
 }
-.cart-item-actions .remove-item:hover { background: #ccc; }
+.action-button.danger:hover { background: var(--brand-pink); color: white; }
 
-.cart-summary { /* Styling summary area */
-    margin-top: auto; /* Pushes to bottom */
-    padding-top: 1rem;
-    border-top: 1px solid var(--border-color);
-}
-.cart-summary p {
-    font-weight: 700; font-size: 1.3rem; color: var(--brand-teal);
-    text-align: right; margin-bottom: 1rem;
-}
-.cart-summary .checkout-btn { width: 100%; }
+.cart-summary-section { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border-color); }
+.cart-total-text { font-weight: 800; font-size: 1.4rem; color: var(--brand-teal); text-align: right; margin-bottom: 1rem; }
+.checkout-btn { width: 100%; padding: 15px; font-size: 1.2rem; }
+.checkout-btn:disabled { background-color: #ccc; cursor: not-allowed; box-shadow: none; transform: none; }
+.checkout-btn:disabled:hover { background-color: #ccc; }
 
-.close-cart-button { /* Adjust close button */
-    position: absolute; top: 15px; right: 20px; background: none;
-    border: none; font-size: 2.5rem; cursor: pointer; color: #bbb;
-    line-height: 1; transition: color 0.2s ease;
-}
-.close-cart-button:hover { color: var(--brand-pink); }
 
 /* --- Checkout Modal --- */
-.checkout-overlay { /* Reusing cart overlay is fine */ }
 .checkout-modal {
     background: white; padding: 2.5rem; border-radius: var(--radius-main);
     max-width: 550px; width: 90%; z-index: 1001; position: relative;
     max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-medium);
+    /* Add entry animation for modal itself */
+     opacity: 0; transform: scale(0.9) translateY(20px);
+     transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-.close-checkout-button { /* Reuse cart close style */
-     position: absolute; top: 15px; right: 20px; background: none;
-    border: none; font-size: 2.5rem; cursor: pointer; color: #bbb;
-    line-height: 1; transition: color 0.2s ease;
+body.checkout-open .checkout-modal {
+     opacity: 1; transform: scale(1) translateY(0);
 }
-.close-checkout-button:hover { color: var(--brand-pink); }
-.checkout-modal h2 {
+.modal-title { /* Class for checkout title */
     font-family: var(--heading-font); color: var(--brand-teal);
     margin-bottom: 2rem; text-align: center; font-size: 2.2rem;
 }
-#checkout-form label { display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.9rem; }
-#checkout-form input, #checkout-form textarea {
-    width: 100%; padding: 12px; margin-bottom: 1.2rem;
-    border: 1px solid #ccc; border-radius: var(--radius-small);
-    font-family: var(--body-font); font-size: 1rem;
+.close-modal-button { /* Unified class for close buttons */
+    position: absolute; top: 15px; right: 15px; background: none;
+    border: none; font-size: 2.5rem; cursor: pointer; color: #bbb;
+    line-height: 1; transition: color 0.2s ease, transform 0.2s ease;
+    z-index: 1002; /* Ensure above form content */
 }
-#checkout-form textarea { resize: vertical; min-height: 80px; }
-#checkout-form input:focus, #checkout-form textarea:focus {
-     border-color: var(--brand-teal); outline: none; box-shadow: 0 0 0 2px rgba(29, 185, 163, 0.2);
-}
-.summary-title, .total-title { font-weight: bold; margin-bottom: 0.5rem; font-size: 1.1rem;}
-#checkout-summary {
-    font-size: 0.9rem; margin-bottom: 1rem; max-height: 120px;
-    overflow-y: auto; border: 1px dashed var(--border-color); padding: 0.8rem;
-    border-radius: var(--radius-small); background: #fafafa;
-}
-#checkout-summary .item { margin-bottom: 0.3rem; }
-.total-title { text-align: right; font-size: 1.4rem; color: var(--brand-pink); }
-#checkout-form .submit-btn { width: 100%; margin-top: 1.5rem; padding: 15px; }
-.checkout-message {
-    margin-top: 1.5rem; text-align: center; font-weight: 600;
-    padding: 10px; border-radius: var(--radius-small);
-}
-.checkout-message.success { color: #2e7d32; background-color: #e8f5e9; }
-.checkout-message.error { color: #c62828; background-color: #ffcdd2; }
+.close-modal-button:hover { color: var(--brand-pink); transform: rotate(90deg); }
 
-/* --- Loading Message --- */
-.loading-msg { font-style: italic; color: var(--text-grey); padding: 2rem; text-align: center; }
+#checkout-form .form-group { margin-bottom: 1.5rem; } /* Spacing for form fields */
+#checkout-form label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 1rem; }
+#checkout-form input, #checkout-form textarea {
+    width: 100%; padding: 14px;
+    border: 2px solid #ddd; /* Thicker default border */
+    border-radius: var(--radius-small);
+    font-family: var(--body-font); font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+#checkout-form textarea { resize: vertical; min-height: 90px; }
+#checkout-form input:focus, #checkout-form textarea:focus {
+     border-color: var(--brand-teal); outline: none; box-shadow: 0 0 0 3px rgba(29, 185, 163, 0.2);
+}
+.form-hint { font-size: 0.85rem; color: var(--text-grey); display: block; margin-top: -0.8rem; }
+.checkout-summary-box { background: #f8f9fa; padding: 1rem; border-radius: var(--radius-small); margin-bottom: 1.5rem; }
+#checkout-summary { margin-bottom: 0.5rem; max-height: 130px; overflow-y: auto;}
+#checkout-summary .item { margin-bottom: 0.4rem; font-weight: 600;}
+.total-title { text-align: right; font-size: 1.5rem; color: var(--brand-pink); margin-top: 0.5rem; margin-bottom: 0;}
+.submit-btn { width: 100%; margin-top: 1.5rem; padding: 16px; font-size: 1.2rem;}
+.checkout-message { margin-top: 1.5rem; text-align: center; font-weight: 600; padding: 12px; border-radius: var(--radius-small); }
+.checkout-message.success { color: #2e7d32; background-color: #e8f5e9; border: 1px solid #a5d6a7;}
+.checkout-message.error { color: #c62828; background-color: #ffcdd2; border: 1px solid #ef9a9a;}
+
+
+/* --- Loading & Empty States --- */
+#loading-indicator, .empty-message, .error-message, .cart-empty-message { /* Unified styling */
+  font-style: normal; /* Not italic by default */
+  color: var(--text-grey);
+  font-weight: 600;
+  text-align: center;
+  padding: 3rem 1rem;
+  font-size: 1.2rem;
+  opacity: 0.8;
+}
+.error-message { color: var(--brand-pink); font-weight: 700; }
+
 
 /* --- Responsiveness --- */
+@media (min-width: 769px) {
+     .tagline { display: block; } /* Show tagline on larger screens */
+     .main-nav { display: block; } /* Show nav links */
+     .mobile-menu-toggle { display: none; } /* Hide hamburger */
+}
+
 @media (max-width: 992px) {
-    .intro-section, .drama-content { flex-direction: column; }
-    .intro-text { text-align: center; }
-    .intro-text h1 { font-size: 3.5rem; }
-    .intro-text h2 { font-size: 1.3rem; text-align: center; }
-    .intro-visual img { max-width: 80%; } /* Adjust image size */
+    .hero-container { flex-direction: column; text-align: center; }
+    .hero-text { order: 2; } /* Text below image */
+    .hero-visual { order: 1; }
+    .hero-text h1 { text-align: center; transform: rotate(0); }
+    .hero-text h2 { text-align: center; }
+    .hero-main-image { transform: rotate(0) scale(1); width: clamp(300px, 80%, 550px);} /* Adjust size and remove tilt */
+     .info-panel-container { grid-template-columns: 1fr; } /* Stack panels */
+     .drama-columns { flex-direction: column; }
 }
 
 @media (max-width: 768px) {
-    h2 { font-size: 2.2rem; margin-bottom: 2rem; }
-    .logo-img { height: 50px; }
-    .tagline { display: none; } /* Hide tagline on tablet and below */
-    .product-grid { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
-     .product-info h3 { font-size: 1.5rem; }
-     .product-info .price { font-size: 1.2rem; }
-     .cart-sidebar { width: 320px; right: -350px; }
-     .checkout-modal { padding: 1.5rem; }
-     .intro-text h1 { font-size: 3rem; }
-     .intro-text h2 { font-size: 1.2rem; }
+    html { font-size: 15px; /* Adjust base font for smaller screens */ }
+     .header-container { position: relative; } /* For mobile nav positioning */
+    .logo-main { height: 50px; }
+     .main-nav { /* Basic mobile nav - Needs JS toggle */
+        display: none; /* Hide initially */
+         position: absolute; top: 100%; left: 0; width: 100%;
+         background: white; box-shadow: var(--shadow-medium); flex-direction: column; padding: 1rem 0;
+    }
+    .main-nav.active { display: flex; } /* Show when active */
+    .main-nav a { display: block; padding: 0.8rem 5%; text-align: center; margin: 0; }
+    .cart-sidebar { width: clamp(280px, 85vw, 350px); }
+    .checkout-modal { padding: 1.5rem; }
 }
 
 @media (max-width: 480px) {
-     .header-content { padding: 0.5rem 0; /* Reduce padding further */ }
-     .logo-img { height: 40px; }
+     .logo-main { height: 40px; }
      .cart-toggle-button { padding: 8px 15px; font-size: 0.9rem; }
-     h2 { font-size: 1.8rem; }
-     .intro-text h1 { font-size: 2.5rem; }
-     .intro-text h2 { font-size: 1rem; }
-     .intro-text p { font-size: 0.95rem;}
-     .cta-button { padding: 12px 25px; font-size: 1rem; }
-     .product-grid { grid-template-columns: 1fr; } /* Single column */
-      .tiktok-embed-container { max-width: 95%; }
-      .cart-sidebar { width: 85%; }
-      .checkout-modal { width: 95%; padding: 1.5rem 1rem;}
-      .actual-ingredients, .more-info { padding: 1rem; }
+     h2 { font-size: 2rem; }
+     .hero-text h1 { font-size: clamp(2.8rem, 10vw, 3.2rem); }
+     .hero-subheadline { font-size: 1.1rem; }
+     .hero-description { font-size: 1rem;}
+     .cta-button, .button-style-primary { padding: 12px 25px; font-size: 1rem; }
+      .tiktok-embed-container { max-width: 100%; }
+     .checkout-modal { width: 95%; padding: 1.5rem 1rem;}
+     .cart-item { grid-template-columns: auto 1fr; gap: 0.8rem; /* Stack actions below */ }
+     .cart-item-img { grid-row: 1 / 2; width: 60px; height: 60px;}
+     .cart-item-info { grid-column: 2 / 3; grid-row: 1 / 2; }
+     .cart-item-actions { grid-column: 1 / 3; grid-row: 2 / 3; flex-direction: row; justify-content: center; margin-top: 0.5rem;}
+     .action-button.danger { margin-top: 0; margin-left: 1rem; }
+ }
+
+
+/* --- Animation & Feedback Styles (Copied from previous JS step - ensure these are included!) --- */
+/* General Fade-In */
+.fade-in { opacity: 0; animation: fadeInAnimation 0.6s ease-out forwards; }
+@keyframes fadeInAnimation { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Entry animations for HTML elements */
+.animate-on-load.slide-in-left { opacity: 0; transform: translateX(-50px); animation: slideInLeft 0.8s 0.2s cubic-bezier(0.175, 0.885, 0.32, 1) forwards;}
+@keyframes slideInLeft { to { opacity: 1; transform: translateX(0); } }
+.animate-on-load.fade-in { opacity: 0; animation: fadeInLoad 1s 0.4s ease-out forwards; }
+@keyframes fadeInLoad { to { opacity: 1; } }
+
+/* Scroll-triggered Animations (Placeholders - requires Intersection Observer JS) */
+.animate-on-scroll { opacity: 0; transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+.animate-on-scroll.fade-in { transform: translateY(30px); }
+.animate-on-scroll.slide-in-left { transform: translateX(-50px); }
+.animate-on-scroll.slide-in-right { transform: translateX(50px); }
+/* 'is-visible' class added by Intersection Observer JS */
+.animate-on-scroll.is-visible { opacity: 1; transform: translateY(0) translateX(0) !important; }
+/* Stagger delay classes */
+.animate-on-scroll.delay-1 { transition-delay: 0.15s; }
+.animate-on-scroll.delay-2 { transition-delay: 0.3s; }
+.animate-on-scroll.delay-3 { transition-delay: 0.45s; }
+
+/* Subtle pulse */
+.pulse { animation: pulseAnimation 0.5s ease-in-out; }
+@keyframes pulseAnimation { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+.pulse-quick { animation: pulseAnimation 0.3s ease-in-out; }
+
+/* Error Shake */
+.shake-error { animation: shakeErrorAnimation 0.4s linear; }
+@keyframes shakeErrorAnimation { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
+
+/* Button Feedback */
+.button-style-primary, .cta-button, .action-button { position: relative; overflow: hidden; }
+.button-clicked::after, .button-adding::after { content: ''; position: absolute; top: 50%; left: 50%; width: 5px; height: 5px; background: rgba(255, 255, 255, 0.5); opacity: 0; border-radius: 50%; transform: scale(1) translate(-50%, -50%); transform-origin: 50% 50%; animation: ripple 0.4s ease-out;}
+@keyframes ripple { 0% { transform: scale(0) translate(-50%, -50%); opacity: 1; } 100% { transform: scale(15) translate(-50%, -50%); opacity: 0; } }
+.button-success { background-color: #4CAF50 !important; animation: successPulse 0.5s ease; }
+@keyframes successPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); }}
+.button-adding { background-color: var(--brand-teal); transform: scale(0.98); }
+
+/* Cart Item Animations */
+.animate-item-enter { opacity: 0; transform: translateX(20px); animation: itemEnterAnimation 0.3s ease-out forwards; }
+@keyframes itemEnterAnimation { to { opacity: 1; transform: translateX(0); } }
+.animate-item-exit { animation: itemExitAnimation 0.3s ease-in forwards; }
+@keyframes itemExitAnimation { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.8); } }
+
+/* Product Card Entry */
+.animate-card-enter { opacity: 0; transform: translateY(30px); animation: cardEnterAnimation 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; animation-delay: var(--animation-delay, 0s); }
+@keyframes cardEnterAnimation { to { opacity: 1; transform: translateY(0); } }
+
+/* Cart Button State */
+.cart-toggle-button.has-items { animation: cartPulse 0.6s ease; border: 2px solid var(--brand-yellow); box-shadow: 0 0 10px var(--brand-yellow); }
+@keyframes cartPulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+/* Form Validation Error Highlight */
+input.input-error, textarea.input-error { border-color: var(--brand-pink) !important; background-color: var(--brand-bg-light-pink); animation: shakeErrorAnimation 0.3s linear; }
+input:focus.input-error, textarea:focus.input-error { box-shadow: 0 0 0 3px rgba(255, 51, 153, 0.3) !important;}
+
+
+/* Notification Styling (ensure these exist if using showNotification JS function) */
+.notification {
+    position: fixed; bottom: 20px; left: 50%;
+    transform: translateX(-50%) translateY(120px); /* Start below */
+    padding: 15px 25px; border-radius: var(--radius-main);
+    background-color: var(--text-dark); color: var(--text-light);
+    font-weight: 600; z-index: 10000;
+    box-shadow: var(--shadow-heavy); opacity: 0; visibility: hidden;
+    transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s ease; /* Bounce & color transition */
+    max-width: 90%; /* Prevent excessive width */
+     text-align: center;
 }
+.notification.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+.notification-success { background-color: var(--brand-teal); }
+.notification-error { background-color: #c62828; } /* Red */
+.notification-warn { background-color: #FFA000; color: var(--text-dark);} /* Orange */
+.notification-info { background-color: #546E7A; } /* Blue Grey */

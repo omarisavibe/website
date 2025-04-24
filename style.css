@@ -1229,3 +1229,39 @@ textarea:focus.input-error {
 .notification-info {
     background-color: #546E7A;
 }
+/* General box-sizing for better layout control */
+* {
+  box-sizing: border-box;
+}
+
+/* Media query for mobile devices (max-width: 768px) */
+@media (max-width: 768px) {
+  /* Fix TikTok video being half-visible */
+  .tiktok-video {
+    width: 100%;
+    height: auto;
+  }
+
+  /* Center the hero image on mobile only */
+  .hero-image {
+    display: block;
+    margin: 0 auto;
+  }
+
+  /* Improve background photo quality in additional facts */
+  .additional-facts-bg {
+    background-size: contain; /* Prevents stretching, keeps quality */
+    /* Optional: Uncomment and replace with a smaller image path if available */
+    /* background-image: url('path/to/small-image.jpg'); */
+  }
+
+  /* Fix stretched text in "detail and drama" section */
+  .detail-drama {
+    max-width: 100%;
+    padding: 0 10px;
+  }
+  .detail-drama p {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}

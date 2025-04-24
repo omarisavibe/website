@@ -1426,7 +1426,7 @@ textarea:focus.input-error {
 @media (max-width: 768px) {
   .tiktok-video { /* Keep specific class if used elsewhere */
     width: 100%;
-    height: auto;
+    height: 100%;
   }
   .hero-image { /* Keep specific class if used elsewhere */
     display: block;

@@ -546,7 +546,48 @@ p {
  .storage-column ul {
     list-style: '🔒 ';
  }
-
+.deets-drama-container h2 {
+     color: var(--brand-pink);
+     margin-bottom: 2.5rem;
+     /* IMPORTANT: Ensure h2 background is transparent if needed */
+     background-color: transparent; /* Or remove if it inherits correctly */
+ }
+ .drama-columns {
+     display: flex;
+     flex-wrap: wrap;
+     gap: 3rem;
+     max-width: 1100px;
+     margin: 0 auto;
+ }
+ .drama-column {
+    flex: 1 1 400px;
+    text-align: left;
+ }
+ .drama-column h3 {
+    font-size: 1.6rem;
+    color: var(--brand-teal);
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--brand-yellow);
+    padding-bottom: 0.3rem;
+    display: inline-block;
+}
+ .drama-column p {
+    color: var(--text-grey);
+    margin-bottom: 1rem;
+    line-height: 1.8;
+ }
+ .drama-column ul {
+    list-style: '🍪 ';
+    padding-left: 1.5rem;
+    margin-top: 0.5rem;
+ }
+ .drama-column li {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+ }
+ .storage-column ul {
+    list-style: '🔒 ';
+ }
 
 /* --- Footer --- */
 .site-footer {

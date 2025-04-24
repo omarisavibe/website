@@ -1265,3 +1265,201 @@ textarea:focus.input-error {
     line-height: 1.5;
   }
 }
+/* --- For the hero image to be centered on mobile --- */
+@media (max-width: 768px) {
+  .hero-visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .hero-main-image {
+    margin: 0 auto;
+    max-width: 90%;
+  }
+}
+
+/* --- Fix for TikTok video embedding --- */
+.tiktok-embed-wrapper {
+  position: relative;
+  padding-bottom: 177.77%; /* Adjusted for TikTok's taller aspect ratio */
+  height: 0;
+  overflow: hidden;
+  max-width: 340px; /* TikTok's standard width */
+  margin: 1.5rem auto;
+}
+
+@media (min-width: 769px) {
+  .tiktok-embed-wrapper {
+    padding-bottom: 146%; /* Slightly adjusted for desktop */
+  }
+}
+
+/* --- Fix for background image quality --- */
+.info-panel-section {
+  padding: 3rem 0;
+  background-image: url('cookiess.webp');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .info-panel-section {
+    background-size: 200% auto; /* Reduce stretching on mobile */
+    background-position: center top;
+  }
+}
+
+/* --- Fix for text overflow in drama and details section --- */
+@media (max-width: 768px) {
+  .deets-drama-container {
+    padding: 2rem 4%;
+  }
+  
+  .drama-columns {
+    gap: 1.5rem;
+    padding: 0 2%;
+  }
+  
+  .drama-column {
+    flex: 1 1 100%;
+    padding: 0.5rem;
+  }
+  
+  .drama-column p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    word-wrap: break-word;
+    width: 100%;
+  }
+  
+  .drama-column h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .drama-column ul {
+    padding-left: 1.2rem;
+  }
+}
+
+/* --- Additional improvements for mobile --- */
+@media (max-width: 768px) {
+  /* Better product card layout */
+  .product-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+  
+  /* Improved nutritional facts panel */
+  .nutritional-facts-panel {
+    max-width: 100%;
+    overflow-x: hidden;
+    font-size: 0.9rem;
+  }
+  
+  /* Fix for cart sidebar width */
+  .cart-sidebar {
+    width: 85%;
+    padding: 1rem 0.75rem;
+  }
+}
+
+/* --- Fix for TikTok video overlay --- */
+.tiktok-feature-section {
+  position: relative;
+  z-index: 1;
+}
+
+.tiktok-embed-wrapper iframe {
+  z-index: 2;
+}
+
+/* --- Improved modal for mobile --- */
+@media (max-width: 768px) {
+  .checkout-modal {
+    padding: 1.25rem 0.75rem;
+    max-height: 80vh;
+  }
+  
+  .modal-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  #checkout-form .form-group {
+    margin-bottom: 0.8rem;
+  }
+  
+  #checkout-form label {
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+  }
+  
+  #checkout-form input,
+  #checkout-form textarea {
+    padding: 10px;
+    font-size: 0.95rem;
+  }
+}
+
+/* --- Better spacing for info panels on mobile --- */
+@media (max-width: 768px) {
+  .info-panel-container {
+    gap: 1rem;
+  }
+  
+  .info-panel {
+    padding: 0.75rem;
+  }
+  
+  .panel-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .serving-info {
+    font-size: 0.75rem;
+  }
+}
+
+/* --- Fix for navigation on mobile --- */
+@media (max-width: 768px) {
+  .site-header {
+    padding: 0.5rem 4%;
+  }
+  
+  .header-container {
+    padding: 0.25rem 0;
+  }
+  
+  .nav-link {
+    font-size: 1.1rem;
+    padding: 0.75rem 5%;
+  }
+}
+
+/* --- Improve hero section on mobile --- */
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 1.5rem 0 2rem 0;
+  }
+  
+  .hero-text {
+    padding: 0 4%;
+  }
+  
+  .hero-headline {
+    margin-bottom: 0.5rem;
+  }
+  
+  .hero-description {
+    margin-bottom: 1rem;
+  }
+  
+  .cta-button {
+    padding: 10px 20px;
+  }

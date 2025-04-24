@@ -778,15 +778,15 @@ document.addEventListener('DOMContentLoaded', () => {
         checkoutButton.addEventListener('click', openCheckout);
         closeCheckoutButton.addEventListener('click', closeCheckout);
         checkoutOverlay.addEventListener('click', (event) => {
-    // Check if the direct click target *IS* the overlay itself
-    if (event.target === checkoutOverlay) {
-        console.log("Clicked on overlay background, closing checkout.");
-        closeCheckout();
-    } else {
-         console.log("Clicked inside modal content (or on modal itself), NOT closing.");
-        // Do nothing, the click was inside the modal area
-    }
-}); // Click outside modal to close
+            // Check if the direct click target *IS* the overlay itself
+            if (event.target === checkoutOverlay) {
+                console.log("Clicked on overlay background, closing checkout.");
+                closeCheckout();
+            } else {
+                console.log("Clicked inside modal content (or on modal itself), NOT closing.");
+                // Do nothing, the click was inside the modal area
+            }
+        }); // Click outside modal to close
 
         // Checkout Form Submission
         checkoutForm.addEventListener('submit', handleCheckout);

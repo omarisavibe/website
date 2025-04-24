@@ -245,44 +245,46 @@
         </div>
     </div>
 
-    <!-- ===================== CHECKOUT MODAL & OVERLAY ===================== -->
-    <!-- (HTML Structure is similar to previous, styling handled by CSS) -->
-    <div id="checkout-overlay" class="checkout-overlay"></div>
-    <div id="checkout-modal" class="checkout-modal">
-        <button id="close-checkout-button" class="close-modal-button" aria-label="Close Checkout">×</button>
-        <h2 class="modal-title">Delivery Deets - Don't Mess Up</h2>
-        <form id="checkout-form" novalidate> <!-- Added novalidate to rely on JS/backend validation primarily -->
-            <div class="form-group">
-                <label for="customer_name">Your Name / TikTok Handle / Alias:</label>
-                <input type="text" id="customer_name" name="customer_name" placeholder="Who gets the goods?" required>
-            </div>
-            <!-- REMOVED EMAIL - Simplify checkout unless strictly needed for receipts/Supabase auth later -->
-            <!-- <div class="form-group">
-                <label for="customer_email">Email (Optional - For boring stuff):</label>
-                <input type="email" id="customer_email" name="customer_email" placeholder="your.vibe@email.com">
-            </div> -->
-            <div class="form-group">
-                <label for="customer_address">Full Address (Crucial!):</label>
-                <textarea id="customer_address" name="customer_address" rows="4" placeholder="Street, Building, Floor, Apartment #, Any Landmarks a confused delivery person needs!" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="customer_phone">Phone Number (MUST WORK!):</label>
-                <input type="tel" id="customer_phone" name="customer_phone" placeholder="Egyptian Mobile # (e.g., 01xxxxxxxxx)" required pattern="^01[0-2,5]{1}[0-9]{8}$"> <!-- Basic Egyptian Mobile Pattern -->
-                <small class="form-hint">Needed for delivery driver to find you / complain.</small>
-            </div>
+     <!-- ===================== CHECKOUT MODAL & OVERLAY ===================== -->
+    <!-- CORRECTED STRUCTURE: Modal is placed *INSIDE* the Overlay tags -->
 
-            <div class="checkout-summary-box">
-                <p class="summary-title">Your Score:</p>
-                <div id="checkout-summary"><!-- Populated by JS --></div>
-                <p class="total-title">Final Damage: <span id="checkout-total-price">LE 0.00</span></p>
-            </div>
+    <div id="checkout-overlay" class="checkout-overlay">  <!-- Overlay Tag STARTS Here -->
 
-            <button type="submit" id="submit-order-button" class="cta-button submit-btn">SEND IT! (Commit Now) 💸</button>
-            <p id="checkout-message" class="checkout-message"></p> <!-- For success/error messages -->
-        </form>
-    </div>
+        <!-- The ENTIRE Modal element goes INSIDE the overlay -->
+        <div id="checkout-modal" class="checkout-modal">
+            <button id="close-checkout-button" class="close-modal-button" aria-label="Close Checkout">×</button>
+            <h2 class="modal-title">Delivery Deets - Don't Mess Up</h2>
+            <form id="checkout-form" novalidate>
+                <div class="form-group">
+                    <label for="customer_name">Your Name / TikTok Handle / Alias:</label>
+                    <input type="text" id="customer_name" name="customer_name" placeholder="Who gets the goods?" required>
+                </div>
+                <!-- Email field removed as per your HTML -->
+                <div class="form-group">
+                    <label for="customer_address">Full Address (Crucial!):</label>
+                    <textarea id="customer_address" name="customer_address" rows="4" placeholder="Street, Building, Floor, Apartment #, Any Landmarks a confused delivery person needs!" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="customer_phone">Phone Number (MUST WORK!):</label>
+                    <input type="tel" id="customer_phone" name="customer_phone" placeholder="Egyptian Mobile # (e.g., 01xxxxxxxxx)" required pattern="^01[0-2,5]{1}[0-9]{8}$">
+                    <small class="form-hint">Needed for delivery driver to find you / complain.</small>
+                </div>
+
+                <div class="checkout-summary-box">
+                    <h4 class="summary-title">Your Score:</h4> <!-- Using H4 as you had -->
+                    <div id="checkout-summary"><!-- Populated by JS --></div>
+                    <p class="total-title">Final Damage: <span id="checkout-total-price">LE 0.00</span></p>
+                </div>
+
+                <button type="submit" id="submit-order-button" class="cta-button submit-btn">SEND IT! (Commit Now) 💸</button>
+                <p id="checkout-message" class="checkout-message"></p> <!-- For success/error messages -->
+            </form>
+        </div> <!-- Modal element ENDS Here -->
+
+    </div> <!-- Overlay Tag ENDS Here (AFTER the modal) -->
 
     <!-- ============================ SCRIPTS ============================ -->
+    <!-- ... rest of your body ... -->
     <!-- Supabase Client Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Your Custom JS File (handles cart, products, checkout) -->

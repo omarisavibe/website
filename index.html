@@ -3,96 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vibe Treats - Like my posting schedule, but edible.</title>
+    <title>Vibe Treats - Probably Good.</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Favicon Placeholder - Generate a favicon later -->
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Replace with your actual favicon -->
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
     <header>
-        <div class="logo">
-            <!-- Placeholder: Replace with actual logo image if you have one -->
-            <img src="logo-placeholder.png" alt="Vibe Treats Logo" id="logo-img">
-            <h1>VIBE TREATS</h1>
+        <div class="header-content">
+             <div class="logo-container">
+                 <!-- USE YOUR ACTUAL LOGO IMAGE HERE -->
+                <img src="vibe-treats-logo-actual.png" alt="Vibe Treats Logo" class="logo-img">
+                <span class="tagline">Like my posting schedule, but edible.</span>
+             </div>
+             <button id="cart-button" class="cart-toggle-button">
+                🛒 Cart (<span id="cart-count">0</span>)
+            </button>
         </div>
-        <nav>
-            <ul>
-                <li><a href="#products">Treats</a></li>
-                <li><a href="#about">The Deets</a></li>
-                <li><a href="#" id="cart-button">Cart (<span id="cart-count">0</span>)</a></li>
-                 <li><a href="admin-login.html" target="_blank" class="admin-link">Admin Login</a></li>
-            </ul>
-        </nav>
     </header>
 
     <main>
-        <section id="hero">
-            <div class="hero-content">
-                <h2>Like your posting schedule, but edible.</h2>
-                <p>Probably good? Cookies baked with questionable life choices and premium ingredients. Get 'em before I eat 'em all.</p>
-                <a href="#products" class="cta-button">Get Your Vibe On</a>
+        <!-- Hero/Intro Section -->
+        <section id="intro" class="intro-section">
+            <div class="intro-text">
+                <h1>WHY DON'T<br>YOU SAY SO?</h1>
+                <h2>These treats slap harder than existential dread.</h2>
+                <p>Probably good? Yeah. Approved by my dwindling serotonin & maybe some teething toddlers. Grab 'em before I realize what I've done.</p>
+                <a href="#treats" class="cta-button main-cta">Score: Certified Banger / Treat Yo'self</a>
             </div>
-            <div class="hero-image">
-                <!-- Placeholder Image -->
-                <img src="hero-image-placeholder.png" alt="Delicious looking cookies in a fun setting">
+            <div class="intro-visual">
+                <!-- Use the great hero image you provided! -->
+                <img src="vibe-treats-hero-main.jpg" alt="Stacks of Vibe Treats cookies with gooey fillings">
             </div>
         </section>
 
-        <section id="products">
-            <h2>THE LINEUP (When I Feel Like Baking)</h2>
+        <!-- TikTok Embed Section -->
+        <section id="tiktok-vibe" class="tiktok-section">
+            <h2>The Origin Story (Or Latest Chaos)</h2>
+             <div class="tiktok-embed-container">
+                <!-- *** REPLACE with your actual TikTok Embed Code *** -->
+                <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@omarisavibe/video/7370664694153006337" data-video-id="7370664694153006337" style="max-width: 605px;min-width: 325px;" > <section> <a target="_blank" title="@YOUR_USERNAME" href="https://www.tiktok.com/@YOUR_USERNAME?refer=embed">@YOUR_USERNAME</a> <p>The vid that started it all (or maybe just today's breakdown)</p> <a target="_blank" title="♬ original sound - YOUR_USERNAME" href="https://www.tiktok.com/music/original-sound-YOUR_SOUND_ID?refer=embed">♬ original sound - YOUR_USERNAME</a> </section> </blockquote> <script async src="https://www.tiktok.com/embed.js"></script>
+                <!-- *********************************************** -->
+            </div>
+            <p class="tiktok-follow">See the full descent into madness <a href="https://tiktok.com/@OMARISAVIBE" target="_blank" rel="noopener noreferrer">on TikTok @OMARISAVIBE</a></p>
+        </section>
+
+
+        <!-- Treats Section -->
+        <section id="treats" class="treats-section">
+            <h2>DA GOODS (Limited Stock aka Bake When Motivated)</h2>
             <div class="product-grid" id="product-grid">
-                <!-- Products will be loaded here by JavaScript -->
-                <p class="loading-msg">Loading the good stuff...</p>
+                <!-- Products loaded via JS -->
+                <p class="loading-msg">Summoning treats from the void...</p>
             </div>
         </section>
 
-        <section id="about">
-            <h2>The Deets & The Drama</h2>
-            <p>Okay, so basically I bake stuff I see online or invent in fever dreams. Sometimes it slaps, sometimes it's a certified "learning experience." If it makes the cut, it lands here. Baked in small batches (aka whenever I have executive function). Expect chaos, maybe some existential dread baked in for free.</p>
-            <p>Follow the descent into madness on TikTok: <a href="https://tiktok.com/@YOUR_TIKTOK_USERNAME" target="_blank" rel="noopener noreferrer">@YOUR_TIKTOK_USERNAME</a></p>
-            <div class="about-image">
-               <!-- Placeholder Image -->
-               <img src="about-image-placeholder.png" alt="Chaotic but fun baking scene or abstract brand pattern">
+         <!-- About/Philosophy Section -->
+        <section id="the-drama" class="drama-section">
+             <h2>The Details & The Drama</h2>
+            <div class="drama-content">
+                 <div class="actual-ingredients">
+                    <h3>Actual Ingredients <span class="shocking">(Shocking I know)</span></h3>
+                    <ul>
+                        <li>Flour</li>
+                        <li>Butter <span class="detail">(the good kind)</span></li>
+                        <li>Sugar <span class="detail">(white, maybe brown idk ask future me)</span></li>
+                        <li>Chocolate Chips <span class="detail">(loads)</span></li>
+                        <li>Eggs <span class="detail">(from actual chickens)</span></li>
+                        <li>Vanilla <span class="detail">(smells nice)</span></li>
+                        <li>Baking Powder/Soda <span class="detail">(science!)</span></li>
+                        <li>Salt <span class="detail">(enhances drama)</span></li>
+                        <li>Maybe Atik Powder? <span class="detail">(traces or chaos & existential dread)</span></li>
+                         <li>Love? Obligation? Who knows.</li>
+                    </ul>
+                 </div>
+                 <div class="more-info">
+                     <h3>Best Before...</h3>
+                     <p>idk, like, now? Eat up.</p>
+                     <h3>Storage Instructions</h3>
+                     <p>Hide from roommates/family immediately. Do not trust anyone. Maybe freeze if you have self-control (lol).</p>
+                     <h3>Pairs Well With</h3>
+                     <p>Procrastination, late-night scrolling, existential crises, your fave beverage (probably iced coffee), canceling plans.</p>
+                </div>
             </div>
         </section>
 
-        <!-- Cart Sidebar/Modal -->
+
+        <!-- Cart Sidebar (Keep structure similar) -->
         <div id="cart-sidebar" class="cart-sidebar">
-            <button id="close-cart-button" class="close-cart-button">&times;</button>
-            <h2>Your Treat Stash</h2>
+            <button id="close-cart-button" class="close-cart-button">×</button>
+            <h2>YOUR STASH</h2>
             <div id="cart-items">
-                <!-- Cart items will be loaded here -->
-                <p>Your cart is lookin' kinda sad rn.</p>
+                <p>Cart's empty. Go on, live a little.</p>
             </div>
-            <div class="cart-total">
-                <p>Total: $<span id="cart-total-price">0.00</span></p>
+            <div class="cart-summary">
+                <p>Total Vibe Cost: <span id="cart-total-price">LE 0.00</span></p>
+                <button id="checkout-button" class="cta-button checkout-btn">Checkout (Final Boss)</button>
             </div>
-            <button id="checkout-button" class="cta-button">Checkout (Commitment Issues?)</button>
         </div>
         <div id="cart-overlay" class="cart-overlay"></div>
 
-        <!-- Checkout Modal -->
-        <div id="checkout-modal" class="checkout-modal">
-             <button id="close-checkout-button" class="close-checkout-button">&times;</button>
-            <h2>Alright, Spill the Tea (Your Info)</h2>
+
+        <!-- Checkout Modal (Keep structure similar) -->
+       <div id="checkout-modal" class="checkout-modal">
+             <button id="close-checkout-button" class="close-checkout-button">×</button>
+            <h2>Drop the Deets (Delivery Stuff)</h2>
             <form id="checkout-form">
-                <label for="customer_name">Name (or alias, idc):</label>
-                <input type="text" id="customer_name" name="customer_name" required>
+                <label for="customer_name">Your Name/Handle:</label>
+                <input type="text" id="customer_name" name="customer_name" placeholder="How we yell for you" required>
 
-                <label for="customer_address">Address (where the goods go):</label>
-                <textarea id="customer_address" name="customer_address" rows="3" required></textarea>
+                <label for="customer_address">Address (Where the vibes land):</label>
+                <textarea id="customer_address" name="customer_address" rows="3" placeholder="Full address, ppl!" required></textarea>
 
-                <label for="customer_phone">Phone (Optional, for delivery drama?):</label>
-                <input type="tel" id="customer_phone" name="customer_phone">
+                <label for="customer_phone">Phone (Optional, for delivery SOS):</label>
+                <input type="tel" id="customer_phone" name="customer_phone" placeholder="Digits here">
 
-                <p>Order Summary:</p>
+                <p class="summary-title">Your Haul:</p>
                 <div id="checkout-summary"></div>
-                <p>Total: $<span id="checkout-total-price">0.00</span></p>
+                <p class="total-title">Total Price Damage: <span id="checkout-total-price">LE 0.00</span></p>
 
-                <button type="submit" id="submit-order-button" class="cta-button">Send It (No Take-Backs!)</button>
+                <button type="submit" id="submit-order-button" class="cta-button submit-btn">Confirm Order (No Undos!) 💸</button>
                  <p id="checkout-message" class="checkout-message"></p>
             </form>
         </div>
@@ -102,13 +135,13 @@
     </main>
 
     <footer>
-        <p>&copy; <span id="year"></span> Vibe Treats. Consume Responsibly (or don't, I'm not your dad).</p>
-         <p>Powered by questionable decisions & Supabase.</p>
+         <p>© <span id="year"></span> Vibe Treats. Handle (No) Care.</p>
+         <p class="footer-joke">May contain nuts, existential questions, and glitter (unintentionally).</p>
+         <a href="admin-login.html" class="footer-admin-link" target="_blank">Secret Admin Stuff</a>
     </footer>
 
-    <!-- Supabase Client Library -->
+    <!-- Supabase & Custom JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Your Custom JavaScript -->
     <script src="script.js"></script>
 </body>
 </html>

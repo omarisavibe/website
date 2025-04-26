@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en-EG">
+    <!-- Added lang="en-EG" hinting towards Egyptian audience but using English -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIBE TREATS - Too Lazy To Bake?</title>
+    <!-- Favicon Link - Replace 'favicon.png' with your actual icon file -->
+    <link rel="icon" href="logo-placeholder.png" type="image/png">
+
+    <!-- Preconnect for Fonts (Good practice for performance) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Font Links (Keep these, they match the vibe) -->
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Link to your CSS file (We'll create this later) -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Add any SEO Meta Tags if needed -->
+    <meta name="description" content="Too lazy to bake? Same. Order my viral TikTok treats instead. Baked with chaotic energy and premium ingredients. Delivering in Egypt.">
+
+</head>
+<body>
+
+    <!-- ============================ HEADER ============================ -->
+    <header class="site-header">
+        <div class="container header-container">
+            <div class="logo-area">
+                <!-- ** USE YOUR ACTUAL LOGO IMAGE HERE (Extracted from PDF) ** -->
+                <img src="logo-placeholder.png" alt="Vibe Treats Logo - Piece of cake with musical note poop emoji" class="logo-main">
+                <!-- Optionally add the text next to it if not part of the image -->
+                <!-- <span class="logo-text">VIBE TREATS</span> -->
+            </div>
+            <nav class="main-nav" aria-label="Main Navigation">
+                <!-- Basic nav, can be improved later -->
+                <a href="#treats" class="nav-link">The Goods</a>
+                <a href="#the-real-tea" class="nav-link">The Tea</a>
+                <a href="#tiktok-vibe" class="nav-link">My Origin Story</a>
+            </nav>
+            <button id="cart-button" class="cart-toggle-button button-style-primary">
+                🛒 Cart (<span id="cart-count">0</span>)
+            </button>
+            <!-- Maybe a Mobile Menu Button (for CSS/JS later) -->
+            <button class="mobile-menu-toggle" aria-label="Toggle Menu">☰</button>
+        </div>
+    </header>
+
+    <!-- ============================ MAIN CONTENT ============================ -->
+    <main>
+
+        <!-- ============================ HERO SECTION ============================ -->
+        <section id="hero" class="hero-section">
+            <div class="container hero-container">
+                <div class="hero-text animate-on-load slide-in-left">
+                    <!-- Directly using the box copy -->
+                    <h1 class="hero-headline">
+                        <span>WHY</span>
+                        <span>DON'T</span>
+                        <span>YOU SAY</span>
+                        <span>SOOO GOOD?</span>
+                    </h1>
+                    <p class="hero-subheadline">i got you bestie ✨</p>
+                    <p class="hero-description">tired of watching my recipes but never making them? same. just order them instead and we can both pretend you have the motivation to bake. premium ingredients + unhinged energy = these treats that are actually worth your money. 👏 </p>
+                    <a href="#treats" class="cta-button hero-cta animate-bounce">shop now or whatever 👇</a>
+                </div>
+                <div class="hero-visual animate-on-load fade-in">
+                    <!-- ** USE THE HERO IMAGE YOU PROVIDED (3 cookie stacks) ** -->
+                    <img src="hero-image-placeholder.png" alt="Delicious Vibe Treats cookies: Pistachio, Chocolate, Kinder Bueno style." class="hero-main-image">
+                </div>
+            </div>
+        </section>
+
+        <!-- ====================== FEATURED TIKTOK SECTION ======================= -->
+          <section id="tiktok-vibe" class="tiktok-feature-section dark-section">
+         <div class="container">
+           <h2 class="section-title animate-on-scroll fade-in">before you ask: yes, these are THE cookies</h2>
+           <p class="section-subtitle animate-on-scroll fade-in delay-1">from the FYP to your mouth. no literally. i make these.</p>
+
+           <div class="tiktok-embed-wrapper animate-on-scroll fade-in delay-2">
+             <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@omarisavibe/video/7370664694153006337" data-video-id="7370664694153006337" style="max-width: 500px; min-width: 300px;"> {/* <-- ADD THIS INLINE STYLE */}
+               <section>
+                 <a target="_blank" title="@omarisavibe" href="https://www.tiktok.com/@omarisavibe?refer=embed">@omarisavibe</a>
+                 <p>Watch me try not to burn your legendary treats 🔥</p>
+                 <a target="_blank" title="♬ original sound - omarisavibe" href="https://www.tiktok.com/music/original-sound-7370664761363368705?refer=embed">♬ original sound - omarisavibe</a>
+               </section>
+             </blockquote>
+             <script async src="https://www.tiktok.com/embed.js"></script>
+           </div>
+
+           <p class="follow-link animate-on-scroll fade-in delay-3">
+             more unhinged baking moments at <a href="https://tiktok.com/@omarisavibe" target="_blank" rel="noopener noreferrer">@OmarIsAVibe</a> (follow or i'll cry)
+           </p>
+         </div>
+       </section>
+
+
+        <!-- ========================= PRODUCTS SECTION ========================= -->
+        <section id="treats" class="product-section">
+            <div class="container">
+                <h2 class="section-title animate-on-scroll fade-in">THE MENU</h2>
+                <p class="section-subtitle animate-on-scroll fade-in delay-1">(stock = whenever i feel like baking, so grab them fast)</p>
+                <!-- Product Grid - This will be populated by script.js -->
+                <div class="product-grid" id="product-grid">
+                    <!-- ** Product Card Structure (Repeated by JS) **
+                         Needs 'image_url', 'name', 'description', 'price', 'id' from Supabase.
+                         Ensure Supabase table includes a product for the Box of 6.
+                    -->
+                    <article class="product-card placeholder-card animate-on-scroll fade-in">
+                        <!-- Placeholder Example - JS will replace this -->
+                        <div class="product-image-container">
+                           <div class="loading-spinner"></div>
+                           <!-- Actual image added by JS using image_url from DB -->
+                           <!-- <img src="cookies.png" alt="PLACEHOLDER NAME"> -->
+                        </div>
+                        <div class="product-details">
+                            <h3 class="product-name">loading treats...</h3>
+                            <p class="product-description">manifesting inventory data...</p>
+                            <p class="product-price">LE ???.??</p>
+                            <button class="cta-button add-to-cart-btn" disabled>add to cart</button>
+                        </div>
+                    </article>
+                    <!-- ... more placeholder cards or leave it to JS to show a loading state ... -->
+                    <p class="loading-msg" id="loading-indicator">loading... pls don't refresh or i'll cry</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====================== "NUTRITIONAL" / INFO PANEL ====================== -->
+        <section id="the-real-tea" class="info-panel-section">
+            <div class="container info-panel-container">
+
+                <!-- LEFT SIDE: Inspired by Box Left Panel -->
+                <div class="info-panel side-panel handle-care-panel animate-on-scroll slide-in-left">
+                    <!-- ** USE THE "Handle (No) Care" IMAGE HERE ** -->
+                    <!-- Image Prompt: Vertical panel design, Vibe Treats branding (teal/pink/yellow), dominant text "HANDLE (NO) CARE" in a fun, maybe slightly distressed font. Could include the winking smiley face. Background has subtle playful pattern. -->
+                    <img src="panel-handle-no-care.png" alt="Handle (No) Care - Vibe Treats Panel" class="info-panel-graphic">
+                    <!-- Fallback text or extra details if needed -->
+                    <h3 class="panel-title">handle with care or don't idc</h3>
+                    <p>these cookies will survive the apocalypse but not your hangry roommate. hide them well besties.</p>
+                    <p><strong>actual product:</strong> the famous brown butter cookies you've been screenshotting</p>
+                    <p>available when i'm not having a breakdown xoxo</p>
+                </div>
+
+                <!-- CENTER: Nutritional Facts Parody -->
+                <div class="info-panel nutritional-facts-panel animate-on-scroll fade-in delay-1">
+                     <h3 class="panel-title">Nutritional(ly) Facts</h3>
+                     <p class="serving-info">Serving Size: 1 Cookie (LOL, yeah right)</p>
+                     <p class="serving-info">Servings Per Container: Approx. 6 (If you're weak)</p>
+                     <div class="facts-table">
+                         <div class="fact-row header">
+                             <span></span>
+                             <span><strong>% Daily Vibe*</strong></span>
+                         </div>
+                         <div class="fact-row">
+                             <span><strong>Deliciousness</strong></span>
+                             <span><strong>1000%</strong></span>
+                         </div>
+                          <div class="fact-row">
+                             <span>Serotonin Boost</span>
+                             <span>200%</span>
+                         </div>
+                         <div class="fact-row">
+                             <span>Regret (Post-Binge)</span>
+                             <span>200%</span>
+                         </div>
+                          <div class="fact-row">
+                             <span>Chance of Sharing</span>
+                             <span>0%</span>
+                         </div>
+                          <div class="fact-row dense">
+                             <span>Chance of Immediately Ordering More</span>
+                             <span>At least 1%</span>
+                         </div>
+                     </div>
+                     <p class="facts-footer">*Not FDA Approved. Or APA approved. Or approved by any sane adult. We tried 'em tho.</p>
+                     <p class="facts-footer">Approved by teething toddlers and questionable judgement.</p>
+                 </div>
+
+                 <!-- RIGHT SIDE: Inspired by Box Right Panel -->
+                 <div class="info-panel side-panel why-say-so-panel animate-on-scroll slide-in-right delay-2">
+                     <!-- ** USE THE "Why Don't You Say So" PANEL IMAGE HERE ** -->
+                     <!-- Image Prompt: Vertical panel design, Vibe Treats branding (teal/pink/yellow, heavy on yellow?), dominant text "WHY DON'T YOU SAY SO?" possibly in bubble letters or loud font. Three exclamation marks graphic. "SCORE: Certified Banger / TBD". Area for "Pairs Well With". Maybe food stains/coffee rings effect. -->
+                     <img src="panel-why-dont-you-say-so.png" alt="Why Dont You Say So - Vibe Treats Panel" class="info-panel-graphic">
+                     <!-- Fallback text or dynamic elements -->
+                     <h3 class="panel-title">vibe check report:</h3>
+                     <p><strong>SCORE:</strong> ate and left no crumbs / literally</p>
+                     <h4>perfect pairing ideas:</h4>
+                     <ul>
+                         <li>scrolling through instagram at 3am</li>
+                         <li>ghosting someone who asked for the recipe</li>
+                         <li>watching your bank account cry</li>
+                         <li>convincing yourself this counts as "self-care"</li>
+                         <li>ice cold milk (obviously)</li>
+                     </ul>
+                     <p class="disclaimer">*written while in my feels after eating the entire batch</p>
+                 </div>
+            </div>
+             <div class="container deets-drama-container animate-on-scroll fade-in">
+                 <h2 class="section-title alternate">the tea you didn't ask for</h2>
+                 <div class="drama-columns">
+                     <div class="drama-column ingredients-column">
+                         <h3>what's actually in these? <span class="highlight">(receipts)</span></h3>
+                         <p>high quality only, bestie: Flour (<span class="banter">filtered through my emotional baggage</span>), Butter (<span class="banter">the expensive kind my wallet cried about</span>), Sugar (<span class="banter">sweet like my toxic ex</span>), Free-range Eggs (<span class="banter">the chickens had better housing than me</span>), Premium Chocolate (<span class="banter">the kind i hide from my siblings</span>), Vanilla (<span class="banter">imported, bc i'm extra like that</span>), Salt (<span class="banter">for the flavor AND the drama</span>).</p>
+                         <p>also contains: my tears, the sound of my mom asking when i'll get a real job, and the three hours of sleep i got before baking these.</p>
+                      <div class="drama-column storage-column">
+                          <h3>how long will these last?</h3>
+                          <p><strong>shelf life:</strong> lol you're not gonna need to worry about that</p>
+                          <ul>
+                              <li><strong>best before:</strong> you'll inhale these before checking expiry dates, trust</li>
+                              <li><strong>storage tips:</strong> hide them from your siblings/roommates/parents/self at 2am. airtight container if you have self-control (suspicious). freezable if you're a psychopath who "saves treats for later".</li>
+                          </ul>
+                          <h3>allergen tea</h3>
+                          <p>contains: gluten, dairy, eggs, and my chaotic energy. may contain nuts (both the ingredient and my mental state while baking). made in a kitchen where someone regularly has meltdowns. if you have allergies, maybe just enjoy my tiktoks instead?</p>
+                     </div>
+                 </div>
+            </div>
+        </section>
+
+
+    </main>
+
+    <!-- ============================ FOOTER ============================ -->
+    <footer class="site-footer">
+        <div class="container">
+            <p class="copyright">© <span id="year">2024</span> VIBE TREATS. not responsible for addiction to these cookies.</p>
+            <p class="footer-tagline">made with zero sleep and premium ingredients.</p>
+            <p class="footer-smallprint">results may vary. side effects include: happiness, telling everyone about these cookies, sliding into my DMs with praise.</p>
+            <!-- Hidden Admin Link for easier access -->
+             <a href="admin-login.html" class="admin-secret-link" target="_blank" title="Super Secret Admin Zone">👨‍💻</a>
+        </div>
+    </footer>
+
+    <!-- ======================= CART SIDEBAR & OVERLAY ======================= -->
+    <!-- (HTML Structure is similar to previous, styling handled by CSS) -->
+    <div id="cart-overlay" class="cart-overlay"></div>
+    <div id="cart-sidebar" class="cart-sidebar">
+        <button id="close-cart-button" class="close-modal-button" aria-label="Close Cart">×</button>
+        <h2 class="sidebar-title">YOUR STASH 🍪</h2>
+        <div id="cart-items" class="cart-items-container">
+            <!-- Cart items will be loaded by JS -->
+            <p class="cart-empty-message">empty cart? that's embarrassing.</p>
+        </div>
+        <div class="cart-summary-section">
+            <p class="cart-total-text">total damage: <span id="cart-total-price">LE 0.00</span></p>
+            <button id="checkout-button" class="cta-button checkout-btn" disabled>checkout (no regrets)</button>
+        </div>
+    </div>
+
+    <!-- ===================== CHECKOUT MODAL & OVERLAY ===================== -->
+    <div id="checkout-overlay" class="checkout-overlay">  <!-- Overlay START -->
+
+        <div id="checkout-modal" class="checkout-modal"> <!-- Modal START -->
+            <button id="close-checkout-button" class="close-modal-button" aria-label="Close Checkout">×</button>
+            <h2 class="modal-title">drop your deets</h2>
+
+            <form id="checkout-form" novalidate>
+                <!-- 1. Form Fields -->
+                <div class="form-group">
+                    <label for="customer_name">your name / social handle:</label>
+                    <input type="text" id="customer_name" name="customer_name" placeholder="who's the main character here?" required>
+                </div>
+                <div class="form-group">
+                    <label for="customer_address">full address (be specific bestie):</label>
+                    <textarea id="customer_address" name="customer_address" rows="4" placeholder="street, building, floor, apartment, landmarks... help us find you!" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="customer_phone">phone # (that actually works):</label>
+                    <input type="tel" id="customer_phone" name="customer_phone" placeholder="01xxxxxxxxx" required pattern="^01[0-2,5]{1}[0-9]{8}$">
+                    <small class="form-hint">so the delivery person can find you when they're lost</small>
+                </div>
+
+                <!-- 2. Telda Payment Instructions -->
+                <div class="telda-payment-instructions">
+                    <img src="images.png" alt="Telda Logo" class="telda-logo"> <!-- Ensure images.png exists or use correct path -->
+                    <h4>final step: payment!</h4>
+                    <p>to complete your order, please send the total amount (<span id="telda-total-price-reminder">LE 0.00</span>) via Telda to:</p>
+                    <p class="telda-username-wrapper">
+                        <span class="telda-username">@omarisavibe</span>
+                    </p>
+                    <p class="telda-note">we'll confirm your order once payment pops up. no payment = no treats, sorry bestie! 🤷‍♀️</p>
+                </div>
+
+
+                <!-- 4. Submit Button (ONLY ONE) -->
+                <button type="submit" id="submit-order-button" class="cta-button submit-btn">got it! ready to pay via telda ✅</button>
+
+                <!-- 5. Message Area -->
+                <p id="checkout-message" class="checkout-message"></p> <!-- For success/error messages -->
+
+            </form> <!-- Form END -->
+
+        </div> <!-- Modal END -->
+
+    </div> <!-- Overlay END -->
+
+    <!-- ============================ SCRIPTS ============================ -->
+    <!-- ... rest of your body ... -->
+    <!-- Supabase Client Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Your Custom JS File (handles cart, products, checkout) -->
+    <script src="script.js"></script>
+    <!-- Optional: JS for animations if needed -->
+    <!-- <script src="animations.js"></script> -->
+
+</body>
+</html>

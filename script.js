@@ -365,53 +365,92 @@ document.addEventListener('DOMContentLoaded', () => {
         isCartOpen = false;
     };
 
-    /** Opens the checkout modal and overlay, populates summary. */
+    // --- Sidebar/Modal Toggles ---
+
+    // --- REPLACE your existing openCheckout function with this one ---
+    /** Opens the checkout modal and overlay, populates summary including Telda reminder. */
     const openCheckout = () => {
+        // Guard clauses for missing elements
+        // Make sure all the element IDs used inside this function exist in the DOM cache check near the top of the script.
+        if (!checkoutModal || !checkoutOverlay || !bodyElement || !checkoutSummary || !checkoutTotalPrice || !checkoutForm || !submitOrderButton) {
+            console.error("Cannot open checkout - required elements missing. Check IDs: checkoutModal, checkoutOverlay, body, checkout-summary, checkout-total-price, checkout-form, submit-order-button");
+            showNotification("Checkout unavailable due to page error.", "error");
+            return;
+        }
+
         if (cart.length === 0) {
             showNotification("Add some treats to your cart first!", "warn");
             return;
         }
-        if (!checkoutModal || !checkoutOverlay || !bodyElement || !checkoutSummary || !checkoutTotalPrice || !checkoutForm) return;
 
-        console.log("Opening checkout modal.");
+        console.log("Opening checkout modal (Telda Flow).");
 
         // Populate Checkout Summary
         let summaryHTML = '<h4>Order Summary:</h4><ul>';
         let total = 0;
         cart.forEach(item => {
-            const product = products.find(p => p.id === item.id);
-            if (product && typeof product.price === 'number') {
-                 // Ensure product data is valid before adding to summary
+             const product = products.find(p => p.id === item.id);
+             if (product && typeof product.price === 'number') {
+                // Ensure product data is valid before adding to summary
                 summaryHTML += `<li>${item.quantity} x ${product.name} (${formatCurrency(product.price)} each)</li>`;
-                total += product.price * item.quantity;
-            } else {
-                 // Handle case where product details might be missing (though updateCartUI should prevent this in cart)
-                summaryHTML += `<li class="error-message">Error processing item ID: ${item.id}</li>`;
-                console.warn(`Checkout Summary: Missing product data for ID ${item.id}`);
-            }
+                 total += product.price * item.quantity;
+             } else {
+                 // Handle case where product details might be missing
+                summaryHTML += `<li class="error-message">Error processing item ID: ${item.id || 'Unknown'}</li>`; // Added fallback for item.id
+                 console.warn(`Checkout Summary: Missing product data for ID ${item.id || 'Unknown'}`);
+             }
         });
         summaryHTML += '</ul>';
-        checkoutSummary.innerHTML = summaryHTML;
-        checkoutTotalPrice.textContent = formatCurrency(total);
+        checkoutSummary.innerHTML = summaryHTML; // Update the summary box
+        const totalFormatted = formatCurrency(total); // Get formatted total
+        checkoutTotalPrice.textContent = totalFormatted; // Update the total in the summary box
+
+        // --- Update Telda Total Reminder ---
+        // Make sure the element with ID 'telda-total-price-reminder' exists in your HTML inside the telda instructions block.
+        const teldaTotalPriceReminder = document.getElementById('telda-total-price-reminder');
+        if (teldaTotalPriceReminder) {
+             teldaTotalPriceReminder.textContent = totalFormatted;
+             console.log("Updated Telda reminder span with total:", totalFormatted);
+        } else {
+             console.warn("Telda total reminder span (#telda-total-price-reminder) not found in HTML.");
+             // Optionally display a less critical error or fallback in the UI if this span is missing
+        }
 
         // Reset form state and messages from previous attempts
         checkoutForm.reset();
         if(checkoutMessage) checkoutMessage.textContent = '';
         if(checkoutMessage) checkoutMessage.className = 'checkout-message'; // Reset classes
-        if(submitOrderButton) submitOrderButton.disabled = false;
-        if(submitOrderButton) submitOrderButton.textContent = 'Confirm Order & Send Vibes 💸';
+        if(submitOrderButton) submitOrderButton.disabled = false; // Ensure button is enabled initially
+        // Ensure button text is the initial Telda one when opening modal
+        if(submitOrderButton) submitOrderButton.textContent = 'got it! ready to pay via telda ✅';
         isSubmitting = false; // Ensure submitting flag is reset
 
          // Clear previous validation errors visually
-        checkoutForm.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+        checkoutForm.querySelectorAll('.input-error').forEach(el => {
+            el.classList.remove('input-error');
+            el.removeAttribute('aria-invalid'); // Also remove accessibility attribute
+        });
 
 
+        // Show the modal and overlay
         checkoutModal.classList.add('active');
         checkoutOverlay.classList.add('active');
-        bodyElement.classList.add('overlay-active', 'checkout-open');
+        bodyElement.classList.add('overlay-active', 'checkout-open'); // Use body classes for potential global styling/scroll lock
         isCheckoutOpen = true;
-        if (isCartOpen) closeCart(); // Close cart if it's open
-    };
+
+        // Optionally close the cart sidebar if it happens to be open
+        if (isCartOpen) {
+            closeCart();
+        }
+
+        // Optional: Focus the first input field for accessibility/usability
+        const firstInput = checkoutForm.querySelector('input, textarea');
+        if (firstInput) {
+            // Use a slight delay to ensure the modal transition is complete before focusing
+            setTimeout(() => firstInput.focus(), 100); // Adjust delay if needed
+        }
+     };
+    // --- End of openCheckout function ---
 
     /** Closes the checkout modal and overlay. */
     const closeCheckout = () => {
@@ -560,72 +599,101 @@ document.addEventListener('DOMContentLoaded', () => {
        * Validates the checkout form fields.
        * @returns {boolean} True if the form is valid, false otherwise.
        */
+         // --- Validation ---
+      /**
+       * Validates the checkout form fields (Name, Address, Phone - Email removed).
+       * Adds/removes 'input-error' class and sets aria-invalid attributes.
+       * @returns {boolean} True if the form is valid, false otherwise.
+       */
+       // --- REPLACE your existing validateCheckoutForm function with this one ---
       const validateCheckoutForm = () => {
-          // Ensure all form elements are present
-          if (!checkoutForm || !customerNameInput || !customerEmailInput || !customerAddressInput || !customerPhoneInput) {
-               console.error("Checkout form validation skipped: One or more input elements are missing.");
+          // Ensure all required form elements (that we intend to validate) are present
+          // Note: customerEmailInput is removed from this check as it was removed from HTML
+          if (!checkoutForm || !customerNameInput || !customerAddressInput || !customerPhoneInput) {
+               console.error("Checkout form validation skipped: One or more required input elements (name, address, phone) are missing from the DOM or script cache.");
                showNotification("Checkout form error. Please contact support.", "error");
-               return false;
+               return false; // Cannot validate if elements are missing
            }
 
          let isValid = true;
          let firstInvalidField = null;
-          console.log("Validating checkout form...");
+          console.log("Validating checkout form (Telda Flow)...");
 
-          // Reset previous error styles
-         checkoutForm.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+          // Helper function to apply error state
+          const applyError = (inputElement) => {
+              temporaryClass(inputElement, 'input-error', 3000); // Add visual cue
+              inputElement.setAttribute('aria-invalid', 'true'); // Accessibility
+              if (!firstInvalidField) {
+                  firstInvalidField = inputElement; // Track the first error for focus
+              }
+          };
+
+          // Helper function to remove error state
+          const removeError = (inputElement) => {
+              // Note: temporaryClass handles removal, but we need to handle aria-invalid
+              inputElement.setAttribute('aria-invalid', 'false');
+              // inputElement.classList.remove('input-error'); // If not using temporaryClass
+          };
+
+          // Reset previous error styles before new validation run
+          checkoutForm.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+          // Also reset aria-invalid on all relevant fields
+          [customerNameInput, customerAddressInput, customerPhoneInput].forEach(el => el.setAttribute('aria-invalid', 'false'));
+
 
          // --- Field Validations ---
 
-         // Name: Required, at least 2 characters
+         // 1. Name: Required, at least 2 characters
          if (customerNameInput.value.trim().length < 2) {
              isValid = false;
-             temporaryClass(customerNameInput, 'input-error', 3000);
-             if (!firstInvalidField) firstInvalidField = customerNameInput;
-              console.warn("Validation Fail: Name too short.");
+             applyError(customerNameInput);
+             console.warn("Validation Fail: Name too short or empty.");
+          } else {
+             removeError(customerNameInput); // Explicitly mark as valid for accessibility state
           }
 
-         // Email: Required, basic format check using browser's built-in validation
-         if (!customerEmailInput.checkValidity() || customerEmailInput.value.trim() === '') {
-              isValid = false;
-             temporaryClass(customerEmailInput, 'input-error', 3000);
-             if (!firstInvalidField) firstInvalidField = customerEmailInput;
-             console.warn("Validation Fail: Email invalid or empty.");
-         }
+         // 2. Email validation removed as the field was removed from HTML
 
-         // Address: Required, at least 10 characters (basic check)
+         // 3. Address: Required, at least 10 characters (basic check)
          if (customerAddressInput.value.trim().length < 10) {
              isValid = false;
-            temporaryClass(customerAddressInput, 'input-error', 3000);
-             if (!firstInvalidField) firstInvalidField = customerAddressInput;
-             console.warn("Validation Fail: Address too short.");
+            applyError(customerAddressInput);
+             console.warn("Validation Fail: Address too short or empty.");
+          } else {
+             removeError(customerAddressInput);
           }
 
-        // Phone: Required (based on HTML 'required'), check pattern validity
-        if (!customerPhoneInput.checkValidity() || customerPhoneInput.value.trim() === '') {
+         // 4. Phone: Required (based on HTML 'required'), check pattern validity
+         // checkValidity() checks both required and pattern attributes
+         if (!customerPhoneInput.checkValidity()) {
              isValid = false;
-            temporaryClass(customerPhoneInput, 'input-error', 3000);
-             if (!firstInvalidField) firstInvalidField = customerPhoneInput;
-             console.warn("Validation Fail: Phone invalid or empty.");
-        }
+            applyError(customerPhoneInput);
+             console.warn("Validation Fail: Phone number is empty or does not match the required format (e.g., ^01[0-2,5]{1}[0-9]{8}$).");
+         } else {
+             removeError(customerPhoneInput);
+         }
          // --- End Field Validations ---
 
 
+          // --- Final Action Based on Validation ---
           if (!isValid) {
               console.error("Checkout validation failed.");
              showNotification("Please check your details. Look for the highlighted fields!", 'warn');
              if (firstInvalidField) {
-                 firstInvalidField.focus(); // Focus the first problematic field
-                 // Optionally shake the form or modal
-                 if (checkoutModal) temporaryClass(checkoutModal, 'shake-error', 400);
-                 else if(bodyElement) temporaryClass(bodyElement, 'shake-error', 400);
+                 // Use a slight delay to ensure the notification doesn't interfere with focus
+                 setTimeout(() => firstInvalidField.focus(), 50);
+                 // Optionally shake the form or modal for stronger feedback
+                 if (checkoutModal) {
+                     temporaryClass(checkoutModal, 'shake-error', 400);
+                 }
              }
          } else {
               console.log("✅ Checkout validation passed.");
           }
 
-         return isValid;
+         return isValid; // Return the overall validity status
      };
+    // --- End of validateCheckoutForm function ---
 
 
     // --- Checkout Handler ---
@@ -635,16 +703,15 @@ document.addEventListener('DOMContentLoaded', () => {
        */
       const handleCheckout = async (event) => {
            event.preventDefault(); // Prevent default form submission
-           console.log("handleCheckout initiated.");
+           console.log("handleCheckout initiated (Telda Flow).");
 
-           if (!supabase) {
-                console.error("Cannot submit order, Supabase client not available.");
-                showNotification("Connection error. Cannot submit order.", "error");
-                return;
-           }
+           // --- Initial Checks ---
+           // Supabase check is optional here unless using the logging feature below
+           // if (!supabase) { console.error("Supabase client not available for logging."); }
+
            if (isSubmitting) {
-              console.warn("Order submission already in progress. Please wait.");
-               showNotification("Processing your order...", "info");
+              console.warn("Submission already in progress. Please wait.");
+               showNotification("Processing...", "info");
                return;
           }
            if (cart.length === 0) {
@@ -654,109 +721,125 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
            }
 
-          // --- Frontend Validation ---
+          // --- Frontend Validation (Keep This) ---
           if (!validateCheckoutForm()) {
-              console.error("Frontend validation failed. Stopping order submission.");
+              console.error("Frontend validation failed. Stopping process.");
               // Notification is shown by validateCheckoutForm()
               return; // Stop submission
            }
 
-           // --- Start Submission Process ---
+           // --- Start "Confirmation" Process ---
            isSubmitting = true;
            if(submitOrderButton) submitOrderButton.disabled = true;
-           if(submitOrderButton) submitOrderButton.textContent = 'Sending Order... 🛸';
+           if(submitOrderButton) submitOrderButton.textContent = 'Got It! One Sec... ✨';
            if(checkoutMessage) checkoutMessage.textContent = ''; // Clear previous messages
            if(checkoutMessage) checkoutMessage.className = 'checkout-message'; // Reset message style
 
-         // --- Gather Data for Supabase ---
-         const formData = new FormData(checkoutForm);
-         const customerData = {
-             customer_name: formData.get('customer_name')?.trim() || 'N/A',
-             customer_email: formData.get('customer_email')?.trim().toLowerCase() || 'N/A',
-             customer_address: formData.get('customer_address')?.trim() || 'N/A',
-             customer_phone: formData.get('customer_phone')?.trim() || null // Use null if empty/not provided
-         };
+           // --- Gather Data (Still useful for display and potential logging) ---
+           const formData = new FormData(checkoutForm);
+           const customerData = {
+               customer_name: formData.get('customer_name')?.trim() || 'N/A',
+               // Note: email field was removed from HTML example, so not gathered here.
+               // customer_email: formData.get('customer_email')?.trim().toLowerCase() || 'N/A',
+               customer_address: formData.get('customer_address')?.trim() || 'N/A',
+               customer_phone: formData.get('customer_phone')?.trim() || 'N/A' // Keep phone
+           };
 
-          // Prepare order items: Include product ID, quantity, and price *at the time of purchase*
-          // Also store product name for easier viewing in Supabase dashboard
-         const orderItems = cart.map(item => {
-             const product = products.find(p => p.id === item.id);
-             return {
-                 product_id: item.id,
-                 quantity: item.quantity,
-                 // Include name and price for easier order management later
-                 name_at_purchase: product ? product.name : 'Unknown Item',
-                 price_at_purchase: (product && typeof product.price === 'number') ? product.price : 0
-             };
-         });
+           // Prepare order items for display/logging
+           const orderItems = cart.map(item => {
+               const product = products.find(p => p.id === item.id);
+               return {
+                   product_id: item.id,
+                   quantity: item.quantity,
+                   name_at_purchase: product ? product.name : 'Unknown Item',
+                   price_at_purchase: (product && typeof product.price === 'number') ? product.price : 0
+               };
+           });
 
-         // Recalculate total server-side ideally, but also needed for insertion here
-         const calculatedTotalPrice = orderItems.reduce((sum, item) => {
-              // Ensure price_at_purchase is a valid number
-              const price = typeof item.price_at_purchase === 'number' ? item.price_at_purchase : 0;
-              const quantity = typeof item.quantity === 'number' ? item.quantity : 0;
-              return sum + (price * quantity);
-          }, 0);
+           const calculatedTotalPrice = orderItems.reduce((sum, item) => {
+                const price = typeof item.price_at_purchase === 'number' ? item.price_at_purchase : 0;
+                const quantity = typeof item.quantity === 'number' ? item.quantity : 0;
+                return sum + (price * quantity);
+            }, 0);
 
-          const orderPayload = {
-            ...customerData, // Spread customer details
-            items: orderItems, // The array of item objects (maps to JSONB column)
-            total_price: calculatedTotalPrice,
-            order_status: 'Pending', // Default status
-            // 'is_fulfilled' might be deprecated if using 'order_status'
-            // is_fulfilled: false
-          };
+            const totalFormatted = formatCurrency(calculatedTotalPrice); // Format for display
 
-          console.log("Order payload prepared, sending to Supabase:", orderPayload);
+            // --- !! CORE LOGIC CHANGE !! ---
+            // Instead of sending to Supabase 'orders', just update the UI
+            // to confirm details are noted and payment is the next step.
 
-          // --- Sending to Supabase ---
-           try {
-               // Optional: Short delay for UX feedback (makes loading state visible)
-               await new Promise(resolve => setTimeout(resolve, 500));
+            console.log("Validation passed. Details captured (locally):", customerData);
+            console.log("Order items (local):", orderItems);
+            console.log("Total Price (local):", totalFormatted);
 
-              const { data, error } = await supabase
-                   .from('orders') // Make sure 'orders' is your table name
-                   .insert([orderPayload]) // Insert the prepared payload
-                   .select(); // Optionally select the newly created record
+            // --- Update UI to Confirm & Instruct ---
+            if (checkoutMessage) {
+                // Use innerHTML to allow the strong tags
+                checkoutMessage.innerHTML = `🎉 Awesome! Details look good. <br>Now, please send <strong>${totalFormatted}</strong> to Telda: <strong class="telda-username-confirm">@omarisavibe</strong> to lock in your order.`;
+                checkoutMessage.className = 'checkout-message success animate-fade-in'; // Use success style and animation
+                 // You can style '.telda-username-confirm' in CSS if needed
+            }
 
-              if (error) {
-                  // Handle potential Supabase errors (e.g., RLS policy violation, network issue)
-                  console.error('🔥 Supabase Insert Error:', error);
-                  throw new Error(`Database error: ${error.message}`); // Re-throw for generic catch block
-              }
+           if (submitOrderButton) {
+                // Change button text permanently after click for this session
+                submitOrderButton.textContent = 'PAYMENT PENDING VIA TELDA';
+                // Keep it disabled to prevent re-clicks confusion
+                 submitOrderButton.disabled = true;
+            }
 
-               console.log('✅ ORDER SUCCESS! Supabase Response:', data);
-               if (checkoutMessage) {
-                    checkoutMessage.textContent = '🎉 Order Placed Successfully! Thanks for the vibes! We\'ll be in touch.';
-                    checkoutMessage.className = 'checkout-message success animate-fade-in';
-               }
-               if (submitOrderButton) temporaryClass(submitOrderButton, 'button-success', 1500); // Green flash feedback
+            // --- IMPORTANT: Do NOT clear the cart or localStorage here ---
+            // The order is NOT complete until payment is manually verified.
 
-               // --- Post-Success Actions ---
-               cart = []; // Clear the local cart array
-               localStorage.removeItem('vibeTreatsCart'); // Clear cart from storage
-               updateCartUI(); // Update the UI (cart count, sidebar)
+            // Keep the modal open so the user can see the Telda info & total.
+            // Do not call closeCheckout() automatically.
 
-               // Close the checkout modal after a delay to show the success message
-               setTimeout(() => {
-                   closeCheckout();
-               }, 4000); // Keep modal open for 4 seconds
+             console.log("Checkout process paused. User instructed to pay via Telda.");
+             // Maybe show a final notification after a small delay
+             setTimeout(() => {
+                showNotification(`Reminder: Send ${totalFormatted} to Telda @omarisavibe!`, 'info', 5000);
+             }, 1000);
 
-           } catch (error) {
-               console.error('🔥 ORDER SUBMISSION FAILED:', error);
-               if (checkoutMessage) {
-                   // Provide a user-friendly error message
-                   checkoutMessage.textContent = `😥 Oops! Couldn't place the order. ${error.message}. Please try again or contact us.`;
-                   checkoutMessage.className = 'checkout-message error animate-fade-in';
-               }
-               if (bodyElement) temporaryClass(bodyElement, 'shake-error', 400); // Shake effect on error
 
-               // --- Reset form on error to allow retry ---
-               if(submitOrderButton) submitOrderButton.disabled = false; // IMPORTANT: Re-enable button
-               if(submitOrderButton) submitOrderButton.textContent = 'Try Sending Order Again?';
-               isSubmitting = false; // Reset submitting flag
-           }
-      };
+             // --- OPTIONAL: Log Contact Info to Supabase (Highly Recommended) ---
+             // ** REQUIRES a Supabase table named 'potential_orders' (or similar) **
+             // ** Columns suggestion: customer_name (text), customer_address (text),
+             // ** customer_phone (text), items_ordered (jsonb), order_total (numeric),
+             // ** status (text, default 'Awaiting Telda Payment'), created_at (timestamp)
+             if (supabase) { // Only attempt if Supabase client is available
+                 const logPayload = {
+                     customer_name: customerData.customer_name,
+                     customer_address: customerData.customer_address,
+                     customer_phone: customerData.customer_phone,
+                     items_ordered: orderItems, // Supabase handles JSON stringification
+                     order_total: calculatedTotalPrice,
+                     status: 'Awaiting Telda Payment',
+                 };
+                 try {
+                     const { error: logError } = await supabase
+                         .from('potential_orders') // <<-- YOUR NEW TABLE NAME
+                         .insert([logPayload]);
+                     if (logError) {
+                         console.error("Failed to log potential order details to Supabase:", logError);
+                         // Log this error for your debugging, but don't bother the user.
+                     } else {
+                         console.log("Successfully logged potential order details for follow-up.");
+                     }
+                 } catch (err) {
+                     console.error("Error during optional Supabase logging:", err);
+                 }
+            } else {
+                 console.warn("Supabase client not available, skipping optional order logging.");
+            }
+            // --- End Optional Logging ---
+
+
+            // Reset isSubmitting flag *only if* you have a reason to allow re-clicks later.
+            // Keeping the button disabled is generally clearer for this flow.
+            // isSubmitting = false;
+
+
+       }; // --- END OF handleCheckout ---
+
 
 
     // --- EVENT LISTENERS SETUP ---

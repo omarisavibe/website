@@ -256,12 +256,13 @@
         <div id="checkout-modal" class="checkout-modal">
             <button id="close-checkout-button" class="close-modal-button" aria-label="Close Checkout">×</button>
             <h2 class="modal-title">drop your deets</h2>
+            <!-- ... inside #checkout-modal ... -->
             <form id="checkout-form" novalidate>
+                <!-- Keep Name, Address, Phone form groups as they are -->
                 <div class="form-group">
                     <label for="customer_name">your name / social handle:</label>
                     <input type="text" id="customer_name" name="customer_name" placeholder="who's the main character here?" required>
                 </div>
-                <!-- Email field removed as per your HTML -->
                 <div class="form-group">
                     <label for="customer_address">full address (be specific bestie):</label>
                     <textarea id="customer_address" name="customer_address" rows="4" placeholder="street, building, floor, apartment, landmarks... help us find you!" required></textarea>
@@ -271,6 +272,30 @@
                     <input type="tel" id="customer_phone" name="customer_phone" placeholder="01xxxxxxxxx" required pattern="^01[0-2,5]{1}[0-9]{8}$">
                     <small class="form-hint">so the delivery person can find you when they're lost</small>
                 </div>
+
+                <div class="checkout-summary-box">
+                    <h4 class="summary-title">your haul:</h4>
+                    <div id="checkout-summary"><!-- Populated by JS --></div>
+                    <p class="total-title">total: <span id="checkout-total-price">LE 0.00</span></p>
+                </div>
+
+                <!-- START: Telda Payment Instructions -->
+                <div class="telda-payment-instructions">
+                    <img src="images.png" alt="Telda Logo" class="telda-logo">
+                     <h4>final step: payment!</h4>
+                    <p>to complete your order, please send the total amount (<span id="telda-total-price-reminder">LE 0.00</span>) via Telda to:</p>
+                    <p class="telda-username-wrapper">
+                        <span class="telda-username">@omarisavibe</span>
+                    </p>
+                    <p class="telda-note">we'll confirm your order once payment pops up. no payment = no treats, sorry bestie! 🤷‍♀️</p>
+                </div>
+                <!-- END: Telda Payment Instructions -->
+
+                <!-- CHANGE BUTTON TEXT -->
+                <button type="submit" id="submit-order-button" class="cta-button submit-btn">got it! ready to pay via telda ✅</button>
+                <p id="checkout-message" class="checkout-message"></p> <!-- Still useful for confirmation -->
+            </form>
+            <!-- ... rest of modal ... -->
 
                 <div class="checkout-summary-box">
                     <h4 class="summary-title">your haul:</h4> <!-- Using H4 as you had -->

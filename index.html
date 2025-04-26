@@ -247,53 +247,67 @@
         </div>
     </div>
 
-    <!-- ===================== CHECKOUT MODAL & OVERLAY ===================== -->
-    <div id="checkout-overlay" class="checkout-overlay">  <!-- Overlay START -->
+<!-- ===================== CHECKOUT MODAL & OVERLAY ===================== -->
+<div id="checkout-overlay" class="checkout-overlay">  <!-- Overlay START -->
 
-        <div id="checkout-modal" class="checkout-modal"> <!-- Modal START -->
-            <button id="close-checkout-button" class="close-modal-button" aria-label="Close Checkout">×</button>
-            <h2 class="modal-title">drop your deets</h2>
+    <div id="checkout-modal" class="checkout-modal"> <!-- Modal START -->
+        <button id="close-checkout-button" class="close-modal-button" aria-label="Close Checkout">×</button>
+        <h2 class="modal-title">drop your deets</h2>
 
-            <form id="checkout-form" novalidate>
-                <!-- 1. Form Fields -->
-                <div class="form-group">
-                    <label for="customer_name">your name / social handle:</label>
-                    <input type="text" id="customer_name" name="customer_name" placeholder="who's the main character here?" required>
-                </div>
-                <div class="form-group">
-                    <label for="customer_address">full address (be specific bestie):</label>
-                    <textarea id="customer_address" name="customer_address" rows="4" placeholder="street, building, floor, apartment, landmarks... help us find you!" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="customer_phone">phone # (that actually works):</label>
-                    <input type="tel" id="customer_phone" name="customer_phone" placeholder="01xxxxxxxxx" required pattern="^01[0-2,5]{1}[0-9]{8}$">
-                    <small class="form-hint">so the delivery person can find you when they're lost</small>
-                </div>
-
-                <!-- 2. Telda Payment Instructions -->
-                <div class="telda-payment-instructions">
-                    <img src="images.png" alt="Telda Logo" class="telda-logo"> <!-- Ensure images.png exists or use correct path -->
-                    <h4>final step: payment!</h4>
-                    <p>to complete your order, please send the total amount (<span id="telda-total-price-reminder">LE 0.00</span>) via Telda to:</p>
-                    <p class="telda-username-wrapper">
-                        <span class="telda-username">@omarisavibe</span>
-                    </p>
-                    <p class="telda-note">we'll confirm your order once payment pops up. no payment = no treats, sorry bestie! 🤷‍♀️</p>
-                </div>
+        <!-- ****** ADDED SUMMARY SECTION HERE ****** -->
+        <div class="checkout-order-summary">
+            <div id="checkout-summary">
+                <!-- Order summary will be loaded here by JS -->
+                <p>Loading your stash details...</p>
+            </div>
+            <p class="checkout-total-line">
+                Total Damage: <strong id="checkout-total-price">LE 0.00</strong>
+            </p>
+        </div>
+        <!-- ****** END OF ADDED SECTION ****** -->
 
 
-                <!-- 4. Submit Button (ONLY ONE) -->
-                <button type="submit" id="submit-order-button" class="cta-button submit-btn">got it! ready to pay via telda ✅</button>
+        <form id="checkout-form" novalidate>
+            <!-- 1. Form Fields -->
+            <div class="form-group">
+                <label for="customer_name">your name / social handle:</label>
+                <input type="text" id="customer_name" name="customer_name" placeholder="who's the main character here?" required>
+            </div>
+            <div class="form-group">
+                <label for="customer_address">full address (be specific bestie):</label>
+                <textarea id="customer_address" name="customer_address" rows="4" placeholder="street, building, floor, apartment, landmarks... help us find you!" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="customer_phone">phone # (that actually works):</label>
+                <input type="tel" id="customer_phone" name="customer_phone" placeholder="01xxxxxxxxx" required pattern="^01[0-2,5]{1}[0-9]{8}$">
+                <small class="form-hint">so the delivery person can find you when they're lost</small>
+            </div>
 
-                <!-- 5. Message Area -->
-                <p id="checkout-message" class="checkout-message"></p> <!-- For success/error messages -->
+            <!-- 2. Telda Payment Instructions -->
+            <div class="telda-payment-instructions">
+                <img src="images.png" alt="Telda Logo" class="telda-logo"> <!-- Ensure images.png exists or use correct path -->
+                <h4>final step: payment!</h4>
+                <p>to complete your order, please send the total amount (<span id="telda-total-price-reminder">LE 0.00</span>) via Telda to:</p>
+                <p class="telda-username-wrapper">
+                    <span class="telda-username">@omarisavibe</span>
+                </p>
+                <p class="telda-note">we'll confirm your order once payment pops up. no payment = no treats, sorry bestie! 🤷‍♀️</p>
+            </div>
 
-            </form> <!-- Form END -->
 
-        </div> <!-- Modal END -->
+            <!-- 4. Submit Button (ONLY ONE) -->
+            <!-- **** NOTE: I am using the 'handleCheckout' function from script (15).js which is the TELDA FLOW **** -->
+            <!-- **** If you switched to the FINALIZING flow, update the button text accordingly **** -->
+            <button type="submit" id="submit-order-button" class="cta-button submit-btn">got it! ready to pay via telda ✅</button>
 
-    </div> <!-- Overlay END -->
+            <!-- 5. Message Area -->
+            <p id="checkout-message" class="checkout-message"></p> <!-- For success/error messages -->
 
+        </form> <!-- Form END -->
+
+    </div> <!-- Modal END -->
+
+</div> <!-- Overlay END -->
     <!-- ============================ SCRIPTS ============================ -->
     <!-- ... rest of your body ... -->
     <!-- Supabase Client Library -->

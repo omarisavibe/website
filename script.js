@@ -699,15 +699,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Checkout Handler ---
       /**
        * Handles the checkout form submission: validates, prepares data, sends to Supabase.
+      /**
+       * Handles the checkout form submission: validates, prepares data, sends to Supabase.
        * @param {Event} event - The form submission event.
        */
       const handleCheckout = async (event) => {
            event.preventDefault(); // Prevent default form submission
-           console.log("handleCheckout initiated (Telda Flow).");
+           console.log("handleCheckout initiated (Finalize Order Flow).");
 
            // --- Initial Checks ---
-           // Supabase check is optional here unless using the logging feature below
-           // if (!supabase) { console.error("Supabase client not available for logging."); }
+           if (!supabase) {
+               console.error("Supabase client not available. Cannot place order.");
+               showNotification("Connection error. Cannot place order.", "error");
+               return; // Need Supabase to save the order
+            }
 
            if (isSubmitting) {
               console.warn("Submission already in progress. Please wait.");
@@ -721,36 +726,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
            }
 
-          // --- Frontend Validation (Keep This) ---
+          // --- Frontend Validation ---
           if (!validateCheckoutForm()) {
               console.error("Frontend validation failed. Stopping process.");
               // Notification is shown by validateCheckoutForm()
               return; // Stop submission
            }
 
-           // --- Start "Confirmation" Process ---
+           // --- Start Submission Process ---
            isSubmitting = true;
            if(submitOrderButton) submitOrderButton.disabled = true;
-           if(submitOrderButton) submitOrderButton.textContent = 'Got It! One Sec... ✨';
+           if(submitOrderButton) submitOrderButton.textContent = 'Placing Order... ✨'; // Update text
            if(checkoutMessage) checkoutMessage.textContent = ''; // Clear previous messages
            if(checkoutMessage) checkoutMessage.className = 'checkout-message'; // Reset message style
 
-           // --- Gather Data (Still useful for display and potential logging) ---
+           // --- Gather Data ---
            const formData = new FormData(checkoutForm);
            const customerData = {
                customer_name: formData.get('customer_name')?.trim() || 'N/A',
-               // Note: email field was removed from HTML example, so not gathered here.
-               // customer_email: formData.get('customer_email')?.trim().toLowerCase() || 'N/A',
                customer_address: formData.get('customer_address')?.trim() || 'N/A',
-               customer_phone: formData.get('customer_phone')?.trim() || 'N/A' // Keep phone
+               customer_phone: formData.get('customer_phone')?.trim() || 'N/A'
            };
 
-           // Prepare order items for display/logging
            const orderItems = cart.map(item => {
                const product = products.find(p => p.id === item.id);
                return {
                    product_id: item.id,
                    quantity: item.quantity,
+                   // Store name/price at time of purchase in case product details change later
                    name_at_purchase: product ? product.name : 'Unknown Item',
                    price_at_purchase: (product && typeof product.price === 'number') ? product.price : 0
                };
@@ -762,81 +765,76 @@ document.addEventListener('DOMContentLoaded', () => {
                 return sum + (price * quantity);
             }, 0);
 
-            const totalFormatted = formatCurrency(calculatedTotalPrice); // Format for display
+           // --- Prepare Payload for Supabase 'orders' Table ---
+           // *** IMPORTANT: Make sure you have an 'orders' table in Supabase ***
+           // Columns needed: customer_name (text), customer_address (text), customer_phone (text),
+           // order_items (jsonb), total_price (numeric), status (text, e.g., 'Pending'), created_at (timestamp)
+           const orderPayload = {
+               customer_name: customerData.customer_name,
+               customer_address: customerData.customer_address,
+               customer_phone: customerData.customer_phone,
+               order_items: orderItems, // Supabase handles JSON stringification
+               total_price: calculatedTotalPrice,
+               status: 'Pending' // Or 'Processing', 'Received', etc.
+               // created_at is usually handled automatically by Supabase
+           };
 
-            // --- !! CORE LOGIC CHANGE !! ---
-            // Instead of sending to Supabase 'orders', just update the UI
-            // to confirm details are noted and payment is the next step.
+           console.log("Attempting to insert order:", orderPayload);
 
-            console.log("Validation passed. Details captured (locally):", customerData);
-            console.log("Order items (local):", orderItems);
-            console.log("Total Price (local):", totalFormatted);
+           // --- Insert into Supabase ---
+           try {
+               const { data, error } = await supabase
+                   .from('orders') // <<<--- YOUR ACTUAL ORDERS TABLE NAME
+                   .insert([orderPayload])
+                   .select(); // Optionally select the inserted data if needed
 
-            // --- Update UI to Confirm & Instruct ---
-            if (checkoutMessage) {
-                // Use innerHTML to allow the strong tags
-                checkoutMessage.innerHTML = `🎉 Awesome! Details look good. <br>Now, please send <strong>${totalFormatted}</strong> to Telda: <strong class="telda-username-confirm">@omarisavibe</strong> to lock in your order.`;
-                checkoutMessage.className = 'checkout-message success animate-fade-in'; // Use success style and animation
-                 // You can style '.telda-username-confirm' in CSS if needed
-            }
+               if (error) {
+                   console.error("🔥 Supabase insert error:", error);
+                   throw new Error(`Database Error: ${error.message}`); // Throw to be caught below
+               }
 
-           if (submitOrderButton) {
-                // Change button text permanently after click for this session
-                submitOrderButton.textContent = 'PAYMENT PENDING VIA TELDA';
-                // Keep it disabled to prevent re-clicks confusion
-                 submitOrderButton.disabled = true;
-            }
+               console.log("✅ Order successfully inserted:", data);
 
-            // --- IMPORTANT: Do NOT clear the cart or localStorage here ---
-            // The order is NOT complete until payment is manually verified.
+               // --- Success Actions ---
+               if (checkoutMessage) {
+                   checkoutMessage.textContent = `🎉 Order Placed! Your treats are on the way. We'll contact you for delivery details.`;
+                   checkoutMessage.className = 'checkout-message success animate-fade-in';
+               }
+               showNotification("Order placed successfully!", 'success', 4000);
 
-            // Keep the modal open so the user can see the Telda info & total.
-            // Do not call closeCheckout() automatically.
+               // Clear the cart
+               cart = [];
+               updateCartUI(); // Updates localStorage and UI
 
-             console.log("Checkout process paused. User instructed to pay via Telda.");
-             // Maybe show a final notification after a small delay
-             setTimeout(() => {
-                showNotification(`Reminder: Send ${totalFormatted} to Telda @omarisavibe!`, 'info', 5000);
-             }, 1000);
+               // Close the modal after a short delay so user can see the message
+               setTimeout(() => {
+                    closeCheckout();
+                    // Reset form for next time AFTER closing
+                    checkoutForm.reset();
+                    if(submitOrderButton) submitOrderButton.textContent = 'Checkout Time!'; // Reset button text
+               }, 3000); // 3-second delay
 
-
-             // --- OPTIONAL: Log Contact Info to Supabase (Highly Recommended) ---
-             // ** REQUIRES a Supabase table named 'potential_orders' (or similar) **
-             // ** Columns suggestion: customer_name (text), customer_address (text),
-             // ** customer_phone (text), items_ordered (jsonb), order_total (numeric),
-             // ** status (text, default 'Awaiting Telda Payment'), created_at (timestamp)
-             if (supabase) { // Only attempt if Supabase client is available
-                 const logPayload = {
-                     customer_name: customerData.customer_name,
-                     customer_address: customerData.customer_address,
-                     customer_phone: customerData.customer_phone,
-                     items_ordered: orderItems, // Supabase handles JSON stringification
-                     order_total: calculatedTotalPrice,
-                     status: 'Awaiting Telda Payment',
-                 };
-                 try {
-                     const { error: logError } = await supabase
-                         .from('potential_orders') // <<-- YOUR NEW TABLE NAME
-                         .insert([logPayload]);
-                     if (logError) {
-                         console.error("Failed to log potential order details to Supabase:", logError);
-                         // Log this error for your debugging, but don't bother the user.
-                     } else {
-                         console.log("Successfully logged potential order details for follow-up.");
-                     }
-                 } catch (err) {
-                     console.error("Error during optional Supabase logging:", err);
-                 }
-            } else {
-                 console.warn("Supabase client not available, skipping optional order logging.");
-            }
-            // --- End Optional Logging ---
+               // Keep the button disabled until the modal closes
+               // isSubmitting = false; // Reset flag (less critical now modal closes)
 
 
-            // Reset isSubmitting flag *only if* you have a reason to allow re-clicks later.
-            // Keeping the button disabled is generally clearer for this flow.
-            // isSubmitting = false;
+           } catch (error) {
+               console.error("🔥 Order placement FAILED:", error);
 
+               // --- Error Actions ---
+               if (checkoutMessage) {
+                   checkoutMessage.textContent = `😭 Oops! Something went wrong placing your order. Please try again or contact us. Error: ${error.message}`;
+                   checkoutMessage.className = 'checkout-message error animate-fade-in';
+               }
+               showNotification(`Order failed: ${error.message}`, 'error', 5000);
+
+               // Re-enable the button so the user can try again
+               isSubmitting = false;
+               if(submitOrderButton) submitOrderButton.disabled = false;
+               if(submitOrderButton) submitOrderButton.textContent = 'Try Placing Order Again?';
+
+               // Keep the modal open on error
+           }
 
        }; // --- END OF handleCheckout ---
 

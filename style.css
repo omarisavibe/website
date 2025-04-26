@@ -1614,7 +1614,78 @@ textarea:focus.input-error {
     background-color: #546E7A;
 }
 
+/* --- Checkout Modal Additions for Telda --- */
 
+.telda-payment-instructions {
+    margin-top: 1.5rem; /* Space above */
+    margin-bottom: 1.5rem; /* Space below */
+    padding: 1rem;
+    border: 2px dashed var(--brand-teal); /* Dashed border */
+    border-radius: var(--radius-small);
+    background-color: var(--brand-bg-light-pink); /* Light pink bg */
+    text-align: center;
+}
+
+.telda-payment-instructions .telda-logo {
+    max-width: 60px; /* Adjust size as needed */
+    height: auto;
+    display: block;
+    margin: 0 auto 0.75rem auto; /* Center logo */
+}
+
+.telda-payment-instructions h4 {
+    font-family: var(--heading-font);
+    color: var(--brand-pink);
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.telda-payment-instructions p {
+    color: var(--text-grey);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+}
+
+.telda-username-wrapper {
+    margin: 0.75rem 0; /* More space around username */
+}
+
+.telda-username {
+    font-weight: 800; /* Bold */
+    color: var(--text-dark); /* Dark text */
+    background-color: var(--brand-yellow); /* Yellow background */
+    padding: 5px 15px; /* Padding */
+    border-radius: 50px; /* Pill shape */
+    font-size: 1.1rem; /* Larger font */
+    display: inline-block; /* Allows padding/bg */
+    letter-spacing: 1px;
+    border: 1px solid rgba(0,0,0,0.1); /* Subtle border */
+}
+
+.telda-note {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--text-grey);
+    margin-top: 1rem;
+}
+
+/* Responsive Adjustments for Telda block if needed */
+@media (max-width: 480px) {
+    .telda-payment-instructions {
+        padding: 0.75rem;
+    }
+    .telda-payment-instructions h4 {
+        font-size: 1.1rem;
+    }
+     .telda-username {
+        font-size: 1rem;
+        padding: 4px 12px;
+    }
+    .telda-payment-instructions p {
+        font-size: 0.9rem;
+    }
+}
 /* --- Specific Mobile Fixes (Keep last, remove redundant ones) --- */
 /* Removing redundant/conflicting rules from the end of style(10) */
 /* @media (max-width: 768px) { */

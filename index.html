@@ -255,7 +255,7 @@
             <h2 class="modal-title">drop your deets</h2>
 
             <form id="checkout-form" novalidate>
-                <!-- 1. Form Fields -->
+                <!-- 1. Form Fields (Keep as is) -->
                 <div class="form-group">
                     <label for="customer_name">your name / social handle:</label>
                     <input type="text" id="customer_name" name="customer_name" placeholder="who's the main character here?" required>
@@ -270,22 +270,56 @@
                     <small class="form-hint">so the delivery person can find you when they're lost</small>
                 </div>
 
-                <!-- 2. Telda Payment Instructions -->
+                <!-- 2. Telda Payment Instructions (Keep as is) -->
                 <div class="telda-payment-instructions">
                     <img src="images.png" alt="Telda Logo" class="telda-logo"> <!-- Ensure images.png exists or use correct path -->
-                    <h4>final step: payment!</h4>
-                    <p>to complete your order, please send the total amount (<span id="telda-total-price-reminder">LE 0.00</span>) via Telda to:</p>
+                    <h4>Option 1: Pay with Telda</h4>
+                    <p>Send the total (<span id="telda-total-price-reminder" class="payment-total-reminder">LE 0.00</span>) via Telda to:</p>
                     <p class="telda-username-wrapper">
                         <span class="telda-username">@omarisavibe</span>
                     </p>
-                    <p class="telda-note">we'll confirm your order once payment pops up. no payment = no treats, sorry bestie! 🤷‍♀️</p>
+                    <p class="telda-note">we'll confirm once payment pops up.</p>
                 </div>
 
+                <!-- 3. Instapay Payment Instructions (NEW SECTION) -->
+                <div class="instapay-payment-instructions">
+                    <!-- ** USE YOUR ACTUAL INSTAPAY LOGO IMAGE HERE ** -->
+                    <img src="unnamed.png" alt="Instapay Logo" class="instapay-logo">
+                    <h4>Option 2: Pay with Instapay</h4>
+                    <p>Or send the total (<span id="instapay-total-price-reminder" class="payment-total-reminder">LE 0.00</span>) via Instapay App:</p>
+                    <div class="copyable-detail">
+                        <label>Card Number:</label>
+                        <span class="instapay-detail" id="instapay-card-number">5484460420559718</span>
+                        <button type="button" class="copy-button" data-clipboard-target="#instapay-card-number" aria-label="Copy Card Number">📋 Copy</button>
+                    </div>
+                    <div class="copyable-detail">
+                        <label>Recipient Name:</label>
+                        <span class="instapay-detail" id="instapay-recipient-name">Omar Moh</span>
+                        <button type="button" class="copy-button" data-clipboard-target="#instapay-recipient-name" aria-label="Copy Name">📋 Copy</button>
+                    </div>
+                    <p class="instapay-note">Make sure you transfer the exact amount!</p>
+                </div>
 
-                <!-- 4. Submit Button (ONLY ONE) -->
-                <button type="submit" id="submit-order-button" class="cta-button submit-btn">got it! ready to pay via telda ✅</button>
+                <!-- 4. Payment Method Selection (NEW SECTION) -->
+                <div class="form-group payment-method-selection">
+                    <label>Which method did you use to pay? *</label>
+                    <div class="payment-method-options">
+                        <div>
+                            <input type="radio" id="payment-method-telda" name="payment_method" value="Telda" required>
+                            <label for="payment-method-telda">Telda (@omarisavibe)</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="payment-method-instapay" name="payment_method" value="Instapay" required>
+                            <label for="payment-method-instapay">Instapay (Card Transfer)</label>
+                        </div>
+                    </div>
+                    <small class="form-hint">Select the one you used so we can confirm faster!</small>
+                </div>
 
-                <!-- 5. Message Area -->
+                <!-- 5. Submit Button (UPDATED TEXT) -->
+                <button type="submit" id="submit-order-button" class="cta-button submit-btn">Confirm Details & Payment Method Used ✅</button>
+
+                <!-- 6. Message Area (Keep as is) -->
                 <p id="checkout-message" class="checkout-message"></p> <!-- For success/error messages -->
 
             </form> <!-- Form END -->

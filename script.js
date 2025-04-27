@@ -465,6 +465,13 @@ document.addEventListener('DOMContentLoaded', () => {
        * Adds/removes 'input-error' class and sets aria-invalid attributes.
        * @returns {boolean} True if the form is valid, false otherwise.
        */
+     // --- Validation ---
+      /**
+       * Validates the checkout form fields (Name, Address, Phone, Payment Method).
+       * Adds/removes 'input-error' class and sets aria-invalid attributes.
+       * Checks if the address is within allowed delivery zones (New Cairo / Nasr City).
+       * @returns {boolean} True if the form is valid, false otherwise.
+       */
       const validateCheckoutForm = () => {
           // Re-check required elements for validation
           if (!checkoutForm || !customerNameInput || !customerAddressInput || !customerPhoneInput || !paymentMethodSelection) {
@@ -480,7 +487,9 @@ document.addEventListener('DOMContentLoaded', () => {
           // Helper to apply error state
           const applyError = (inputElement, isGroup = false) => {
               const elementToStyle = isGroup ? inputElement : inputElement;
-              temporaryClass(elementToStyle, 'input-error', 3000); // CSS handles visual cue
+              // Use temporaryClass for shake/highlight effect, but also keep the class for persistence until next validation
+              elementToStyle.classList.add('input-error'); // Keep the error class
+              temporaryClass(elementToStyle, 'shake-subtle', 500); // Add a temporary shake
               if (!isGroup) inputElement.setAttribute('aria-invalid', 'true');
               if (!firstInvalidField) {
                   firstInvalidField = isGroup ? inputElement.querySelector('input') : inputElement;
@@ -490,29 +499,72 @@ document.addEventListener('DOMContentLoaded', () => {
           // Helper to remove error state
           const removeError = (inputElement, isGroup = false) => {
               const elementToStyle = isGroup ? inputElement : inputElement;
-              elementToStyle.classList.remove('input-error'); // Remove class if not using temporaryClass or for immediate reset
-               if (!isGroup) inputElement.setAttribute('aria-invalid', 'false');
+              elementToStyle.classList.remove('input-error'); // Remove class
+               if (!isGroup) inputElement.removeAttribute('aria-invalid'); // Use removeAttribute for boolean attributes
           };
 
           // --- Reset previous errors ---
           checkoutForm.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
-          [customerNameInput, customerAddressInput, customerPhoneInput].forEach(el => el.setAttribute('aria-invalid', 'false'));
+          [customerNameInput, customerAddressInput, customerPhoneInput].forEach(el => el.removeAttribute('aria-invalid'));
           removeError(paymentMethodSelection, true); // Reset radio group border/bg
 
 
          // --- Field Validations ---
+
          // 1. Name
          if (customerNameInput.value.trim().length < 2) {
              isValid = false; applyError(customerNameInput); console.warn("Validation Fail: Name");
           } else { removeError(customerNameInput); }
+
          // 2. Address
-         if (customerAddressInput.value.trim().length < 10) {
-             isValid = false; applyError(customerAddressInput); console.warn("Validation Fail: Address");
-          } else { removeError(customerAddressInput); }
+         const addressValue = customerAddressInput.value.trim();
+         if (addressValue.length < 10) {
+             // Basic length check first
+             isValid = false; applyError(customerAddressInput); console.warn("Validation Fail: Address too short");
+          } else {
+             // **** START: NEW LOCATION CHECK ****
+             const addressValueLower = addressValue.toLowerCase();
+             const allowedLocationsKeywords = [
+                 'new cairo',
+                 'tagamoa', // Common variation
+                 'tagamou', // Another common spelling
+                 'tagamo3', // Yet another
+                 'التجمع',   // Arabic
+                 'nasr city',
+                 'naser city', // Common misspelling
+                 'madinet nasr', // Common variation
+                 'madint nasr', // Misspelling
+                 'مدينة نصر',    // Arabic
+                 'm. nasr', // Abbreviation
+                 'm nasr'   // Abbreviation
+                 // Add any other essential variations or specific neighborhood names within these areas if needed
+             ];
+
+             // Check if the address contains ANY of the allowed keywords
+             const isLocationAllowed = allowedLocationsKeywords.some(keyword => addressValueLower.includes(keyword));
+
+             if (!isLocationAllowed) {
+                 isValid = false;
+                 applyError(customerAddressInput); // Apply error style to address field
+                 console.warn("Validation Fail: Address not in allowed delivery area (New Cairo/Nasr City). Address provided:", addressValue);
+                 // Set this field as the first invalid one if others were okay
+                 if (!firstInvalidField) firstInvalidField = customerAddressInput;
+                 // Provide a specific notification
+                 showNotification("Sorry, we only deliver to New Cairo & Nasr City for now! Please check your address.", 'warn', 5000);
+             } else {
+                 // Location is valid, remove potential error style from address field
+                 removeError(customerAddressInput);
+                 console.log("Address validation passed: Location seems valid.");
+             }
+             // **** END: NEW LOCATION CHECK ****
+          }
+
          // 3. Phone
-         if (!customerPhoneInput.checkValidity()) { // Checks required and pattern
-             isValid = false; applyError(customerPhoneInput); console.warn("Validation Fail: Phone");
+         // Use checkValidity() which respects the 'required' and 'pattern' attributes
+         if (!customerPhoneInput.checkValidity() || customerPhoneInput.value.trim() === '') {
+             isValid = false; applyError(customerPhoneInput); console.warn("Validation Fail: Phone number invalid or missing.");
          } else { removeError(customerPhoneInput); }
+
          // 4. Payment Method Selection
          const selectedPaymentMethod = checkoutForm.querySelector('input[name="payment_method"]:checked');
          if (!selectedPaymentMethod) {
@@ -528,20 +580,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
           if (!isValid) {
               console.error("Checkout validation failed.");
-             showNotification("Please check details & select payment method!", 'warn');
+             // General failure message (specific one might have been shown already for location)
+             if (!firstInvalidField || firstInvalidField !== customerAddressInput) { // Avoid double notification if location was the only issue
+                showNotification("Please check the highlighted details & select payment method!", 'warn', 3000);
+             }
              if (firstInvalidField) {
                  setTimeout(() => {
                      firstInvalidField.focus();
+                     // Optional: Scroll into view if needed, especially on mobile
                      // firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                 }, 50);
-                 if (checkoutModal) temporaryClass(checkoutModal, 'shake-error', 400);
+                 }, 100); // Small delay to ensure focus works after potential modal shake
+                 // Shake the modal only if it wasn't the location error that already triggered a notification
+                 if (checkoutModal && (!firstInvalidField || firstInvalidField !== customerAddressInput)) {
+                     temporaryClass(checkoutModal, 'shake-error', 400);
+                 }
              }
          } else {
               console.log("✅ Checkout validation passed.");
           }
          return isValid;
      };
-
 
     // --- Checkout Handler ---
       /**

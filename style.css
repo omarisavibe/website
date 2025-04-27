@@ -1711,4 +1711,177 @@ textarea:focus.input-error {
     /* line-height: 1.5; */
   /* } */
 
-/* Removed duplicated rules for deets-drama/info-panel padding from end of style(10) */
+/* --- Checkout Modal Additions for Instapay & Payment Method --- */
+
+.instapay-payment-instructions {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border: 2px dashed var(--brand-pink); /* Pink border for contrast */
+    border-radius: var(--radius-small);
+    background-color: #fff0f9; /* Lighter pink background */
+    text-align: center;
+}
+
+.instapay-payment-instructions .instapay-logo {
+    max-width: 80px; /* Adjust size as needed */
+    height: auto;
+    display: block;
+    margin: 0 auto 0.75rem auto;
+}
+
+.instapay-payment-instructions h4 {
+    font-family: var(--heading-font);
+    color: var(--brand-teal); /* Teal heading */
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.instapay-payment-instructions p {
+    color: var(--text-grey);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 0.75rem; /* More spacing */
+}
+
+.copyable-detail {
+    display: flex; /* Align items horizontally */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    gap: 0.75rem; /* Space between items */
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+}
+
+.copyable-detail label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0; /* Remove default margin */
+    flex-shrink: 0; /* Prevent label from shrinking */
+    color: var(--text-dark);
+}
+
+.instapay-detail {
+    font-weight: 700;
+    background-color: #f0f0f0; /* Light grey background */
+    padding: 4px 10px;
+    border-radius: var(--radius-small);
+    font-family: 'Courier New', Courier, monospace; /* Monospace for numbers */
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    color: var(--text-dark);
+    user-select: all; /* Make it easily selectable */
+}
+
+.copy-button {
+    background-color: var(--brand-teal);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    border-radius: var(--radius-small);
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.copy-button:hover {
+    background-color: #17a791;
+    transform: scale(1.05);
+}
+
+.copy-button:active {
+    transform: scale(0.98);
+}
+
+.copy-button.copied {
+    background-color: #4CAF50; /* Green feedback */
+}
+
+
+.instapay-note {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--text-grey);
+    margin-top: 1rem;
+}
+
+.payment-method-selection {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa; /* Slightly different background */
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-small);
+}
+
+.payment-method-selection > label { /* Style the main label for the group */
+    font-family: var(--heading-font);
+    color: var(--brand-pink);
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    display: block; /* Make it block */
+    text-align: center;
+}
+
+.payment-method-options {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem; /* Space between radio options */
+    flex-wrap: wrap; /* Allow wrapping */
+}
+
+.payment-method-options div { /* Container for each radio + label */
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.payment-method-options input[type="radio"] {
+    accent-color: var(--brand-pink); /* Style the radio button color */
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.payment-method-options label { /* Style labels next to radio buttons */
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+/* Style for highlighting validation error on radio group */
+.payment-method-selection.input-error {
+    border: 2px solid var(--brand-pink);
+    background-color: #fff5f9;
+    animation: shakeErrorAnimation 0.3s linear;
+}
+
+/* Responsive Adjustments if needed */
+@media (max-width: 480px) {
+    .instapay-payment-instructions {
+        padding: 0.75rem;
+    }
+    .instapay-payment-instructions h4 {
+        font-size: 1.1rem;
+    }
+     .instapay-detail {
+        font-size: 0.9rem;
+        padding: 3px 8px;
+    }
+     .copy-button {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+    }
+    .copyable-detail {
+        gap: 0.5rem;
+        justify-content: space-between; /* Better spacing on small screens */
+    }
+    .payment-method-options {
+        flex-direction: column; /* Stack options vertically */
+        align-items: flex-start; /* Align left */
+        gap: 0.8rem;
+    }
+}

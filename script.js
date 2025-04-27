@@ -1,4 +1,4 @@
-// --- VIBE TREATS SCRIPT - CONSOLIDATED & COMPLETE ---
+// --- VIBE TREATS SCRIPT - CONSOLIDATED & COMPLETE (with Telda & Instapay) ---
 document.addEventListener('DOMContentLoaded', () => {
     console.log("----- VIBE TREATS STARTUP ----- DOM loaded.");
 
@@ -39,8 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const cartSidebar = document.getElementById('cart-sidebar');
     const cartOverlay = document.getElementById('cart-overlay');
     const cartCount = document.getElementById('cart-count');
-    const checkoutSummary = document.getElementById('checkout-summary'); // <<< ADD THIS
-    const checkoutTotalPrice = document.getElementById('checkout-total-price'); // <<< ADD THIS
     const cartItemsContainer = document.getElementById('cart-items');
     const cartTotalPrice = document.getElementById('cart-total-price');
     const checkoutButton = document.getElementById('checkout-button');
@@ -51,27 +49,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const customerNameInput = document.getElementById('customer_name');
     const customerAddressInput = document.getElementById('customer_address');
     const customerPhoneInput = document.getElementById('customer_phone');
-    const customerEmailInput = document.getElementById('customer_email'); // Assuming you have this ID in HTML
-    const checkoutSummary = document.getElementById('checkout-summary');
-    const checkoutTotalPrice = document.getElementById('checkout-total-price');
+    // const customerEmailInput = document.getElementById('customer_email'); // Assuming still removed from HTML
+    const checkoutSummary = document.getElementById('checkout-summary'); // Used in openCheckout
+    const checkoutTotalPrice = document.getElementById('checkout-total-price'); // Used in openCheckout
     const submitOrderButton = document.getElementById('submit-order-button');
     const checkoutMessage = document.getElementById('checkout-message');
     const yearSpan = document.getElementById('year');
     const loadingIndicator = document.getElementById('loading-indicator');
-    const bodyElement = document.body; // Cache body element for class toggles
+    const bodyElement = document.body;
+    // NEW: Add payment method elements for validation/update
+    const paymentMethodSelection = document.querySelector('.payment-method-selection'); // The container div
+    const paymentTotalReminders = document.querySelectorAll('.payment-total-reminder'); // Select ALL reminder spans
 
-    // Check if crucial elements were found
-    if (!productGrid || !cartButton || !cartSidebar || !cartOverlay || !checkoutModal || !checkoutOverlay || !checkoutForm || !cartItemsContainer || !cartTotalPrice || !cartCount || !checkoutButton || !submitOrderButton) {
-         console.error("🛑 Critical HTML elements missing! Check IDs in your HTML file against the script:", {
-            productGrid: !!productGrid, cartButton: !!cartButton, cartSidebar: !!cartSidebar,
-             cartOverlay: !!cartOverlay, checkoutModal: !!checkoutModal, checkoutOverlay: !!checkoutOverlay, checkoutForm: !!checkoutForm,
-             cartItemsContainer: !!cartItemsContainer, cartTotalPrice: !!cartTotalPrice, cartCount: !!cartCount, checkoutButton: !!checkoutButton, submitOrderButton: !!submitOrderButton
-        });
-         alert("Woops! Some essential parts of the page (like the product grid, cart display, or checkout form) are missing in the HTML. Can't run properly.");
-         // Optionally display an error message on the page itself
-         if (bodyElement) bodyElement.innerHTML = '<h1 style="color: red; text-align: center; padding: 50px;">CRITICAL LAYOUT ERROR: Page elements missing.</h1>';
-         return; // Stop if layout is fundamentally broken
-     }
+    // Check if crucial elements were found (Combined check)
+    if (!productGrid || !cartButton || !cartSidebar || !cartOverlay || !cartCount || !cartItemsContainer || !cartTotalPrice ||
+        !checkoutButton || !checkoutModal || !checkoutOverlay || !closeCheckoutButton || !checkoutForm || !submitOrderButton ||
+        !customerNameInput || !customerAddressInput || !customerPhoneInput || !checkoutSummary || !checkoutTotalPrice || !paymentMethodSelection || paymentTotalReminders.length === 0) {
+        console.error("🛑 Critical HTML elements missing! Check IDs/Classes in your HTML file against the script.");
+        alert("Woops! Some essential parts of the page (like product grid, cart, checkout form, payment details) are missing in the HTML. Can't run properly.");
+        if (bodyElement) bodyElement.innerHTML = '<h1 style="color: red; text-align: center; padding: 50px;">CRITICAL LAYOUT ERROR: Page elements missing.</h1>';
+        return; // Stop if layout is fundamentally broken
+    }
     console.log("✅ HTML elements found.");
 
     // --- STATE MANAGEMENT ---
@@ -89,7 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
      * @returns {string} Formatted currency string (e.g., "LE 15.00").
      */
     const formatCurrency = (amount) => {
-        // Ensure amount is a number, default to 0 if not
         const numericAmount = typeof amount === 'number' ? amount : 0;
         return `LE ${numericAmount.toFixed(2)}`;
     };
@@ -115,30 +112,21 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {number} [duration=3000] - How long the notification stays visible (in ms).
      */
     const showNotification = (message, type = 'info', duration = 3000) => {
-        // Remove existing notification first
         const existingNotification = document.getElementById('site-notification');
         if (existingNotification) existingNotification.remove();
 
         const notification = document.createElement('div');
-        notification.id = 'site-notification'; // Use ID for easy removal
-        notification.className = `notification notification-${type}`; // Base class + type class
+        notification.id = 'site-notification';
+        notification.className = `notification notification-${type}`;
         notification.textContent = message;
-
         document.body.appendChild(notification);
-
-        // Trigger reflow to enable animation
-        notification.offsetHeight;
-
-        // Add 'show' class to animate in
+        notification.offsetHeight; // Trigger reflow
         notification.classList.add('show');
 
-        // Set timeout to remove the notification
         setTimeout(() => {
             notification.classList.remove('show');
-            // Remove element after fade out animation completes
             notification.addEventListener('transitionend', () => notification.remove(), { once: true });
         }, duration);
-
         console.log(`Notification [${type}]: ${message}`);
     };
 
@@ -151,14 +139,13 @@ document.addEventListener('DOMContentLoaded', () => {
      * Enables/disables the checkout button based on cart content.
      */
     const updateCartUI = () => {
-        // Guard clauses for missing elements (already checked above, but good practice)
         if (!cartItemsContainer || !cartTotalPrice || !cartCount || !checkoutButton) {
             console.error("Cannot update Cart UI - required elements missing.");
             return;
         }
         console.log("Updating Cart UI. Current cart:", JSON.stringify(cart));
 
-        cartItemsContainer.innerHTML = ''; // Clear previous items
+        cartItemsContainer.innerHTML = '';
         let total = 0;
         let itemCount = 0;
 
@@ -167,25 +154,18 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             cart.forEach(item => {
                 const product = products.find(p => p.id === item.id);
-
-                // Robust check for product data needed to display the item
                 if (!product || typeof product.price !== 'number' || !product.name || !product.image_url) {
-                    console.warn(`Cart render: Data missing or invalid for ID: ${item.id}. Skipping item. Product Data:`, product);
-                    // Optionally display an error placeholder in the cart for this item
+                    console.warn(`Cart render: Data missing or invalid for ID: ${item.id}. Skipping item.`);
                     const errorElement = document.createElement('div');
                     errorElement.classList.add('cart-item', 'error-message');
                     errorElement.innerHTML = `<p>Error loading item details (ID: ${item.id || 'Unknown'})</p>`;
                     cartItemsContainer.appendChild(errorElement);
-                    // Potentially remove the faulty item from the cart automatically here if desired
-                    // cart = cart.filter(cartItem => cartItem.id !== item.id);
                     return; // Skip this item
                 }
 
-                // Create cart item element
                 const itemElement = document.createElement('div');
-                itemElement.classList.add('cart-item', 'animate-item-enter'); // Add animation class
-                itemElement.dataset.itemId = item.id; // Use data-item-id for clarity
-
+                itemElement.classList.add('cart-item', 'animate-item-enter');
+                itemElement.dataset.itemId = item.id;
                 itemElement.innerHTML = `
                      <img src="${product.image_url}" alt="${product.name}" class="cart-item-img" onerror="this.onerror=null; this.src='fallback-cookie.png'; this.alt='Image failed';">
                     <div class="cart-item-info">
@@ -200,20 +180,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
                 cartItemsContainer.appendChild(itemElement);
-
                 total += product.price * item.quantity;
                 itemCount += item.quantity;
-
-                // Remove animation class after a short delay
                 setTimeout(() => itemElement.classList.remove('animate-item-enter'), 300);
             });
         }
 
         cartTotalPrice.textContent = formatCurrency(total);
         cartCount.textContent = itemCount;
-        cartButton.classList.toggle('has-items', itemCount > 0); // Toggle class for visual cue
+        cartButton.classList.toggle('has-items', itemCount > 0);
 
-        // Save updated cart to localStorage
         try {
              localStorage.setItem('vibeTreatsCart', JSON.stringify(cart));
         } catch (e) {
@@ -221,7 +197,6 @@ document.addEventListener('DOMContentLoaded', () => {
              showNotification("Could not save cart changes.", "error");
         }
 
-        // Enable/disable checkout button and update its text
         checkoutButton.disabled = cart.length === 0;
         checkoutButton.textContent = cart.length === 0 ? 'Cart is Empty' : 'Checkout Time!';
         console.log(`Cart UI updated: ${itemCount} items, Total: ${formatCurrency(total)}`);
@@ -229,26 +204,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Cart Actions ---
 
-     /**
-     * Adds a product to the cart or increases its quantity if already present.
-     * @param {string} productId - The ID of the product to add.
-     * @param {HTMLElement} [buttonElement] - Optional button element for visual feedback.
-     */
-     const addToCart = (productId, buttonElement) => {
-        console.log(`Attempting to add product ID: ${productId}`);
-         // Find the product details from the locally stored 'products' array
-         const product = products.find(p => p.id === productId);
-
-         if (!product) {
-             console.error(`addToCart Error: Product with ID ${productId} not found in the 'products' array. Cannot add to cart.`);
+    const addToCart = (productId, buttonElement) => {
+        const product = products.find(p => p.id === productId);
+        if (!product) {
+             console.error(`addToCart Error: Product with ID ${productId} not found.`);
              showNotification("Error: Couldn't find that specific treat.", 'error');
             return;
         }
-        console.log(`Product found: ${product.name}`);
-
-         // Find item in cart
         const existingItem = cart.find(item => item.id === productId);
-
         if (existingItem) {
             existingItem.quantity++;
              showNotification(`+1 ${product.name}! Good choice.`, 'info');
@@ -256,126 +219,75 @@ document.addEventListener('DOMContentLoaded', () => {
             cart.push({ id: productId, quantity: 1 });
             showNotification(`Added ${product.name} to your stash!`, 'success');
         }
-
-          // Visual Feedback
-          if(buttonElement) temporaryClass(buttonElement, 'button-adding', 400);
-         temporaryClass(cartCount, 'pulse-quick', 500); // Pulse the cart count
-         if (cartButton) temporaryClass(cartButton, 'shake-subtle', 500); // Jiggle the cart icon
-
-        updateCartUI(); // Update display and save to localStorage
-
-        // Optionally open the cart sidebar
-        if (!isCartOpen) {
-            openCart();
-        }
+        if(buttonElement) temporaryClass(buttonElement, 'button-adding', 400);
+        temporaryClass(cartCount, 'pulse-quick', 500);
+        if (cartButton) temporaryClass(cartButton, 'shake-subtle', 500);
+        updateCartUI();
+        if (!isCartOpen) openCart();
     };
 
-     /**
-     * Removes an item completely from the cart.
-     * @param {string} productId - The ID of the product to remove.
-     */
     const removeFromCart = (productId) => {
         const itemIndex = cart.findIndex(item => item.id === productId);
-        if (itemIndex === -1) {
-            console.warn(`removeFromCart: Item with ID ${productId} not found in cart.`);
-            return;
-        }
-
-        const productName = products.find(p => p.id === productId)?.name || 'Item'; // Get name for notification
-
-        // Find the corresponding DOM element *before* removing from cart array for animation
+        if (itemIndex === -1) return;
+        const productName = products.find(p => p.id === productId)?.name || 'Item';
         const itemElement = cartItemsContainer?.querySelector(`.cart-item[data-item-id="${productId}"]`);
-
-        // Remove item from cart array
         cart = cart.filter(item => item.id !== productId);
-        console.log(`Removed item ID: ${productId}`);
         showNotification(`Removed ${productName} from stash.`, 'info');
-
-        // Animate removal
         if (itemElement) {
             itemElement.classList.add('animate-item-exit');
-            itemElement.addEventListener('animationend', () => {
-                 // Update UI *after* animation completes for smoother visual
-                 updateCartUI();
-            }, { once: true });
+            itemElement.addEventListener('animationend', updateCartUI, { once: true });
         } else {
-            // If element not found (shouldn't happen normally), update UI immediately
             updateCartUI();
         }
     };
 
-    /**
-     * Increases the quantity of an item in the cart.
-     * @param {string} productId - The ID of the product.
-     */
-     const increaseQuantity = (productId) => {
+    const increaseQuantity = (productId) => {
         const item = cart.find(item => item.id === productId);
         if (item) {
             item.quantity++;
-            console.log(`Increased quantity for ID: ${productId} to ${item.quantity}`);
             updateCartUI();
-            // Optional: Add subtle feedback to the specific item row
             const itemElement = cartItemsContainer?.querySelector(`.cart-item[data-item-id="${productId}"] .item-quantity`);
-            if(itemElement) temporaryClass(itemElement.parentElement.parentElement, 'pulse-quick', 300); // Pulse the whole row slightly
-        } else {
-            console.warn(`increaseQuantity: Item with ID ${productId} not found.`);
+            if(itemElement) temporaryClass(itemElement.parentElement.parentElement, 'pulse-quick', 300);
         }
     };
 
-    /**
-     * Decreases the quantity of an item in the cart. Removes if quantity reaches 0.
-     * @param {string} productId - The ID of the product.
-     */
-     const decreaseQuantity = (productId) => {
+    const decreaseQuantity = (productId) => {
         const item = cart.find(item => item.id === productId);
         if (item) {
             item.quantity--;
-            console.log(`Decreased quantity for ID: ${productId} to ${item.quantity}`);
             if (item.quantity <= 0) {
-                console.log(`Quantity is 0, removing item ID: ${productId}`);
-                removeFromCart(productId); // Call remove function for animation & notification
+                removeFromCart(productId);
             } else {
                 updateCartUI();
-                 // Optional: Add subtle feedback
                  const itemElement = cartItemsContainer?.querySelector(`.cart-item[data-item-id="${productId}"] .item-quantity`);
                  if(itemElement) temporaryClass(itemElement.parentElement.parentElement, 'pulse-quick', 300);
             }
-        } else {
-            console.warn(`decreaseQuantity: Item with ID ${productId} not found.`);
         }
     };
 
     // --- Sidebar/Modal Toggles ---
 
-    /** Opens the cart sidebar and overlay. */
     const openCart = () => {
         if (!cartSidebar || !cartOverlay || !bodyElement) return;
-        console.log("Opening cart sidebar.");
         cartSidebar.classList.add('active');
         cartOverlay.classList.add('active');
-        bodyElement.classList.add('overlay-active', 'cart-open'); // Add body classes for potential global styling
+        bodyElement.classList.add('overlay-active', 'cart-open');
         isCartOpen = true;
     };
 
-    /** Closes the cart sidebar and overlay. */
     const closeCart = () => {
         if (!cartSidebar || !cartOverlay || !bodyElement) return;
-        console.log("Closing cart sidebar.");
         cartSidebar.classList.remove('active');
         cartOverlay.classList.remove('active');
         bodyElement.classList.remove('overlay-active', 'cart-open');
         isCartOpen = false;
     };
 
-    // --- Sidebar/Modal Toggles ---
-
-    // --- REPLACE your existing openCheckout function with this one ---
-    /** Opens the checkout modal and overlay, populates summary including Telda reminder. */
+    /** Opens the checkout modal and overlay, populates summary and payment reminders. */
     const openCheckout = () => {
-        // Guard clauses for missing elements
-        // Make sure all the element IDs used inside this function exist in the DOM cache check near the top of the script.
-        if (!checkoutModal || !checkoutOverlay || !bodyElement || !checkoutSummary || !checkoutTotalPrice || !checkoutForm || !submitOrderButton) {
-            console.error("Cannot open checkout - required elements missing. Check IDs: checkoutModal, checkoutOverlay, body, checkout-summary, checkout-total-price, checkout-form, submit-order-button");
+        // Re-check elements needed specifically for this function
+        if (!checkoutModal || !checkoutOverlay || !bodyElement || !checkoutSummary || !checkoutTotalPrice || !checkoutForm || !submitOrderButton || paymentTotalReminders.length === 0) {
+            console.error("Cannot open checkout - required elements missing.");
             showNotification("Checkout unavailable due to page error.", "error");
             return;
         }
@@ -385,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        console.log("Opening checkout modal (Telda Flow).");
+        console.log("Opening checkout modal (Telda & Instapay Flow).");
 
         // Populate Checkout Summary
         let summaryHTML = '<h4>Order Summary:</h4><ul>';
@@ -393,66 +305,55 @@ document.addEventListener('DOMContentLoaded', () => {
         cart.forEach(item => {
              const product = products.find(p => p.id === item.id);
              if (product && typeof product.price === 'number') {
-                // Ensure product data is valid before adding to summary
                 summaryHTML += `<li>${item.quantity} x ${product.name} (${formatCurrency(product.price)} each)</li>`;
                  total += product.price * item.quantity;
              } else {
-                 // Handle case where product details might be missing
-                summaryHTML += `<li class="error-message">Error processing item ID: ${item.id || 'Unknown'}</li>`; // Added fallback for item.id
+                summaryHTML += `<li class="error-message">Error processing item ID: ${item.id || 'Unknown'}</li>`;
                  console.warn(`Checkout Summary: Missing product data for ID ${item.id || 'Unknown'}`);
              }
         });
         summaryHTML += '</ul>';
-        checkoutSummary.innerHTML = summaryHTML; // Update the summary box
-        const totalFormatted = formatCurrency(total); // Get formatted total
+        checkoutSummary.innerHTML = summaryHTML;
+        const totalFormatted = formatCurrency(total);
         checkoutTotalPrice.textContent = totalFormatted; // Update the total in the summary box
 
-        // --- Update Telda Total Reminder ---
-        // Make sure the element with ID 'telda-total-price-reminder' exists in your HTML inside the telda instructions block.
-        const teldaTotalPriceReminder = document.getElementById('telda-total-price-reminder');
-        if (teldaTotalPriceReminder) {
-             teldaTotalPriceReminder.textContent = totalFormatted;
-             console.log("Updated Telda reminder span with total:", totalFormatted);
-        } else {
-             console.warn("Telda total reminder span (#telda-total-price-reminder) not found in HTML.");
-             // Optionally display a less critical error or fallback in the UI if this span is missing
-        }
+        // --- Update ALL Payment Total Reminders ---
+        paymentTotalReminders.forEach(span => {
+            span.textContent = totalFormatted;
+        });
+        console.log("Updated payment reminder spans with total:", totalFormatted);
 
-        // Reset form state and messages from previous attempts
-        checkoutForm.reset();
+        // Reset form state and messages
+        checkoutForm.reset(); // Resets text fields and radio buttons
         if(checkoutMessage) checkoutMessage.textContent = '';
-        if(checkoutMessage) checkoutMessage.className = 'checkout-message'; // Reset classes
-        if(submitOrderButton) submitOrderButton.disabled = false; // Ensure button is enabled initially
-        // Ensure button text is the initial Telda one when opening modal
-        if(submitOrderButton) submitOrderButton.textContent = 'got it! ready to pay via telda ✅';
-        isSubmitting = false; // Ensure submitting flag is reset
+        if(checkoutMessage) checkoutMessage.className = 'checkout-message';
+        if(submitOrderButton) submitOrderButton.disabled = false;
+        // Set the correct default submit button text
+        if(submitOrderButton) submitOrderButton.textContent = 'Confirm Details & Payment Method Used ✅';
+        isSubmitting = false;
 
          // Clear previous validation errors visually
         checkoutForm.querySelectorAll('.input-error').forEach(el => {
             el.classList.remove('input-error');
-            el.removeAttribute('aria-invalid'); // Also remove accessibility attribute
+            el.removeAttribute('aria-invalid');
         });
+        if(paymentMethodSelection) paymentMethodSelection.classList.remove('input-error'); // Clear radio group error
 
 
         // Show the modal and overlay
         checkoutModal.classList.add('active');
         checkoutOverlay.classList.add('active');
-        bodyElement.classList.add('overlay-active', 'checkout-open'); // Use body classes for potential global styling/scroll lock
+        bodyElement.classList.add('overlay-active', 'checkout-open');
         isCheckoutOpen = true;
 
-        // Optionally close the cart sidebar if it happens to be open
-        if (isCartOpen) {
-            closeCart();
-        }
+        if (isCartOpen) closeCart(); // Close cart if open
 
-        // Optional: Focus the first input field for accessibility/usability
-        const firstInput = checkoutForm.querySelector('input, textarea');
+        // Focus first non-radio input
+        const firstInput = checkoutForm.querySelector('input:not([type=radio]), textarea');
         if (firstInput) {
-            // Use a slight delay to ensure the modal transition is complete before focusing
-            setTimeout(() => firstInput.focus(), 100); // Adjust delay if needed
+            setTimeout(() => firstInput.focus(), 100);
         }
      };
-    // --- End of openCheckout function ---
 
     /** Closes the checkout modal and overlay. */
     const closeCheckout = () => {
@@ -463,62 +364,46 @@ document.addEventListener('DOMContentLoaded', () => {
         bodyElement.classList.remove('overlay-active', 'checkout-open');
         isCheckoutOpen = false;
 
-        // Reset button state in case it was left disabled by an error/submission
-        if (submitOrderButton) submitOrderButton.disabled = false;
-        if (submitOrderButton) submitOrderButton.textContent = 'Confirm Order & Send Vibes 💸';
-        isSubmitting = false; // Reset submission flag
+        // Reset button state
+        if (submitOrderButton) {
+             submitOrderButton.disabled = false;
+             // Reset to correct default text
+             submitOrderButton.textContent = 'Confirm Details & Payment Method Used ✅';
+        }
+        isSubmitting = false;
     };
 
     // --- Render Products ---
-    /** Fetches products from Supabase and renders them in the product grid. */
     const renderProducts = () => {
-        if (!productGrid) {
-            console.error("renderProducts: productGrid element not found! Cannot render.");
-            return;
-         }
+        if (!productGrid) return;
         console.log(`Rendering ${products.length} products.`);
-
-        if(loadingIndicator) loadingIndicator.style.display = 'none'; // Hide loading indicator
-        productGrid.innerHTML = ''; // Clear grid before rendering
+        if(loadingIndicator) loadingIndicator.style.display = 'none';
+        productGrid.innerHTML = '';
 
         if (products.length === 0) {
-            // Check if this was due to an error during fetch (fetchProducts would have set a message)
-            // If not, it means fetch was successful but returned no data
             if (!productGrid.querySelector('.error-message')) {
                  productGrid.innerHTML = '<p class="empty-message fade-in">Looks like the treat shelf is empty right now. Maybe check back later?</p>';
             }
             return;
         }
 
-        // Create and append product cards
         products.forEach((product, index) => {
-             // *More Robust Check for essential product data*
              if (!product || typeof product.id !== 'string' || !product.name || typeof product.price !== 'number' || !product.image_url) {
-                 console.warn("Skipping product render due to INCOMPLETE or INVALID data:", product);
-                 // Optionally render a placeholder error card
+                 console.warn("Skipping product render due to INCOMPLETE data:", product);
                  const errorCard = document.createElement('article');
                  errorCard.classList.add('product-card', 'error-card');
-                 errorCard.innerHTML = `<div class="product-details"><h3 class="product-name">Loading Error</h3><p>Couldn't load details for one treat.</p></div>`;
+                 errorCard.innerHTML = `<div class="product-details"><h3 class="product-name">Loading Error</h3><p>Couldn't load details.</p></div>`;
                  productGrid.appendChild(errorCard);
-                 return; // Skip this product
+                 return;
              }
-
-            // Create the card element
             const card = document.createElement('article');
-            card.classList.add('product-card', 'animate-card-enter'); // Add animation class
-             // Stagger animation start time
-             card.style.setProperty('--animation-delay', `${index * 0.05}s`);
-
-             const priceFormatted = formatCurrency(product.price);
-
-            // Populate card HTML
+            card.classList.add('product-card', 'animate-card-enter');
+            card.style.setProperty('--animation-delay', `${index * 0.05}s`);
+            const priceFormatted = formatCurrency(product.price);
             card.innerHTML = `
                 <div class="product-image-container">
-                     <img src="${product.image_url}"
-                          alt="${product.name}"
-                          class="product-main-image"
-                          loading="lazy"
-                          onerror="this.onerror=null; this.src='fallback-cookie.png'; this.alt='Image failed to load for ${product.name}'; console.warn('Image failed to load: ${product.image_url}')">
+                     <img src="${product.image_url}" alt="${product.name}" class="product-main-image" loading="lazy"
+                          onerror="this.onerror=null; this.src='fallback-cookie.png'; this.alt='Image failed'; console.warn('Image load failed: ${product.image_url}')">
                  </div>
                  <div class="product-details">
                     <h3 class="product-name">${product.name}</h3>
@@ -530,67 +415,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             productGrid.appendChild(card);
-
-            // Remove animation class after animation likely completes
-             setTimeout(() => card.classList.remove('animate-card-enter'), 600 + (index * 50));
+            setTimeout(() => card.classList.remove('animate-card-enter'), 600 + (index * 50));
         });
         console.log("Product rendering complete.");
     };
 
     // --- Fetch Products ---
-     /** Fetches product data from the Supabase 'products' table. */
      const fetchProducts = async () => {
-         if (!productGrid) {
-            console.error("Cannot fetch products, productGrid element missing.");
-            return;
-        }
-         if (!supabase) {
-            console.error("Supabase client not initialized. Cannot fetch products.");
-            productGrid.innerHTML = '<p class="error-message">Connection error. Cannot load treats.</p>';
+         if (!productGrid || !supabase) {
+            console.error("Cannot fetch products, grid or supabase client missing.");
+            if(productGrid) productGrid.innerHTML = '<p class="error-message">Connection error. Cannot load treats.</p>';
             return;
          }
-
          if (loadingIndicator) loadingIndicator.style.display = 'block';
-         productGrid.innerHTML = ''; // Clear grid while loading
+         productGrid.innerHTML = '';
          console.log("🚀 Initiating Product Fetch...");
 
          try {
-             // Select only the columns needed for display and cart functionality
              let { data, error, status } = await supabase
                  .from('products')
-                 .select('id, name, description, price, image_url, created_at') // Explicitly select needed columns
-                 .order('created_at', { ascending: true }); // Or order by name, price, etc.
+                 .select('id, name, description, price, image_url, created_at')
+                 .order('created_at', { ascending: true });
 
-             if (error) {
-                 console.error(`🔥 Supabase fetch error! Status: ${status}`, error);
-                // Throw a more specific error to be caught below
-                throw new Error(`Database Error (${status}): ${error.message}`);
-             }
+             if (error) throw new Error(`Database Error (${status}): ${error.message}`);
 
              if (data) {
                 console.log(`✅ Fetch SUCCESS! Found ${data.length} products.`);
-                 // Optional: Log fetched data only in development/debug mode
-                 // console.log("Fetched Data:", data);
-                 products = data; // Store the fetched products globally
+                 products = data;
              } else {
-                 console.warn("🤔 Fetch completed, but no data received (database might be empty or filtered).");
-                 products = []; // Ensure products array is empty
+                 console.warn("🤔 Fetch completed, but no data received.");
+                 products = [];
              }
-
          } catch (error) {
-            console.error('🔥 PRODUCT FETCH FAILED (Catch Block):', error);
-             products = []; // Clear products state on error
-             if (loadingIndicator) loadingIndicator.style.display = 'none';
-             // Display a user-friendly error message directly in the product grid area
-            productGrid.innerHTML = `<p class="error-message">Could not load treats! The server might be napping 😴.<br><small>Error: ${error.message}</small></p>`;
-             // No need to call renderProducts here, the error message is the content now
-
+            console.error('🔥 PRODUCT FETCH FAILED:', error);
+             products = [];
+             if(productGrid) productGrid.innerHTML = `<p class="error-message">Could not load treats! 😴.<br><small>Error: ${error.message}</small></p>`;
          } finally {
-             // Render products (will show products, empty message, or error message set above)
-             renderProducts();
-            // Update cart UI AFTER products (and their prices) are loaded/confirmed empty
-            // This ensures cart calculations use the latest prices.
-            updateCartUI();
+             if (loadingIndicator) loadingIndicator.style.display = 'none';
+             renderProducts(); // Render whatever was fetched (or error/empty message)
+             updateCartUI();   // Update cart display based on potentially new prices/state
              console.log("Product fetch sequence complete.");
         }
      };
@@ -598,187 +461,144 @@ document.addEventListener('DOMContentLoaded', () => {
 
      // --- Validation ---
       /**
-       * Validates the checkout form fields.
-       * @returns {boolean} True if the form is valid, false otherwise.
-       */
-         // --- Validation ---
-      /**
-       * Validates the checkout form fields (Name, Address, Phone - Email removed).
+       * Validates the checkout form fields (Name, Address, Phone, Payment Method).
        * Adds/removes 'input-error' class and sets aria-invalid attributes.
        * @returns {boolean} True if the form is valid, false otherwise.
        */
-       // --- REPLACE your existing validateCheckoutForm function with this one ---
       const validateCheckoutForm = () => {
-          // Ensure all required form elements (that we intend to validate) are present
-          // Note: customerEmailInput is removed from this check as it was removed from HTML
-          if (!checkoutForm || !customerNameInput || !customerAddressInput || !customerPhoneInput) {
-               console.error("Checkout form validation skipped: One or more required input elements (name, address, phone) are missing from the DOM or script cache.");
+          // Re-check required elements for validation
+          if (!checkoutForm || !customerNameInput || !customerAddressInput || !customerPhoneInput || !paymentMethodSelection) {
+               console.error("Checkout form validation skipped: Required elements missing.");
                showNotification("Checkout form error. Please contact support.", "error");
-               return false; // Cannot validate if elements are missing
+               return false;
            }
 
          let isValid = true;
          let firstInvalidField = null;
-          console.log("Validating checkout form (Telda Flow)...");
+          console.log("Validating checkout form (Telda/Instapay Flow)...");
 
-          // Helper function to apply error state
-          const applyError = (inputElement) => {
-              temporaryClass(inputElement, 'input-error', 3000); // Add visual cue
-              inputElement.setAttribute('aria-invalid', 'true'); // Accessibility
+          // Helper to apply error state
+          const applyError = (inputElement, isGroup = false) => {
+              const elementToStyle = isGroup ? inputElement : inputElement;
+              temporaryClass(elementToStyle, 'input-error', 3000); // CSS handles visual cue
+              if (!isGroup) inputElement.setAttribute('aria-invalid', 'true');
               if (!firstInvalidField) {
-                  firstInvalidField = inputElement; // Track the first error for focus
+                  firstInvalidField = isGroup ? inputElement.querySelector('input') : inputElement;
               }
           };
 
-          // Helper function to remove error state
-          const removeError = (inputElement) => {
-              // Note: temporaryClass handles removal, but we need to handle aria-invalid
-              inputElement.setAttribute('aria-invalid', 'false');
-              // inputElement.classList.remove('input-error'); // If not using temporaryClass
+          // Helper to remove error state
+          const removeError = (inputElement, isGroup = false) => {
+              const elementToStyle = isGroup ? inputElement : inputElement;
+              elementToStyle.classList.remove('input-error'); // Remove class if not using temporaryClass or for immediate reset
+               if (!isGroup) inputElement.setAttribute('aria-invalid', 'false');
           };
 
-          // Reset previous error styles before new validation run
+          // --- Reset previous errors ---
           checkoutForm.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
-          // Also reset aria-invalid on all relevant fields
           [customerNameInput, customerAddressInput, customerPhoneInput].forEach(el => el.setAttribute('aria-invalid', 'false'));
+          removeError(paymentMethodSelection, true); // Reset radio group border/bg
 
 
          // --- Field Validations ---
-
-         // 1. Name: Required, at least 2 characters
+         // 1. Name
          if (customerNameInput.value.trim().length < 2) {
-             isValid = false;
-             applyError(customerNameInput);
-             console.warn("Validation Fail: Name too short or empty.");
-          } else {
-             removeError(customerNameInput); // Explicitly mark as valid for accessibility state
-          }
-
-         // 2. Email validation removed as the field was removed from HTML
-
-         // 3. Address: Required, at least 10 characters (basic check)
+             isValid = false; applyError(customerNameInput); console.warn("Validation Fail: Name");
+          } else { removeError(customerNameInput); }
+         // 2. Address
          if (customerAddressInput.value.trim().length < 10) {
+             isValid = false; applyError(customerAddressInput); console.warn("Validation Fail: Address");
+          } else { removeError(customerAddressInput); }
+         // 3. Phone
+         if (!customerPhoneInput.checkValidity()) { // Checks required and pattern
+             isValid = false; applyError(customerPhoneInput); console.warn("Validation Fail: Phone");
+         } else { removeError(customerPhoneInput); }
+         // 4. Payment Method Selection
+         const selectedPaymentMethod = checkoutForm.querySelector('input[name="payment_method"]:checked');
+         if (!selectedPaymentMethod) {
              isValid = false;
-            applyError(customerAddressInput);
-             console.warn("Validation Fail: Address too short or empty.");
-          } else {
-             removeError(customerAddressInput);
-          }
-
-         // 4. Phone: Required (based on HTML 'required'), check pattern validity
-         // checkValidity() checks both required and pattern attributes
-         if (!customerPhoneInput.checkValidity()) {
-             isValid = false;
-            applyError(customerPhoneInput);
-             console.warn("Validation Fail: Phone number is empty or does not match the required format (e.g., ^01[0-2,5]{1}[0-9]{8}$).");
+             applyError(paymentMethodSelection, true); // Style the container
+             console.warn("Validation Fail: Payment method not selected.");
+             // Don't set firstInvalidField here if other fields already failed
+             if (!firstInvalidField) firstInvalidField = paymentMethodSelection.querySelector('input[type="radio"]');
          } else {
-             removeError(customerPhoneInput);
+             removeError(paymentMethodSelection, true); // Remove container style
          }
          // --- End Field Validations ---
 
-
-          // --- Final Action Based on Validation ---
           if (!isValid) {
               console.error("Checkout validation failed.");
-             showNotification("Please check your details. Look for the highlighted fields!", 'warn');
+             showNotification("Please check details & select payment method!", 'warn');
              if (firstInvalidField) {
-                 // Use a slight delay to ensure the notification doesn't interfere with focus
-                 setTimeout(() => firstInvalidField.focus(), 50);
-                 // Optionally shake the form or modal for stronger feedback
-                 if (checkoutModal) {
-                     temporaryClass(checkoutModal, 'shake-error', 400);
-                 }
+                 setTimeout(() => {
+                     firstInvalidField.focus();
+                     // firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                 }, 50);
+                 if (checkoutModal) temporaryClass(checkoutModal, 'shake-error', 400);
              }
          } else {
               console.log("✅ Checkout validation passed.");
           }
-
-         return isValid; // Return the overall validity status
+         return isValid;
      };
-    // --- End of validateCheckoutForm function ---
 
 
     // --- Checkout Handler ---
       /**
        * Handles the checkout form submission: validates, prepares data, sends to Supabase.
-      /**
-       * Handles the checkout form submission: validates, prepares data, sends to Supabase.
+       * Assumes payment is made OUTSIDE the website (Telda/Instapay app).
        * @param {Event} event - The form submission event.
        */
       const handleCheckout = async (event) => {
-           event.preventDefault(); // Prevent default form submission
-           console.log("handleCheckout initiated (Finalize Order Flow).");
+           event.preventDefault();
+           console.log("handleCheckout initiated (Telda/Instapay Flow).");
 
-           // --- Initial Checks ---
-           if (!supabase) {
-               console.error("Supabase client not available. Cannot place order.");
-               showNotification("Connection error. Cannot place order.", "error");
-               return; // Need Supabase to save the order
-            }
-
-           if (isSubmitting) {
-              console.warn("Submission already in progress. Please wait.");
-               showNotification("Processing...", "info");
-               return;
-          }
-           if (cart.length === 0) {
-                console.error("Cannot checkout with an empty cart.");
-                showNotification("Your cart is empty!", "warn");
-                closeCheckout(); // Close the modal if cart is empty
-                return;
-           }
+           if (!supabase) { /* ... (initial checks) */ return; }
+           if (isSubmitting) { /* ... */ return; }
+           if (cart.length === 0) { /* ... */ return; }
 
           // --- Frontend Validation ---
-          if (!validateCheckoutForm()) {
-              console.error("Frontend validation failed. Stopping process.");
-              // Notification is shown by validateCheckoutForm()
-              return; // Stop submission
-           }
+          if (!validateCheckoutForm()) return; // Stops if validation fails
 
            // --- Start Submission Process ---
            isSubmitting = true;
            if(submitOrderButton) submitOrderButton.disabled = true;
-           if(submitOrderButton) submitOrderButton.textContent = 'Placing Order... ✨'; // Update text
-           if(checkoutMessage) checkoutMessage.textContent = ''; // Clear previous messages
-           if(checkoutMessage) checkoutMessage.className = 'checkout-message'; // Reset message style
+           if(submitOrderButton) submitOrderButton.textContent = 'Saving Order... ⏳';
+           if(checkoutMessage) checkoutMessage.textContent = '';
+           if(checkoutMessage) checkoutMessage.className = 'checkout-message';
 
            // --- Gather Data ---
            const formData = new FormData(checkoutForm);
            const customerData = {
                customer_name: formData.get('customer_name')?.trim() || 'N/A',
                customer_address: formData.get('customer_address')?.trim() || 'N/A',
-               customer_phone: formData.get('customer_phone')?.trim() || 'N/A'
+               customer_phone: formData.get('customer_phone')?.trim() || 'N/A',
+               payment_method: formData.get('payment_method') || 'Not Selected' // Get 'Telda' or 'Instapay'
            };
 
            const orderItems = cart.map(item => {
                const product = products.find(p => p.id === item.id);
                return {
-                   product_id: item.id,
-                   quantity: item.quantity,
-                   // Store name/price at time of purchase in case product details change later
-                   name_at_purchase: product ? product.name : 'Unknown Item',
+                   product_id: item.id, quantity: item.quantity,
+                   name_at_purchase: product ? product.name : 'Unknown',
                    price_at_purchase: (product && typeof product.price === 'number') ? product.price : 0
                };
            });
 
            const calculatedTotalPrice = orderItems.reduce((sum, item) => {
-                const price = typeof item.price_at_purchase === 'number' ? item.price_at_purchase : 0;
-                const quantity = typeof item.quantity === 'number' ? item.quantity : 0;
-                return sum + (price * quantity);
+                return sum + (item.price_at_purchase * item.quantity);
             }, 0);
 
            // --- Prepare Payload for Supabase 'orders' Table ---
-           // *** IMPORTANT: Make sure you have an 'orders' table in Supabase ***
-           // Columns needed: customer_name (text), customer_address (text), customer_phone (text),
-           // order_items (jsonb), total_price (numeric), status (text, e.g., 'Pending'), created_at (timestamp)
+           // *** ENSURE 'orders' table has a 'payment_method' (text) column ***
            const orderPayload = {
                customer_name: customerData.customer_name,
                customer_address: customerData.customer_address,
                customer_phone: customerData.customer_phone,
-               order_items: orderItems, // Supabase handles JSON stringification
+               payment_method: customerData.payment_method, // <<< ADDED
+               order_items: orderItems,
                total_price: calculatedTotalPrice,
-               status: 'Pending' // Or 'Processing', 'Received', etc.
-               // created_at is usually handled automatically by Supabase
+               status: 'Pending Payment Confirmation' // Default status
            };
 
            console.log("Attempting to insert order:", orderPayload);
@@ -786,139 +606,130 @@ document.addEventListener('DOMContentLoaded', () => {
            // --- Insert into Supabase ---
            try {
                const { data, error } = await supabase
-                   .from('orders') // <<<--- YOUR ACTUAL ORDERS TABLE NAME
+                   .from('orders') // <<< YOUR ORDERS TABLE NAME
                    .insert([orderPayload])
-                   .select(); // Optionally select the inserted data if needed
+                   .select();
 
-               if (error) {
-                   console.error("🔥 Supabase insert error:", error);
-                   throw new Error(`Database Error: ${error.message}`); // Throw to be caught below
-               }
+               if (error) throw new Error(`Database Error: ${error.message}`);
 
-               console.log("✅ Order successfully inserted:", data);
+               console.log("✅ Order successfully logged:", data);
 
                // --- Success Actions ---
                if (checkoutMessage) {
-                   checkoutMessage.textContent = `🎉 Order Placed! Your treats are on the way. We'll contact you for delivery details.`;
+                   checkoutMessage.textContent = `🎉 Order Logged! Please complete payment via ${customerData.payment_method}. We'll confirm & process once received. Thanks!`;
                    checkoutMessage.className = 'checkout-message success animate-fade-in';
                }
-               showNotification("Order placed successfully!", 'success', 4000);
+               showNotification("Order details sent! Awaiting payment confirmation.", 'success', 5000);
+               cart = []; // Clear the cart
+               updateCartUI(); // Update UI and localStorage
 
-               // Clear the cart
-               cart = [];
-               updateCartUI(); // Updates localStorage and UI
-
-               // Close the modal after a short delay so user can see the message
+               // Close modal after delay
                setTimeout(() => {
-                    closeCheckout();
-                    // Reset form for next time AFTER closing
+                    closeCheckout(); // This also resets button text via its own logic
                     checkoutForm.reset();
-                    if(submitOrderButton) submitOrderButton.textContent = 'Checkout Time!'; // Reset button text
-               }, 3000); // 3-second delay
-
-               // Keep the button disabled until the modal closes
-               // isSubmitting = false; // Reset flag (less critical now modal closes)
-
+               }, 4000); // 4-second delay
 
            } catch (error) {
-               console.error("🔥 Order placement FAILED:", error);
-
-               // --- Error Actions ---
+               console.error("🔥 Order logging FAILED:", error);
                if (checkoutMessage) {
-                   checkoutMessage.textContent = `😭 Oops! Something went wrong placing your order. Please try again or contact us. Error: ${error.message}`;
+                   checkoutMessage.textContent = `😭 Oops! Couldn't save order details. Please try again or contact us. Error: ${error.message}`;
                    checkoutMessage.className = 'checkout-message error animate-fade-in';
                }
-               showNotification(`Order failed: ${error.message}`, 'error', 5000);
-
-               // Re-enable the button so the user can try again
+               showNotification(`Order logging failed: ${error.message}`, 'error', 5000);
+               // Re-enable button on error
                isSubmitting = false;
-               if(submitOrderButton) submitOrderButton.disabled = false;
-               if(submitOrderButton) submitOrderButton.textContent = 'Try Placing Order Again?';
-
-               // Keep the modal open on error
+               if(submitOrderButton) {
+                    submitOrderButton.disabled = false;
+                    submitOrderButton.textContent = 'Try Confirming Again?'; // Error state text
+               }
            }
-
        }; // --- END OF handleCheckout ---
-
 
 
     // --- EVENT LISTENERS SETUP ---
      const setupEventListeners = () => {
-         // Check if all required elements for listeners exist
-         if (!cartButton || !closeCartButton || !cartOverlay || !checkoutButton || !closeCheckoutButton || !checkoutOverlay || !checkoutForm || !cartItemsContainer || !productGrid) {
-             console.error("Cannot setup all event listeners - one or more crucial elements are missing!");
-             showNotification("Page setup error. Some buttons might not work.", "error");
-             return; // Don't proceed if core elements for interaction are missing
+         // Re-check essential elements for listeners
+         if (!cartButton || !closeCartButton || !cartOverlay || !checkoutButton || !closeCheckoutButton || !checkoutOverlay || !checkoutForm || !cartItemsContainer || !productGrid || !checkoutModal) {
+             console.error("Cannot setup all event listeners - crucial elements missing!");
+             showNotification("Page setup error. Buttons might not work.", "error");
+             return;
          }
         console.log("Attaching event listeners...");
 
-        // Cart Toggle Buttons
+        // Cart Toggles
         cartButton.addEventListener('click', openCart);
         closeCartButton.addEventListener('click', closeCart);
-        cartOverlay.addEventListener('click', closeCart); // Click outside cart to close
+        cartOverlay.addEventListener('click', closeCart);
 
-        // Checkout Modal Buttons & Overlay
+        // Checkout Toggles
         checkoutButton.addEventListener('click', openCheckout);
         closeCheckoutButton.addEventListener('click', closeCheckout);
-        checkoutOverlay.addEventListener('click', (event) => {
-            // Check if the direct click target *IS* the overlay itself
-            if (event.target === checkoutOverlay) {
-                console.log("Clicked on overlay background, closing checkout.");
-                closeCheckout();
-            } else {
-                console.log("Clicked inside modal content (or on modal itself), NOT closing.");
-                // Do nothing, the click was inside the modal area
-            }
-        }); // Click outside modal to close
-
-        // Checkout Form Submission
-        checkoutForm.addEventListener('submit', handleCheckout);
-
-        // Cart Item Actions (Event Delegation on the container)
-        cartItemsContainer.addEventListener('click', (event) => {
-            // Find the closest ancestor button with '.action-button' class
-            const targetButton = event.target.closest('.action-button');
-            if (!targetButton) return; // Click was not on an action button or its child
-
-            const productId = targetButton.dataset.id;
-            if (!productId) {
-                 console.warn("Cart action button clicked, but missing 'data-id' attribute.");
-                 return;
-             }
-
-             console.log(`Cart action detected: Classes=${targetButton.className}, ID=${productId}`);
-            temporaryClass(targetButton, 'button-clicked', 200); // Visual feedback on click
-
-             // Determine action based on button class
-             if (targetButton.classList.contains('increase-quantity')) {
-                 increaseQuantity(productId);
-             } else if (targetButton.classList.contains('decrease-quantity')) {
-                 decreaseQuantity(productId);
-             } else if (targetButton.classList.contains('remove-item')) {
-                 // Optional: Add a confirmation dialog before removing
-                 // if (confirm(`Are you sure you want to remove this item?`)) {
-                 //    removeFromCart(productId);
-                 // }
-                 removeFromCart(productId); // Remove directly for now
-             }
+        checkoutOverlay.addEventListener('click', (event) => { // Click outside modal to close
+            if (event.target === checkoutOverlay) closeCheckout();
         });
 
-        // Add to Cart Buttons (Event Delegation on the product grid)
+        // Form Submission
+        checkoutForm.addEventListener('submit', handleCheckout);
+
+        // Cart Item Actions (Delegation)
+        cartItemsContainer.addEventListener('click', (event) => {
+            const targetButton = event.target.closest('.action-button');
+            if (!targetButton) return;
+            const productId = targetButton.dataset.id;
+            if (!productId) return;
+            temporaryClass(targetButton, 'button-clicked', 200);
+             if (targetButton.classList.contains('increase-quantity')) increaseQuantity(productId);
+             else if (targetButton.classList.contains('decrease-quantity')) decreaseQuantity(productId);
+             else if (targetButton.classList.contains('remove-item')) removeFromCart(productId);
+        });
+
+        // Add to Cart Buttons (Delegation)
         productGrid.addEventListener('click', (event) => {
-            // Find the closest ancestor button with '.add-to-cart-btn' class
              const button = event.target.closest('.add-to-cart-btn');
              if (button) {
-                event.preventDefault(); // Good practice if the button is inside a link/form
+                event.preventDefault();
                 const productId = button.dataset.id;
-                 console.log(`Product grid click: Found 'add-to-cart-btn', ID: ${productId}`);
-                 if (productId) {
-                    addToCart(productId, button); // Pass button for feedback
-                 } else {
-                     console.warn("'Add To Stash' button clicked but missing 'data-id' attribute!");
-                     showNotification("Error identifying treat.", "error");
-                 }
+                 if (productId) addToCart(productId, button);
+                 else console.warn("Add button missing data-id!");
              }
          });
+
+        // --- Copy Buttons Listener (Delegation on Modal) ---
+        checkoutModal.addEventListener('click', async (event) => {
+            const copyButton = event.target.closest('.copy-button');
+            if (!copyButton) return;
+
+            const targetSelector = copyButton.dataset.clipboardTarget;
+            const targetElement = targetSelector ? document.querySelector(targetSelector) : null;
+            if (!targetElement) {
+                console.warn(`Copy target "${targetSelector}" not found.`);
+                showNotification("Error finding text to copy.", "error");
+                return;
+            }
+
+            const textToCopy = targetElement.textContent || targetElement.innerText;
+            try {
+                await navigator.clipboard.writeText(textToCopy);
+                console.log(`Copied: ${textToCopy}`);
+                const originalText = copyButton.innerHTML;
+                copyButton.innerHTML = '✅ Copied!';
+                copyButton.classList.add('copied');
+                showNotification(`Copied: ${textToCopy}`, 'success', 2000);
+                setTimeout(() => {
+                    copyButton.innerHTML = originalText;
+                    copyButton.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+                showNotification('Failed to copy. Please copy manually.', 'error');
+                // Fallback: Try to select text
+                try {
+                    const range = document.createRange(); range.selectNodeContents(targetElement);
+                    const selection = window.getSelection(); selection.removeAllRanges(); selection.addRange(range);
+                } catch (selectErr) { /* Ignore fallback error */ }
+            }
+        });
+
 
         console.log("✅ Event listeners setup complete.");
      };
@@ -927,46 +738,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const initializePage = () => {
         console.log("----- Initializing Vibe Treats Page -----");
          try {
-             // 1. Load cart from localStorage *before* fetching products or setting up UI
+             // 1. Load cart from localStorage
              const storedCart = localStorage.getItem('vibeTreatsCart');
              if (storedCart) {
                  try {
-                     cart = JSON.parse(storedCart);
-                     // Basic validation of loaded cart structure (optional but good)
-                     if (!Array.isArray(cart) || cart.some(item => typeof item.id === 'undefined' || typeof item.quantity === 'undefined')) {
-                         console.warn("Invalid cart data found in localStorage. Resetting cart.");
-                         cart = [];
-                         localStorage.removeItem('vibeTreatsCart');
-                     } else {
+                     const parsedCart = JSON.parse(storedCart);
+                     // Basic validation
+                     if (Array.isArray(parsedCart) && parsedCart.every(item => typeof item.id !== 'undefined' && typeof item.quantity !== 'undefined')) {
+                         cart = parsedCart;
                          console.log("Loaded cart from localStorage:", cart);
+                     } else {
+                         console.warn("Invalid cart data in localStorage. Resetting.");
+                         localStorage.removeItem('vibeTreatsCart');
                      }
                  } catch (e) {
-                     console.error("Failed to parse cart from localStorage. Resetting cart.", e);
-                     cart = [];
-                     localStorage.removeItem('vibeTreatsCart'); // Clear corrupted data
+                     console.error("Failed to parse cart from localStorage. Resetting.", e);
+                     localStorage.removeItem('vibeTreatsCart');
                  }
             }
 
-             // 2. Set Dynamic Year in Footer (if element exists)
-             if (yearSpan) {
-                yearSpan.textContent = new Date().getFullYear();
-             } else {
-                console.warn("Footer year span element (#year) not found.");
-             }
+             // 2. Set Dynamic Year
+             if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+             else console.warn("Footer year span #year not found.");
 
-             // 3. Setup Event Listeners for user interactions
+             // 3. Setup Event Listeners
              setupEventListeners();
 
-            // 4. Fetch Products from Supabase (this will trigger renderProducts and updateCartUI)
-             fetchProducts(); // This is async, rest of the initialization doesn't wait for it
+            // 4. Fetch Products (async - triggers render and cart update in finally block)
+             fetchProducts();
 
-            console.log("----- Page Initialized (Async operations like fetchProducts may still be running) -----");
+            console.log("----- Page Initialized (Async fetch running) -----");
 
         } catch (error) {
             console.error("☠️ FATAL ERROR during page initialization:", error);
              alert("A critical error occurred while loading the page. Please try refreshing.");
-             // Display a prominent error message on the page
-             if(bodyElement) bodyElement.innerHTML = `<h1 style="color: #FF3399; text-align: center; padding: 50px;">CRITICAL PAGE LOAD ERROR</h1><p style="text-align:center;">Something went very wrong. Please refresh.</p><p style="text-align:center; color: grey;"><small>${error.message}</small></p>`;
+             if(bodyElement) bodyElement.innerHTML = `<h1 style="color: #FF3399; text-align: center; padding: 50px;">CRITICAL PAGE LOAD ERROR</h1><p style="text-align:center;">Please refresh.</p><p style="text-align:center; color: grey;"><small>${error.message}</small></p>`;
         }
      };
 

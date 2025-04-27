@@ -1,25 +1,19 @@
 <!DOCTYPE html>
 <html lang="en-EG">
-    <!-- Added lang="en-EG" hinting towards Egyptian audience but using English -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VIBE TREATS - Too Lazy To Bake?</title>
-    <!-- Favicon Link - Replace 'favicon.png' with your actual icon file -->
     <link rel="icon" href="logo-placeholder.png" type="image/png">
 
-    <!-- Preconnect for Fonts (Good practice for performance) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Font Links (Keep these, they match the vibe) -->
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Link to your CSS file -->
+    <!-- ** Ensure this points to your CSS file name (e.g., style.css) ** -->
     <link rel="stylesheet" href="style.css">
 
-    <!-- Add any SEO Meta Tags if needed -->
     <meta name="description" content="Too lazy to bake? Same. Order my viral TikTok treats instead. Baked with chaotic energy and premium ingredients. Delivering in Egypt.">
-
 </head>
 <body>
 
@@ -67,7 +61,7 @@
         </section>
 
         <!-- ====================== FEATURED TIKTOK SECTION ======================= -->
-          <section id="tiktok-vibe" class="tiktok-feature-section dark-section">
+        <section id="tiktok-vibe" class="tiktok-feature-section dark-section">
              <div class="container">
                <h2 class="section-title animate-on-scroll fade-in">before you ask: yes, these are THE cookies</h2>
                <p class="section-subtitle animate-on-scroll fade-in delay-1">from the FYP to your mouth. no literally. i make these.</p>
@@ -81,16 +75,14 @@
              </div>
            </section>
 
-
         <!-- ========================= PRODUCTS SECTION ========================= -->
         <section id="treats" class="product-section">
             <div class="container">
                 <h2 class="section-title animate-on-scroll fade-in">THE MENU</h2>
                 <p class="section-subtitle animate-on-scroll fade-in delay-1">(stock = whenever i feel like baking, so grab them fast)</p>
                 <div class="product-grid" id="product-grid">
-                    <!-- Loading Indicator/Placeholder -->
                     <p class="loading-msg" id="loading-indicator">loading... pls don't refresh or i'll cry</p>
-                    <!-- Product cards will be inserted here by script.js -->
+                    <!-- Products Load Here -->
                 </div>
             </div>
         </section>
@@ -144,10 +136,12 @@
                  <div class="drama-columns">
                      <div class="drama-column ingredients-column">
                          <h3>what's actually in these? <span class="highlight">(receipts)</span></h3>
-                         <p>high quality only, bestie: Flour (<span class="banter">filtered through my emotional baggage</span>), Butter (<span class="banter">the expensive kind my wallet cried about</span>), Sugar (<span class="banter">sweet like my toxic ex</span>), Free-range Eggs (<span class="banter">the chickens had better housing than me</span>), Premium Chocolate (<span class="banter">the kind i hide from my siblings</span>), Vanilla (<span class="banter">imported, bc i'm extra like that</span>), Salt (<span class="banter">for the flavor AND the drama</span>).</p>
+                         <!-- === FIX START: Removed banter spans === -->
+                         <p>high quality only, bestie: Flour, Butter, Sugar, Free-range Eggs, Premium Chocolate, Vanilla, Salt.</p>
+                         <!-- === FIX END: Removed banter spans === -->
                          <p>also contains: my tears, the sound of my mom asking when i'll get a real job, and the three hours of sleep i got before baking these.</p>
-                     </div>
-                     <div class="drama-column storage-column">
+                      </div>
+                      <div class="drama-column storage-column">
                           <h3>how long will these last?</h3>
                           <p><strong>shelf life:</strong> lol you're not gonna need to worry about that</p>
                           <ul>
@@ -178,7 +172,6 @@
         <button id="close-cart-button" class="close-modal-button" aria-label="Close Cart">×</button>
         <h2 class="sidebar-title">YOUR STASH 🍪</h2>
         <div id="cart-items" class="cart-items-container">
-            <!-- Cart items loaded by JS -->
             <p class="cart-empty-message">empty cart? that's embarrassing.</p>
         </div>
         <div class="cart-summary-section">
@@ -209,17 +202,14 @@
                     <small class="form-hint">so the delivery person can find you when they're lost</small>
                 </div>
 
-                <!-- ========= FIX START: Added Missing Summary Elements ========= -->
+                <!-- Summary Elements (Already Added in Previous Fix) -->
                 <div class="checkout-summary-box">
-                    <h4 class="summary-title" style="font-size: 1.1rem; margin-bottom: 0.5rem;">Quick Look:</h4> <!-- Adjusted title slightly -->
-                    <div id="checkout-summary" style="max-height: 80px;"> <!-- Reduced max-height slightly -->
-                        <!-- JS will populate this -->
+                    <h4 class="summary-title" style="font-size: 1.1rem; margin-bottom: 0.5rem;">Quick Look:</h4>
+                    <div id="checkout-summary" style="max-height: 80px;">
                         <p style="font-style: italic; color: var(--text-grey); font-size: 0.9rem;">Cart summary appears here...</p>
                     </div>
                     <p class="total-title" style="margin-top: 0.5rem; font-size: 1.2rem;">Total: <span id="checkout-total-price">LE 0.00</span></p>
                 </div>
-                <!-- ========= FIX END: Added Missing Summary Elements ========= -->
-
 
                 <!-- 2. Telda Payment Instructions -->
                 <div class="telda-payment-instructions">
@@ -278,7 +268,8 @@
 
     <!-- ============================ SCRIPTS ============================ -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script.js"></script> <!-- Make sure this path is correct -->
+    <!-- ** Ensure this points to your JS file name (e.g., script.js) ** -->
+    <script src="script.js"></script>
 
 </body>
 </html>

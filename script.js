@@ -101,11 +101,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // These are ROUGH estimates. You'll need more precise polygons for accuracy.
     // Using a bounding box covering a large area including both for simplicity.
 const DELIVERY_ZONE = {
-    minLat: 30.02,
-    maxLat: 30.06,
-    minLng: 31.28,
-    maxLng: 31.55
+    minLat: 29.900000,
+    maxLat: 30.080000,
+    minLng: 31.250000,
+    maxLng: 31.520000
 };
+
     console.log("Delivery Zone (Approx BBox):", DELIVERY_ZONE);
 
     // --- UTILITY FUNCTIONS ---

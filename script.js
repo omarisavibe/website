@@ -1,6 +1,6 @@
-// --- VIBE TREATS SCRIPT - CONSOLIDATED & COMPLETE (with Leaflet Location Pinning) ---
+// --- VIBE TREATS SCRIPT - CONSOLIDATED & COMPLETE (with Leaflet Location Pinning, Geolocation, Geocoder Search) ---
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("----- VIBE TREATS STARTUP (v_LocationPin) ----- DOM loaded.");
+    console.log("----- VIBE TREATS STARTUP (v_LocationSearch) ----- DOM loaded.");
 
     // --- SUPABASE CLIENT SETUP ---
     const SUPABASE_URL = 'https://oljmjsegopkyqnujrzyi.supabase.co'; // ✅ Make sure this is correct
@@ -30,16 +30,20 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-     // --- Leaflet Check ---
+     // --- Leaflet & Plugin Checks ---
+     let leafletAvailable = true;
+     let geocoderAvailable = true;
      if (typeof L === 'undefined') {
-        console.error("🛑 Leaflet library (L) not found. Make sure Leaflet CSS and JS are linked correctly in your HTML.");
-        alert("Map feature cannot load. Please check the setup or contact support.");
-        // Optionally disable checkout or map-related features
-        const mapContainer = document.getElementById('map-container');
-        if (mapContainer) mapContainer.innerHTML = '<p style="color: red; text-align: center; padding: 20px;">Map library failed to load.</p>';
-        // Consider returning here if map is absolutely critical
-    } else {
+        console.error("🛑 Leaflet library (L) not found. Map features disabled.");
+        leafletAvailable = false;
+     } else {
         console.log("✅ Leaflet library (L) found.");
+        if (typeof L.Control.Geocoder === 'undefined') {
+            console.warn("⚠️ Leaflet Geocoder plugin (L.Control.Geocoder) not found. Search functionality disabled.");
+            geocoderAvailable = false;
+        } else {
+            console.log("✅ Leaflet Geocoder plugin found.");
+        }
     }
 
     // --- DOM ELEMENTS CACHE ---
@@ -58,7 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeCheckoutButton = document.getElementById('close-checkout-button');
     const checkoutForm = document.getElementById('checkout-form');
     const customerNameInput = document.getElementById('customer_name');
-    // Address Textarea REMOVED - No longer caching customerAddressInput
     const customerPhoneInput = document.getElementById('customer_phone');
     const checkoutSummary = document.getElementById('checkout-summary');
     const checkoutTotalPrice = document.getElementById('checkout-total-price');
@@ -69,24 +72,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const bodyElement = document.body;
     const paymentMethodSelection = document.querySelector('.payment-method-selection');
     const paymentTotalReminders = document.querySelectorAll('.payment-total-reminder');
-    // NEW: Map related elements
+    // Map related elements
     const mapContainer = document.getElementById('map-container');
     const locationStatus = document.getElementById('location-status');
     const customerLatitudeInput = document.getElementById('customer_latitude');
     const customerLongitudeInput = document.getElementById('customer_longitude');
+    const findMeButton = document.getElementById('find-me-button'); // Added
 
 
     // Check if crucial elements were found
     if (!productGrid || !cartButton || !cartSidebar || !cartOverlay || !cartCount || !cartItemsContainer || !cartTotalPrice ||
         !checkoutButton || !checkoutModal || !checkoutOverlay || !closeCheckoutButton || !checkoutForm || !submitOrderButton ||
-        !customerNameInput || /*customerAddressInput REMOVED*/ !customerPhoneInput || !checkoutSummary || !checkoutTotalPrice || !paymentMethodSelection || paymentTotalReminders.length === 0 ||
-        !mapContainer || !locationStatus || !customerLatitudeInput || !customerLongitudeInput) { // Added map elements check
-        console.error("🛑 Critical HTML elements missing! Check IDs/Classes in your HTML file against the script (including new map elements).");
-        alert("Woops! Some essential parts of the page (like product grid, cart, checkout form, map area, payment details) are missing in the HTML. Can't run properly.");
+        !customerNameInput || !customerPhoneInput || !checkoutSummary || !checkoutTotalPrice || !paymentMethodSelection || paymentTotalReminders.length === 0 ||
+        (leafletAvailable && (!mapContainer || !locationStatus || !customerLatitudeInput || !customerLongitudeInput || !findMeButton)) // Check map elements only if Leaflet loaded
+       )
+    {
+        console.error("🛑 Critical HTML elements missing! Check IDs/Classes in your HTML file against the script (including map elements if map library loaded).");
+        alert("Woops! Some essential parts of the page are missing in the HTML. Can't run properly.");
         if (bodyElement) bodyElement.innerHTML = '<h1 style="color: red; text-align: center; padding: 50px;">CRITICAL LAYOUT ERROR: Page elements missing.</h1>';
         return; // Stop if layout is fundamentally broken
     }
-    console.log("✅ HTML elements found (including map elements).");
+    console.log("✅ HTML elements found.");
+    if (!leafletAvailable && mapContainer) {
+         mapContainer.innerHTML = '<p style="color: red; text-align: center; padding: 20px;">Map library failed to load.</p>';
+    }
+
 
     // --- STATE MANAGEMENT ---
     let cart = [];
@@ -96,16 +106,19 @@ document.addEventListener('DOMContentLoaded', () => {
     let isSubmitting = false;
     let mapInstance = null; // Holds the Leaflet map object
     let markerInstance = null; // Holds the Leaflet marker object
+    let geocoderControl = null; // Holds the Geocoder control
 
-    // --- APPROXIMATE DELIVERY ZONE BOUNDARIES (New Cairo & Nasr City combined - ADJUST THESE!) ---
-    // These are ROUGH estimates. You'll need more precise polygons for accuracy.
-    // Using a bounding box covering a large area including both for simplicity.
-const DELIVERY_ZONE = {
-    minLat: 29.900000,
-    maxLat: 30.080000,
-    minLng: 31.250000,
-    maxLng: 31.520000
-};
+    // --- DELIVERY ZONE ---
+    // ** YOU MUST ADJUST THESE COORDINATES **
+    const DELIVERY_ZONE = {
+        minLat: 29.900000,
+        maxLat: 30.080000,
+        minLng: 31.250000,
+        maxLng: 31.520000
+    };
+    const DEFAULT_MAP_CENTER = [30.0444, 31.2357]; // Cairo Center (Fallback)
+    const DEFAULT_MAP_ZOOM = 11;
+    const LOCATION_FOUND_ZOOM = 16; // Zoom level when location is found/pinned
 
     console.log("Delivery Zone (Approx BBox):", DELIVERY_ZONE);
 
@@ -147,6 +160,7 @@ const DELIVERY_ZONE = {
     // --- CORE FUNCTIONS ---
 
     const updateCartUI = () => {
+        // ... (Keep existing updateCartUI function - no changes needed here)
         if (!cartItemsContainer || !cartTotalPrice || !cartCount || !checkoutButton) {
             console.error("Cannot update Cart UI - required elements missing.");
             return;
@@ -211,8 +225,8 @@ const DELIVERY_ZONE = {
     };
 
     // --- Cart Actions ---
-
     const addToCart = (productId, buttonElement) => {
+        // ... (Keep existing addToCart function - no changes needed here)
         const product = products.find(p => p.id === productId);
         if (!product) {
              console.error(`addToCart Error: Product with ID ${productId} not found.`);
@@ -235,6 +249,7 @@ const DELIVERY_ZONE = {
     };
 
     const removeFromCart = (productId) => {
+        // ... (Keep existing removeFromCart function - no changes needed here)
         const itemIndex = cart.findIndex(item => item.id === productId);
         if (itemIndex === -1) return;
         const productName = products.find(p => p.id === productId)?.name || 'Item';
@@ -250,6 +265,7 @@ const DELIVERY_ZONE = {
     };
 
     const increaseQuantity = (productId) => {
+        // ... (Keep existing increaseQuantity function - no changes needed here)
         const item = cart.find(item => item.id === productId);
         if (item) {
             item.quantity++;
@@ -260,6 +276,7 @@ const DELIVERY_ZONE = {
     };
 
     const decreaseQuantity = (productId) => {
+        // ... (Keep existing decreaseQuantity function - no changes needed here)
         const item = cart.find(item => item.id === productId);
         if (item) {
             item.quantity--;
@@ -274,8 +291,8 @@ const DELIVERY_ZONE = {
     };
 
     // --- Sidebar/Modal Toggles ---
-
     const openCart = () => {
+        // ... (Keep existing openCart function - no changes needed here)
         if (!cartSidebar || !cartOverlay || !bodyElement) return;
         cartSidebar.classList.add('active');
         cartOverlay.classList.add('active');
@@ -284,6 +301,7 @@ const DELIVERY_ZONE = {
     };
 
     const closeCart = () => {
+        // ... (Keep existing closeCart function - no changes needed here)
         if (!cartSidebar || !cartOverlay || !bodyElement) return;
         cartSidebar.classList.remove('active');
         cartOverlay.classList.remove('active');
@@ -291,88 +309,190 @@ const DELIVERY_ZONE = {
         isCartOpen = false;
     };
 
-    // --- Map Initialization ---
+    // --- Map Location Update Function ---
+    /** Handles updating the marker, inputs, and status when a location is selected */
+    const updateLocation = (lat, lng, locationName = null) => {
+        if (!mapInstance || !markerInstance || !customerLatitudeInput || !customerLongitudeInput || !locationStatus) return;
+
+        const latLng = L.latLng(lat, lng);
+
+        // Update marker position
+        if (!markerInstance.getLatLng() || markerInstance.getLatLng().lat === 0) { // Add marker if it doesn't exist or is at 0,0
+            markerInstance.setLatLng(latLng).addTo(mapInstance);
+        } else {
+            markerInstance.setLatLng(latLng);
+        }
+
+        // Update popup content if name is available
+        if (locationName) {
+            markerInstance.bindPopup(`<b>${locationName}</b><br>Your Delivery Location`).openPopup();
+        } else {
+            markerInstance.bindPopup("Your Delivery Location").openPopup();
+        }
+
+
+        mapInstance.setView(latLng, LOCATION_FOUND_ZOOM); // Center map and zoom in
+
+        // Update hidden fields
+        customerLatitudeInput.value = lat.toFixed(6);
+        customerLongitudeInput.value = lng.toFixed(6);
+
+        // Update status message
+        locationStatus.textContent = `Location Set: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+        locationStatus.style.color = 'var(--text-dark)'; // Use a neutral/positive color
+        mapContainer.classList.remove('input-error'); // Remove error state
+
+        // Immediately re-validate the form to check the zone
+        validateCheckoutForm();
+    };
+
+    // --- Geolocation Function ---
+    /** Tries to get the user's current location */
+    const findUserLocation = (initialLoad = false) => {
+        if (!navigator.geolocation) {
+            console.warn("Geolocation is not supported by this browser.");
+            if (!initialLoad) showNotification("Sorry, your browser doesn't support finding your location.", "warn");
+            // Map should still center on default Cairo if called during init
+            if (mapInstance && initialLoad) {
+                mapInstance.setView(DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM);
+            }
+            return;
+        }
+
+        if (!initialLoad) showNotification("Finding your location...", "info", 2000);
+        if (findMeButton) findMeButton.disabled = true; // Disable button while searching
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+                console.log(`Geolocation success: Lat: ${latitude}, Lng: ${longitude}`);
+                updateLocation(latitude, longitude, "Your Current Location");
+                if (findMeButton) findMeButton.disabled = false;
+            },
+            (error) => {
+                console.error("Geolocation error:", error);
+                let message = "Could not get your location.";
+                if (error.code === error.PERMISSION_DENIED) {
+                    message = "Location permission denied. Please allow or pin manually.";
+                } else if (error.code === error.POSITION_UNAVAILABLE) {
+                    message = "Location information is unavailable.";
+                } else if (error.code === error.TIMEOUT) {
+                    message = "Getting location timed out.";
+                }
+                if (!initialLoad) showNotification(message, "warn");
+                // Center on Cairo if it was the initial load attempt
+                 if (mapInstance && initialLoad) {
+                    mapInstance.setView(DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM);
+                    console.log("Geolocation failed on load, centering on default.");
+                 }
+                 if (findMeButton) findMeButton.disabled = false;
+            },
+            {
+                enableHighAccuracy: false, // Lower accuracy is faster and often sufficient
+                timeout: 10000, // 10 seconds
+                maximumAge: 60000 // Accept cached position up to 1 minute old
+            }
+        );
+    };
+
+
+    // --- Map Initialization (Now includes Geolocation attempt & Geocoder) ---
     const initializeMap = () => {
-        if (mapInstance) { // If map already exists, remove it first
+        if (!leafletAvailable || !mapContainer) {
+             console.error("Leaflet not available or map container missing. Cannot initialize map.");
+             if (mapContainer) mapContainer.innerHTML = '<p style="color: red; text-align: center; padding: 20px;">Error: Map library failed to load.</p>';
+             return; // Stop if Leaflet isn't loaded
+        }
+
+        if (mapInstance) {
             console.log("Removing previous map instance.");
             mapInstance.remove();
             mapInstance = null;
             markerInstance = null;
+            geocoderControl = null;
         }
 
-        if (typeof L === 'undefined') {
-            console.error("Leaflet (L) is not available. Cannot initialize map.");
-            mapContainer.innerHTML = '<p style="color: red; text-align: center; padding: 20px;">Error: Map library failed to load.</p>';
-            return; // Stop if Leaflet isn't loaded
-        }
-
-        console.log("Initializing Leaflet map...");
-        mapContainer.innerHTML = ''; // Clear any loading message
+        console.log("Initializing Leaflet map with Geolocation and Geocoder...");
+        mapContainer.querySelector('p')?.remove(); // Remove loading message if exists
 
         try {
-             // Center roughly on Cairo
-             mapInstance = L.map('map-container').setView([30.0444, 31.2357], 11);
+             // Initialize map centered on Cairo (will be updated by geolocation if successful)
+             mapInstance = L.map('map-container').setView(DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM);
 
              L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
-                attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
              }).addTo(mapInstance);
 
-            // Add marker (initially not placed)
-             markerInstance = L.marker([0, 0], { draggable: false }).bindPopup("Your Delivery Location"); // Draggable false, we use map clicks
+            // Initialize marker (draggable false, position updated by events)
+            markerInstance = L.marker([0, 0], { draggable: false }).bindPopup("Your Delivery Location");
 
-            // Add click listener to map
+            // --- Add Geocoder Control ---
+            if (geocoderAvailable) {
+                geocoderControl = L.Control.geocoder({
+                    defaultMarkGeocode: false, // We'll handle the marker ourselves
+                    placeholder: "Search address or place...",
+                    errorMessage: "Nothing found, try again?",
+                    geocoder: L.Control.Geocoder.nominatim({
+                        geocodingQueryParams: {
+                            countrycodes: 'eg', // Prioritize Egypt results
+                            viewbox: '31.0,29.8,31.8,30.2', // Optional: Bbox roughly around Cairo
+                            bounded: 1 // Strictly search within viewbox if set
+                        }
+                    }),
+                    position: 'topright',
+                    collapsed: false, // Keep it expanded initially on desktop? Maybe true for mobile.
+                })
+                .on('markgeocode', function(e) {
+                    const { center, name } = e.geocode; // center is a L.LatLng object
+                    console.log("Geocoder result selected:", e.geocode);
+                    updateLocation(center.lat, center.lng, name); // Use our update function
+                })
+                .addTo(mapInstance);
+                 console.log("✅ Geocoder control added.");
+            } else {
+                console.warn("Geocoder plugin not loaded, search disabled.");
+            }
+
+            // --- Map Click Listener ---
             mapInstance.on('click', (e) => {
-                const { lat, lng } = e.latlng;
-                console.log(`Map clicked at: Lat: ${lat}, Lng: ${lng}`);
+                console.log(`Map clicked at: Lat: ${e.latlng.lat}, Lng: ${e.latlng.lng}`);
+                updateLocation(e.latlng.lat, e.latlng.lng); // Use our update function
+            });
 
-                // Update marker position
-                 if (!markerInstance.getLatLng().equals([0,0])) { // If marker already exists, just move it
-                    markerInstance.setLatLng(e.latlng);
-                 } else { // Add marker if it's the first click
-                    markerInstance.setLatLng(e.latlng).addTo(mapInstance);
-                 }
-                mapInstance.panTo(e.latlng); // Center map on marker
+            // --- Attempt Geolocation on Initial Load ---
+            findUserLocation(true); // Pass true for initial load context
 
-                 // Update hidden fields
-                 customerLatitudeInput.value = lat.toFixed(6); // Store with reasonable precision
-                 customerLongitudeInput.value = lng.toFixed(6);
-
-                // Update status message
-                 locationStatus.textContent = `Location Pinned: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
-                 locationStatus.style.color = 'var(--text-color)'; // Reset color
-                 mapContainer.classList.remove('input-error'); // Remove error state from map container
-
-                 // Immediately re-validate the form to check the zone
-                 validateCheckoutForm();
-             });
-
-             console.log("✅ Leaflet map initialized.");
+             console.log("✅ Leaflet map base initialized.");
 
         } catch (error) {
              console.error("🔥 Failed to initialize Leaflet map:", error);
              mapContainer.innerHTML = `<p style="color: red; text-align: center; padding: 20px;">Map Error: ${error.message}</p>`;
-             mapInstance = null; // Ensure instance is null on error
+             mapInstance = null;
              markerInstance = null;
+             geocoderControl = null;
         }
     };
 
     // --- Checkout Modal ---
     const openCheckout = () => {
-        if (!checkoutModal || !checkoutOverlay || !bodyElement || !checkoutSummary || !checkoutTotalPrice || !checkoutForm || !submitOrderButton || paymentTotalReminders.length === 0 || !mapContainer || !locationStatus || !customerLatitudeInput || !customerLongitudeInput) {
-            console.error("Cannot open checkout - required elements missing (including map elements).");
+        // ... (Keep most of existing openCheckout function)
+        if (!checkoutModal || !checkoutOverlay || !bodyElement || !checkoutSummary || !checkoutTotalPrice || !checkoutForm || !submitOrderButton || paymentTotalReminders.length === 0 ||
+            (leafletAvailable && (!mapContainer || !locationStatus || !customerLatitudeInput || !customerLongitudeInput)) ) // Check map elements only if Leaflet loaded
+        {
+            console.error("Cannot open checkout - required elements missing.");
             showNotification("Checkout unavailable due to page error.", "error");
             return;
         }
-
+        // ... (rest of cart empty check, console log)
         if (cart.length === 0) {
             showNotification("Add some treats to your cart first!", "warn");
             return;
         }
 
-        console.log("Opening checkout modal (Location Pinning Flow).");
+        console.log("Opening checkout modal (Location Search Flow).");
 
-        // Populate Checkout Summary
+        // ... (Keep Summary population logic)
         let summaryHTML = '<h4>Order Summary:</h4><ul>';
         let total = 0;
         cart.forEach(item => {
@@ -389,17 +509,16 @@ const DELIVERY_ZONE = {
         checkoutSummary.innerHTML = summaryHTML;
         const totalFormatted = formatCurrency(total);
         checkoutTotalPrice.textContent = totalFormatted;
-
         paymentTotalReminders.forEach(span => { span.textContent = totalFormatted; });
         console.log("Updated payment reminder spans with total:", totalFormatted);
 
-        // Reset form state and messages
-        checkoutForm.reset(); // Resets text fields, radio buttons
-        customerLatitudeInput.value = ''; // Clear hidden coords
-        customerLongitudeInput.value = '';
-        locationStatus.textContent = 'Please pin your location on the map above.'; // Reset map status
-        locationStatus.style.color = '#888'; // Reset color
-        mapContainer.classList.remove('input-error'); // Clear map error state
+        // ... (Keep Form Reset logic)
+        checkoutForm.reset();
+        if (customerLatitudeInput) customerLatitudeInput.value = ''; // Clear hidden coords
+        if (customerLongitudeInput) customerLongitudeInput.value = '';
+        if (locationStatus) locationStatus.textContent = 'Please pin or search for your location.'; // Reset map status
+        if (locationStatus) locationStatus.style.color = '#888'; // Reset color
+        if (mapContainer) mapContainer.classList.remove('input-error'); // Clear map error state
         if (checkoutMessage) checkoutMessage.textContent = '';
         if (checkoutMessage) checkoutMessage.className = 'checkout-message';
         if (submitOrderButton) submitOrderButton.disabled = false;
@@ -411,28 +530,33 @@ const DELIVERY_ZONE = {
             el.removeAttribute('aria-invalid');
         });
         if(paymentMethodSelection) paymentMethodSelection.classList.remove('input-error');
+        if (findMeButton) findMeButton.disabled = false; // Ensure 'Find Me' button is enabled
 
-        // Show the modal and overlay
+
+        // ... (Show modal logic)
         checkoutModal.classList.add('active');
         checkoutOverlay.classList.add('active');
         bodyElement.classList.add('overlay-active', 'checkout-open');
         isCheckoutOpen = true;
-
         if (isCartOpen) closeCart();
 
         // Initialize or Refresh Map *after* modal is potentially visible
-        // Use setTimeout to ensure container has dimensions
-        setTimeout(() => {
-            initializeMap();
-            // Focus first field (Name)
-            const firstInput = customerNameInput;
-            if (firstInput) {
-                firstInput.focus();
-            }
-        }, 100); // Small delay is usually sufficient
+        if (leafletAvailable) {
+             setTimeout(() => {
+                initializeMap();
+                // Focus first field (Name)
+                 const firstInput = customerNameInput;
+                 if (firstInput) {
+                     firstInput.focus();
+                 }
+            }, 100);
+        } else {
+             console.warn("Map cannot be initialized as Leaflet is not available.");
+        }
      };
 
     const closeCheckout = () => {
+        // ... (Keep most of existing closeCheckout function)
         if (!checkoutModal || !checkoutOverlay || !bodyElement) return;
         console.log("Closing checkout modal.");
         checkoutModal.classList.remove('active');
@@ -440,14 +564,16 @@ const DELIVERY_ZONE = {
         bodyElement.classList.remove('overlay-active', 'checkout-open');
         isCheckoutOpen = false;
 
-        // Destroy map instance to free resources
+        // Destroy map instance
         if (mapInstance) {
             console.log("Destroying map instance.");
             mapInstance.remove();
             mapInstance = null;
             markerInstance = null;
+            geocoderControl = null; // Clear reference to geocoder control
         }
 
+        // ... (Reset button state)
         if (submitOrderButton) {
              submitOrderButton.disabled = false;
              submitOrderButton.textContent = 'Confirm Details & Payment Method Used ✅';
@@ -457,6 +583,7 @@ const DELIVERY_ZONE = {
 
     // --- Render Products ---
     const renderProducts = () => {
+        // ... (Keep existing renderProducts function - no changes needed here)
         if (!productGrid) return;
         console.log(`Rendering ${products.length} products.`);
         if(loadingIndicator) loadingIndicator.style.display = 'none';
@@ -504,6 +631,7 @@ const DELIVERY_ZONE = {
 
     // --- Fetch Products ---
      const fetchProducts = async () => {
+         // ... (Keep existing fetchProducts function - no changes needed here)
          if (!productGrid || !supabase) {
             console.error("Cannot fetch products, grid or supabase client missing.");
             if(productGrid) productGrid.innerHTML = '<p class="error-message">Connection error. Cannot load treats.</p>';
@@ -542,113 +670,126 @@ const DELIVERY_ZONE = {
 
      // --- Validation ---
      const validateCheckoutForm = () => {
-         if (!checkoutForm || !customerNameInput || !customerPhoneInput || !paymentMethodSelection || !mapContainer || !locationStatus || !customerLatitudeInput || !customerLongitudeInput) {
+         // ... (Keep most of existing validateCheckoutForm function)
+         // Check if map elements exist only if Leaflet is supposed to be available
+         const mapElementsPresent = !leafletAvailable || (mapContainer && locationStatus && customerLatitudeInput && customerLongitudeInput);
+
+         if (!checkoutForm || !customerNameInput || !customerPhoneInput || !paymentMethodSelection || !mapElementsPresent) {
               console.error("Checkout form validation skipped: Required elements missing.");
               showNotification("Checkout form error. Please contact support.", "error");
               return false;
           }
-
+         // ... (rest of initialization: isValid, firstInvalidField, applyError, removeError)
          let isValid = true;
          let firstInvalidField = null;
-         console.log("Validating checkout form (Location Pinning Flow)...");
+         console.log("Validating checkout form (Location Search Flow)...");
 
          // Helper to apply error state
          const applyError = (element, isGroup = false, isMap = false) => {
              const elementToStyle = isMap ? mapContainer : (isGroup ? paymentMethodSelection : element);
-             elementToStyle.classList.add('input-error'); // Add persistent error class
-             temporaryClass(elementToStyle, 'shake-subtle', 500); // Temporary shake
-             if (!isGroup && !isMap) element.setAttribute('aria-invalid', 'true');
-
-             // Set focus target
+             if (!elementToStyle) return; // Skip if element doesn't exist
+             elementToStyle.classList.add('input-error');
+             temporaryClass(elementToStyle, 'shake-subtle', 500);
+             if (!isGroup && !isMap && element) element.setAttribute('aria-invalid', 'true');
              if (!firstInvalidField) {
-                if (isMap) firstInvalidField = mapContainer; // Focus the map area
-                else if (isGroup) firstInvalidField = paymentMethodSelection.querySelector('input'); // Focus first radio
-                else firstInvalidField = element; // Focus the input field
+                if (isMap) firstInvalidField = mapContainer;
+                else if (isGroup) firstInvalidField = paymentMethodSelection.querySelector('input');
+                else firstInvalidField = element;
              }
          };
 
          // Helper to remove error state
          const removeError = (element, isGroup = false, isMap = false) => {
              const elementToStyle = isMap ? mapContainer : (isGroup ? paymentMethodSelection : element);
+             if (!elementToStyle) return; // Skip if element doesn't exist
              elementToStyle.classList.remove('input-error');
-              if (!isGroup && !isMap) element.removeAttribute('aria-invalid');
+              if (!isGroup && !isMap && element) element.removeAttribute('aria-invalid');
          };
 
-         // --- Reset previous errors ---
+         // Reset previous errors
          checkoutForm.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
-         [customerNameInput, customerPhoneInput].forEach(el => el.removeAttribute('aria-invalid'));
-         removeError(null, true, false); // Reset radio group border/bg
-         removeError(null, false, true); // Reset map container border/bg
+         [customerNameInput, customerPhoneInput].forEach(el => { if(el) el.removeAttribute('aria-invalid'); });
+         removeError(null, true, false); // Reset radio group
+         removeError(null, false, true); // Reset map container
 
-
-         // --- Field Validations ---
-
-         // 1. Name
-         if (customerNameInput.value.trim().length < 2) {
+         // Field Validations (Name, Phone) - Keep as is
+          if (customerNameInput.value.trim().length < 2) {
              isValid = false; applyError(customerNameInput); console.warn("Validation Fail: Name");
           } else { removeError(customerNameInput); }
 
-         // 2. Phone
          if (!customerPhoneInput.checkValidity() || customerPhoneInput.value.trim() === '') {
              isValid = false; applyError(customerPhoneInput); console.warn("Validation Fail: Phone number invalid or missing.");
          } else { removeError(customerPhoneInput); }
 
-         // 3. Location Pinned & Zone Check
-         const lat = parseFloat(customerLatitudeInput.value);
-         const lng = parseFloat(customerLongitudeInput.value);
 
-         if (isNaN(lat) || isNaN(lng) || lat === 0 || lng === 0) { // Check if coords are valid numbers and not default 0,0
-             isValid = false;
-             applyError(null, false, true); // Apply error to map container
-             locationStatus.textContent = '🚨 Please pin your location on the map!';
-             locationStatus.style.color = 'red';
-             console.warn("Validation Fail: Location not pinned.");
-         } else {
-             // Check if within the defined delivery zone
-             const isInZone = lat >= DELIVERY_ZONE.minLat && lat <= DELIVERY_ZONE.maxLat &&
-                              lng >= DELIVERY_ZONE.minLng && lng <= DELIVERY_ZONE.maxLng;
+         // Location Pinned & Zone Check - Keep as is
+         if (leafletAvailable) { // Only validate map if Leaflet is loaded
+             const lat = parseFloat(customerLatitudeInput.value);
+             const lng = parseFloat(customerLongitudeInput.value);
 
-             if (!isInZone) {
+             if (isNaN(lat) || isNaN(lng) || lat === 0 || lng === 0) {
                  isValid = false;
                  applyError(null, false, true); // Apply error to map container
-                 locationStatus.textContent = `🚨 Sorry, location is outside our delivery zone (New Cairo/Nasr City).`;
-                 locationStatus.style.color = 'red';
-                 console.warn(`Validation Fail: Location (${lat}, ${lng}) is outside delivery zone.`);
-                 showNotification("Selected location is outside our New Cairo / Nasr City delivery zone.", 'warn', 5000);
+                 if (locationStatus) {
+                     locationStatus.textContent = '🚨 Please pin or search for your location!';
+                     locationStatus.style.color = 'var(--error-color)';
+                 }
+                 console.warn("Validation Fail: Location not set.");
              } else {
-                 // Location is valid and in zone
-                 removeError(null, false, true); // Remove error from map container
-                 // Keep the "Location Pinned" message, maybe change color back?
-                 locationStatus.style.color = 'var(--primary-color)'; // Or your success color
-                 console.log("Location validation passed: Pinned and within zone.");
+                 const isInZone = lat >= DELIVERY_ZONE.minLat && lat <= DELIVERY_ZONE.maxLat &&
+                                  lng >= DELIVERY_ZONE.minLng && lng <= DELIVERY_ZONE.maxLng;
+                 if (!isInZone) {
+                     isValid = false;
+                     applyError(null, false, true);
+                     if (locationStatus) {
+                        locationStatus.textContent = `🚨 Sorry, location is outside our delivery zone (New Cairo/Nasr City).`;
+                        locationStatus.style.color = 'var(--error-color)';
+                     }
+                     console.warn(`Validation Fail: Location (${lat}, ${lng}) is outside delivery zone.`);
+                     showNotification("Selected location is outside our New Cairo / Nasr City delivery zone.", 'warn', 5000);
+                 } else {
+                     removeError(null, false, true);
+                     if (locationStatus) {
+                        // Keep the "Location Set" message, maybe change color back if it was red
+                        if (locationStatus.style.color === 'var(--error-color)' || locationStatus.style.color === 'red') {
+                             locationStatus.style.color = 'var(--primary-color)';
+                        }
+                     }
+                     console.log("Location validation passed: Set and within zone.");
+                 }
              }
+         } else {
+            console.log("Skipping map validation as Leaflet is unavailable.");
+            // If map is REQUIRED, you might set isValid = false here if leafletAvailable is false.
+            // Or, have alternative input methods. For now, we assume it might proceed without map if library failed.
          }
 
-         // 4. Payment Method Selection
+
+         // Payment Method Selection - Keep as is
          const selectedPaymentMethod = checkoutForm.querySelector('input[name="payment_method"]:checked');
          if (!selectedPaymentMethod) {
              isValid = false;
              applyError(null, true, false); // Style the payment group container
              console.warn("Validation Fail: Payment method not selected.");
-             if (!firstInvalidField) firstInvalidField = paymentMethodSelection.querySelector('input[type="radio"]');
+             if (!firstInvalidField) firstInvalidField = paymentMethodSelection?.querySelector('input[type="radio"]');
          } else {
              removeError(null, true, false); // Remove container style
          }
-         // --- End Field Validations ---
 
+
+         // --- Final Validation Check & Feedback ---
          if (!isValid) {
              console.error("Checkout validation failed.");
              showNotification("Please check the highlighted details!", 'warn', 3000);
 
              if (firstInvalidField) {
                  setTimeout(() => {
-                     // Focus behavior: input fields get direct focus, map/radio group scrolls into view
                      if (firstInvalidField === mapContainer || firstInvalidField.type === 'radio') {
                         firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        // Optionally add a visual cue to the map/radio if focus isn't obvious
                         if(firstInvalidField === mapContainer) temporaryClass(mapContainer, 'focus-highlight', 1000);
                      } else {
-                        firstInvalidField.focus();
+                        firstInvalidField.focus({ preventScroll: true }); // Focus without jarring scroll
+                        firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Then smooth scroll
                      }
                  }, 100);
                  if (checkoutModal) {
@@ -664,42 +805,45 @@ const DELIVERY_ZONE = {
 
     // --- Checkout Handler ---
       const handleCheckout = async (event) => {
+           // ... (Keep existing handleCheckout function - No significant changes needed here)
+           // It already reads coordinates from the hidden inputs, which are updated by all methods (click, geo, search)
            event.preventDefault();
-           console.log("handleCheckout initiated (Location Pinning Flow).");
+           console.log("handleCheckout initiated (Location Search Flow).");
 
-           if (!supabase || typeof L === 'undefined' || !customerLatitudeInput || !customerLongitudeInput) {
-                console.error("Checkout prerequisites missing (Supabase/Leaflet/Coord Inputs).");
+           // Prerequisites check
+           const mapCheckOk = !leafletAvailable || (customerLatitudeInput && customerLongitudeInput); // Map inputs only needed if Leaflet was supposed to load
+           if (!supabase || !mapCheckOk) {
+                console.error("Checkout prerequisites missing (Supabase or Map Inputs if applicable).");
                 showNotification("Checkout system error. Please refresh or contact support.", "error");
                 return;
            }
            if (isSubmitting) { console.warn("Submission already in progress."); return; }
            if (cart.length === 0) { showNotification("Your cart is empty!", "warn"); return; }
 
-           // --- Frontend Validation (Includes Location Pinning & Zone Check) ---
-           if (!validateCheckoutForm()) return; // Stops if validation fails
+           // Frontend Validation
+           if (!validateCheckoutForm()) return;
 
-           // --- Start Submission Process ---
+           // Start Submission Process
            isSubmitting = true;
            if(submitOrderButton) submitOrderButton.disabled = true;
            if(submitOrderButton) submitOrderButton.textContent = 'Saving Order... ⏳';
            if(checkoutMessage) checkoutMessage.textContent = '';
            if(checkoutMessage) checkoutMessage.className = 'checkout-message';
 
-           // --- Gather Data ---
+           // Gather Data
            const formData = new FormData(checkoutForm);
            const customerData = {
                customer_name: formData.get('customer_name')?.trim() || 'N/A',
                customer_phone: formData.get('customer_phone')?.trim() || 'N/A',
                payment_method: formData.get('payment_method') || 'Not Selected',
-               // Coordinates are taken directly from hidden inputs
-               latitude: parseFloat(customerLatitudeInput.value),
-               longitude: parseFloat(customerLongitudeInput.value)
+               latitude: leafletAvailable ? parseFloat(customerLatitudeInput.value) : null, // Get coords only if map available
+               longitude: leafletAvailable ? parseFloat(customerLongitudeInput.value) : null
            };
 
-           // Double check coordinates are valid numbers before sending
-           if (isNaN(customerData.latitude) || isNaN(customerData.longitude)) {
+            // Double check coordinates if map was supposed to be available
+           if (leafletAvailable && (isNaN(customerData.latitude) || isNaN(customerData.longitude))) {
                 console.error("Invalid coordinate data before sending to backend.");
-                showNotification("Error with location data. Please re-pin your location.", "error");
+                showNotification("Error with location data. Please re-select your location.", "error");
                 isSubmitting = false;
                 if(submitOrderButton) submitOrderButton.disabled = false;
                 if(submitOrderButton) submitOrderButton.textContent = 'Try Again?';
@@ -709,56 +853,46 @@ const DELIVERY_ZONE = {
            const orderItems = cart.map(item => {
                const product = products.find(p => p.id === item.id);
                return {
-                   product_id: item.id,
-                   quantity: item.quantity,
+                   product_id: item.id, quantity: item.quantity,
                    name_at_purchase: product ? product.name : 'Unknown',
                    price_at_purchase: (product && typeof product.price === 'number') ? product.price : 0
                };
            });
+           const calculatedTotalPrice = orderItems.reduce((sum, item) => sum + (item.price_at_purchase * item.quantity), 0);
 
-           const calculatedTotalPrice = orderItems.reduce((sum, item) => {
-                return sum + (item.price_at_purchase * item.quantity);
-            }, 0);
-
-           // --- Prepare Payload for Supabase 'orders' Table ---
+           // Prepare Payload
            const orderPayload = {
                customer_name: customerData.customer_name,
-               // customer_address: REMOVED - Replaced by coordinates
                customer_phone: customerData.customer_phone,
-               latitude: customerData.latitude,      // <<< ADDED
-               longitude: customerData.longitude,    // <<< ADDED
+               latitude: customerData.latitude,      // Will be null if map failed
+               longitude: customerData.longitude,    // Will be null if map failed
                payment_method: customerData.payment_method,
-               order_items: orderItems, // Supabase calls this 'items' in schema, check your table! If it's 'items', change here.
+               order_items: orderItems, // Check your Supabase table column name! Use 'items' if needed.
                total_price: calculatedTotalPrice,
-               status: 'Pending Payment Confirmation' // Default status
+               status: 'Pending Payment Confirmation'
            };
 
-           console.log("Attempting to insert order with coordinates:", orderPayload);
+           console.log("Attempting to insert order:", orderPayload);
 
-           // --- Insert into Supabase ---
+           // Insert into Supabase
            try {
-               const { data, error } = await supabase
-                   .from('orders') // <<< YOUR ORDERS TABLE NAME
-                   .insert([orderPayload])
-                   .select();
-
+               const { data, error } = await supabase.from('orders').insert([orderPayload]).select();
                if (error) throw new Error(`Database Error: ${error.message}`);
+               console.log("✅ Order successfully logged:", data);
 
-               console.log("✅ Order successfully logged with location:", data);
-
-               // --- Success Actions ---
+               // Success Actions
                if (checkoutMessage) {
-                   checkoutMessage.textContent = `🎉 Order Logged! Location: ${customerData.latitude.toFixed(4)}, ${customerData.longitude.toFixed(4)}. Please complete payment via ${customerData.payment_method}. We'll confirm & process once received. Thanks!`;
+                   let successMsg = `🎉 Order Logged! Please complete payment via ${customerData.payment_method}. We'll confirm & process once received. Thanks!`;
+                   if(customerData.latitude) { // Add location if available
+                      successMsg = `🎉 Order Logged! Location: ${customerData.latitude.toFixed(4)}, ${customerData.longitude.toFixed(4)}. Please complete payment via ${customerData.payment_method}. Thanks!`;
+                   }
+                   checkoutMessage.textContent = successMsg;
                    checkoutMessage.className = 'checkout-message success animate-fade-in';
                }
                showNotification("Order details sent! Awaiting payment confirmation.", 'success', 5000);
                cart = [];
                updateCartUI();
-
-               setTimeout(() => {
-                    closeCheckout();
-                    // checkoutForm.reset(); // closeCheckout already resets the form
-               }, 4000);
+               setTimeout(closeCheckout, 4000);
 
            } catch (error) {
                console.error("🔥 Order logging FAILED:", error);
@@ -778,10 +912,12 @@ const DELIVERY_ZONE = {
 
     // --- EVENT LISTENERS SETUP ---
      const setupEventListeners = () => {
+         // ... (Keep existing listeners for cart toggles, checkout toggles, form submit, cart actions, add to cart, copy buttons)
+         // Re-check essential elements for listeners
          if (!cartButton || !closeCartButton || !cartOverlay || !checkoutButton || !closeCheckoutButton || !checkoutOverlay || !checkoutForm || !cartItemsContainer || !productGrid || !checkoutModal) {
              console.error("Cannot setup all event listeners - crucial elements missing!");
              showNotification("Page setup error. Buttons might not work.", "error");
-             return;
+             return; // Don't proceed if core elements are missing
          }
         console.log("Attaching event listeners...");
 
@@ -823,6 +959,17 @@ const DELIVERY_ZONE = {
              }
          });
 
+         // "Find Me" Button Listener (Only add if Leaflet and button exist)
+         if (leafletAvailable && findMeButton) {
+             findMeButton.addEventListener('click', () => {
+                console.log("Find Me button clicked.");
+                findUserLocation(false); // Pass false, it's not the initial load
+             });
+         } else if (!leafletAvailable && findMeButton) {
+            findMeButton.disabled = true; // Disable if map library failed
+            findMeButton.title = "Map library failed to load";
+         }
+
         // Copy Buttons Listener (Delegation on Modal - Kept as is)
         checkoutModal.addEventListener('click', async (event) => {
             const copyButton = event.target.closest('.copy-button');
@@ -863,7 +1010,8 @@ const DELIVERY_ZONE = {
 
     // --- PAGE INITIALIZATION ---
     const initializePage = () => {
-        console.log("----- Initializing Vibe Treats Page (v_LocationPin) -----");
+        // ... (Keep existing initializePage function - no changes needed here)
+        console.log("----- Initializing Vibe Treats Page (v_LocationSearch) -----");
          try {
              const storedCart = localStorage.getItem('vibeTreatsCart');
              if (storedCart) {

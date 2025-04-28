@@ -524,21 +524,71 @@ document.addEventListener('DOMContentLoaded', () => {
           } else {
              // **** START: NEW LOCATION CHECK ****
              const addressValueLower = addressValue.toLowerCase();
-             const allowedLocationsKeywords = [
-                 'new cairo',
-                 'tagamoa', // Common variation
-                 'tagamou', // Another common spelling
-                 'tagamo3', // Yet another
-                 'التجمع',   // Arabic
-                 'nasr city',
-                 'naser city', // Common misspelling
-                 'madinet nasr', // Common variation
-                 'madint nasr', // Misspelling
-                 'مدينة نصر',    // Arabic
-                 'm. nasr', // Abbreviation
-                 'm nasr'   // Abbreviation
-                 // Add any other essential variations or specific neighborhood names within these areas if needed
-             ];
+    const allowedLocationsKeywords = [
+  // New Cairo variations
+  'new cairo', 
+  'newcairo', 
+  'n.cairo', 
+  'nc',
+  'القاهرة الجديدة', 
+  'القاهره الجديده', 
+  'نيو كايرو',
+  'tagamoa', // Common spelling
+  'tagamou', // Alternate spelling
+  'tagamo3', // Numeric replacement
+  'التجمع', // Arabic
+
+  // Specific Settlements
+  'first settlement', '1st settlement', 'tagamoa el awal', 'tagamou el awal', 'التجمع الاول', 'التجمع الأول',
+  'second settlement', '2nd settlement', 'tagamoa el thani', 'tagamou el thani', 'south extension', 'التجمع الثاني', 'الامتداد الجنوبي',
+  'third settlement', '3rd settlement', 'tagamoa el thaleth', 'tagamou el thaleth', 'التجمع الثالث',
+  'fifth settlement', '5th settlement', 'tagamoa el khames', 'tagamou el khames', 'التجمع الخامس',
+
+  // Compounds
+  'rehab city', 'al rehab', 'el rehab', 'rehabcity', 'مدينة الرحاب', 'مدينه الرحاب', 'الرحاب',
+  'madinaty', 'madinati', 'madinty', 'مدينتي', 'مدينة مدينتي',
+  'katameya', 'katamya', 'katameya heights', 'القطامية', 'قطامية', 'قطاميه',
+  'south investors', 'north investors', 'مستثمرين جنوب', 'مستثمرين شمال',
+  'al narges', 'narges', 'النرجس',
+  'al yasmeen', 'yasmeen', 'الياسمين',
+  'banafseg', 'al banafseg', 'البنفسج',
+  'lotus', 'west lotus', 'east lotus', 'اللوتس', 'اللوتس الغربية', 'اللوتس الشرقية',
+
+  // Nasr City variations
+  'nasr city',
+  'nasrcity',
+  'naser city',
+  'nasercity',
+  'nasr', // Easy short form
+  'naser', // Common typo
+  'مدينة نصر',
+  'مدينه نصر',
+  'madinet nasr',
+  'madinat nasr',
+  'madint nasr', // Misspelling
+  'm. nasr',
+  'm nasr',
+
+  // Districts inside Nasr City
+  '7th district', 'hay el sabea', 'el hay el sabea', 'hay el saba', 'الحى السابع', 'الحي السابع',
+  '8th district', 'hay el tamen', 'el hay el tamen', 'الحى الثامن', 'الحي الثامن',
+  '9th district', 'hay el tasie', 'el hay el tasie', 'الحى التاسع', 'الحي التاسع',
+  '10th district', 'hay el asher', 'el hay el asher', 'hay al asher', 'الحى العاشر', 'الحي العاشر',
+
+  // Subdivisions
+  'gharb madinet nasr', 'sharq madinet nasr',
+  'gharb nasr city', 'sharq nasr city',
+  'غرب مدينة نصر', 'شرق مدينة نصر',
+  'west nasr city', 'nasr city west', 'east nasr city', 'nasr city east',
+  
+  // New area
+  'nasr city third', 'nasr city 3', 'nasr city iii', 'al-amal', 'al amal', 'الأمل',
+
+  // Famous streets (optional but helpful)
+  'abbas el akkad', 'عباس العقاد',
+  'makram ebaid', 'مكرم عبيد',
+  'mostafa el nahas', 'مصطفى النحاس'
+];
 
              // Check if the address contains ANY of the allowed keywords
              const isLocationAllowed = allowedLocationsKeywords.some(keyword => addressValueLower.includes(keyword));

@@ -100,12 +100,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- APPROXIMATE DELIVERY ZONE BOUNDARIES (New Cairo & Nasr City combined - ADJUST THESE!) ---
     // These are ROUGH estimates. You'll need more precise polygons for accuracy.
     // Using a bounding box covering a large area including both for simplicity.
-    const DELIVERY_ZONE = {
-        minLat: 29.97, // Further South
-        maxLat: 30.15, // Further North
-        minLng: 31.30, // Further West (towards Nasr City center)
-        maxLng: 31.60  // Further East (towards outer New Cairo / Madinaty edge)
-    };
+const DELIVERY_ZONE = {
+    minLat: 30.02,
+    maxLat: 30.06,
+    minLng: 31.28,
+    maxLng: 31.55
+};
     console.log("Delivery Zone (Approx BBox):", DELIVERY_ZONE);
 
     // --- UTILITY FUNCTIONS ---

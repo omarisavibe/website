@@ -10,11 +10,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- ** Ensure this points to your CSS file name (e.g., style.css) ** -->
-    <link rel="stylesheet" href="style.css">
+    <!-- Your main CSS -->
+    <link rel="stylesheet" href="style.css"> <!-- ** Make sure this name is correct ** -->
 
-    <!-- ** ADDED: Leaflet Map CSS ** -->
+    <!-- Leaflet Map CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+    <!-- ** ADDED: Leaflet Geocoder Plugin CSS ** -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
 
     <meta name="description" content="Too lazy to bake? Same. Order my viral TikTok treats instead. Baked with chaotic energy and premium ingredients. Delivering in Egypt.">
 </head>
@@ -24,7 +27,6 @@
     <header class="site-header">
         <div class="container header-container">
             <div class="logo-area">
-                <!-- ** USE YOUR ACTUAL LOGO IMAGE HERE ** -->
                 <img src="logo.png" alt="Vibe Treats Logo" class="logo-main">
             </div>
             <nav class="main-nav" aria-label="Main Navigation">
@@ -57,7 +59,6 @@
                     <a href="#treats" class="cta-button hero-cta animate-bounce">shop now or whatever 👇</a>
                 </div>
                 <div class="hero-visual animate-on-load fade-in">
-                    <!-- ** USE YOUR HERO IMAGE HERE ** -->
                     <img src="hero-image-placeholder.png" alt="Delicious Vibe Treats cookies" class="hero-main-image">
                 </div>
             </div>
@@ -194,27 +195,34 @@
                     <input type="text" id="customer_name" name="customer_name" placeholder="who's the main character here?" required>
                 </div>
 
-                <!-- === ADDRESS TEXTAREA REMOVED === -->
-                <!-- === MAP SECTION ADDED BELOW === -->
-
                 <div class="form-group">
                     <label for="customer_phone">phone # (that actually works):</label>
                     <input type="tel" id="customer_phone" name="customer_phone" placeholder="01xxxxxxxxx" required pattern="^01[0-2,5]{1}[0-9]{8}$">
                     <small class="form-hint">so the delivery person can find you when they're lost</small>
                 </div>
 
-                <!-- ** ADDED: Leaflet Map Section ** -->
+                <!-- ** Leaflet Map Section ** -->
                 <div class="form-group">
-                    <label for="map-container" style="display: block; margin-bottom: 0.5rem;">Delivery Location (Pin on Map):</label>
-                    <p style="font-size: 0.85em; margin-bottom: 0.5rem; color: #555;">
-                        Please click/tap on the map to set your exact delivery spot.
-                        <strong style="color: var(--brand-pink); display: block; margin-top: 3px;">📍 Delivery is currently available ONLY in <strong style="text-decoration: underline;">New Cairo</strong> & <strong style="text-decoration: underline;">Nasr City</strong> areas.</strong>
-                    </p>
-                    <div id="map-container" style="height: 300px; width: 100%; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: var(--border-radius); background-color: #f9f9f9;">
-                        <!-- Map will be loaded here by Leaflet -->
-                        <p style="text-align:center; padding-top: 50px; color: #888;">Loading map...</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 10px;">
+                        <label for="map-container" style="margin-bottom: 0;">Delivery Location (Pin or Search):</label>
+                        <!-- ** ADDED: Find My Location Button ** -->
+                        <button type="button" id="find-me-button" class="button-style-secondary small-button" title="Find My Current Location">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16" style="vertical-align: middle; margin-right: 4px;">
+                              <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
+                            </svg>
+                             Find Me
+                        </button>
                     </div>
-                    <p id="location-status" style="text-align: center; font-weight: bold; min-height: 1.5em; margin-bottom: 1rem; color: #888;">Please pin your location on the map above.</p>
+                    <p style="font-size: 0.85em; margin-bottom: 0.5rem; color: #555;">
+                        Click/tap map, search, or use 'Find Me'.
+                        <strong style="color: var(--brand-pink); display: block; margin-top: 3px;">📍 Delivery ONLY in <strong style="text-decoration: underline;">New Cairo</strong> & <strong style="text-decoration: underline;">Nasr City</strong>.</strong>
+                    </p>
+                    <div id="map-container" style="height: 300px; width: 100%; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: var(--radius-small); background-color: #f9f9f9; position: relative;">
+                        <!-- Map will be loaded here by Leaflet -->
+                        <!-- The Geocoder search box will be added here by the plugin -->
+                        <p style="text-align:center; padding-top: 50px; color: #888; position: absolute; top: 0; left: 0; width: 100%; z-index: 0;">Loading map...</p>
+                    </div>
+                    <p id="location-status" style="text-align: center; font-weight: bold; min-height: 1.5em; margin-bottom: 1rem; color: #888;">Please pin or search for your location.</p>
                     <!-- Hidden inputs to store coordinates -->
                     <input type="hidden" id="customer_latitude" name="customer_latitude" required>
                     <input type="hidden" id="customer_longitude" name="customer_longitude" required>
@@ -233,7 +241,7 @@
 
                 <!-- Telda Payment Instructions (Kept As Is) -->
                 <div class="telda-payment-instructions">
-                    <img src="images.png" alt="Telda Logo" class="telda-logo"> <!-- ** USE YOUR TELDA LOGO IMAGE ** -->
+                    <img src="images.png" alt="Telda Logo" class="telda-logo">
                     <h4>Option 1: Pay with Telda</h4>
                     <p>Send the total (<span id="telda-total-price-reminder" class="payment-total-reminder">LE 0.00</span>) via Telda to:</p>
                     <p class="telda-username-wrapper">
@@ -244,7 +252,7 @@
 
                 <!-- Instapay Payment Instructions (Kept As Is) -->
                 <div class="instapay-payment-instructions">
-                    <img src="unnamed.png" alt="Instapay Logo" class="instapay-logo"> <!-- ** USE YOUR INSTAPAY LOGO IMAGE ** -->
+                    <img src="unnamed.png" alt="Instapay Logo" class="instapay-logo">
                     <h4>Option 2: Pay with Instapay</h4>
                     <p>Or send the total (<span id="instapay-total-price-reminder" class="payment-total-reminder">LE 0.00</span>) via Instapay App:</p>
                     <div class="copyable-detail">
@@ -288,10 +296,12 @@
 
     <!-- ============================ SCRIPTS ============================ -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- ** ADDED: Leaflet Map JS ** -->
+    <!-- Leaflet Map JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <!-- ** Ensure this points to your JS file name (e.g., script.js) ** -->
-    <script src="script.js"></script>
+    <!-- ** ADDED: Leaflet Geocoder Plugin JS ** -->
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <!-- Your main JS file -->
+    <script src="script.js"></script> <!-- ** Make sure this name is correct ** -->
 
 </body>
 </html>
